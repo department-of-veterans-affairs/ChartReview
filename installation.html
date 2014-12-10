@@ -57,7 +57,7 @@
                 </ul>
                 <h3>Chart Review Downloads</h3>
                 <ul style=" list-style-type: none;">
-                	<li><a href="assets/chart-review.war"><i class="glyphicon glyphicon-download"></i> Chart Review .war</a></li>
+                	<li><a href="http://decipher.chpc.utah.edu/nexus/service/local/repositories/thirdparty/content/chart-review/chart-review/2014.12.2/chart-review-2014.12.2.war"><i class="glyphicon glyphicon-download"></i> Chart Review .war</a></li>
                     <li><a href="assets/chart-review.xml"><i class="glyphicon glyphicon-download"></i> Chart Review example context file (chart-review.xml)</a></li>
                     <li><a href="assets/chart-review-dump.sql"><i class="glyphicon glyphicon-download"></i> Chart Review example database dump</a></li>
                 </ul>
@@ -83,6 +83,7 @@
 &lt;/Context&gt;</code></pre>
                 </li>
                 <li>Import the example Mysql database dump: <strong>mysql -uroot -p &lt; chart-review-dump.sql</strong></li>
+		<li>Copy the downloaded war to **TOMCAT_HOME/webapps**, and rename it **chart-review.war**
                 <li>Start Tomcat</li>
                 <li>Browse to <a href="http://localhost:8080/chart-review/">http://localhost:8080/chart-review/</a></li>
                 <li>Example users are username: <strong>admin</strong> password:<strong>admin</strong> and username: <strong>u1</strong> password:<strong>u1</strong>.
