@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chart Review">
+    <link rel="shortcut icon" href="assets/ico/favicon.png">
+
+    <title>ChartReview Installation</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/main.css" rel="stylesheet">
+    
+    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
+    
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/smoothscroll.js"></script>
+    
+
+  </head>
+
+  <body data-spy="scroll" data-offset="0" data-target="#navigation">
+
+    <!-- Fixed navbar -->
+	    <div id="navigation" class="navbar navbar-default navbar-fixed-top">
+	      <div class="container">
+	        <div class="navbar-header">
+	          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </button>
+	          <p><strong><a class="navbar-brand" href="index.html">ChartReview </a></strong></p>
+	        </div>
+	        <div class="navbar-collapse collapse">
+	          <ul class="nav navbar-nav">
+	            <li class="active"><a href="index.html" class="smothscroll">Home</a></li>
+          </ul>
+	        </div><!--/.nav-collapse -->
+	      </div>
+	    </div>
+	<!-- FEATURES WRAP -->
+	<div id="features">
+    
+      <div class="container">
+		<h1>Quick Installation</h1>
+      	  <div class="col-lg-12	"> 
+              	<h3>Required Software</h3>
+                <ul style=" list-style-type: none;">
+                	<li><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html"  target="_blank">Java 7+</a></li>
+                    <li>JDBC Accessible Database (<a href="http://dev.mysql.com/downloads/" target="_blank">MySQL</a> is used in the example below)</li>
+                    <li>Web Servlet Container (<a href="http://tomcat.apache.org/download-80.cgi" target="_blank">Tomcat 8</a> is used in the example below)</li>
+                </ul>
+                <h3>Chart Review Downloads</h3>
+                <ul style=" list-style-type: none;">
+                	<li><a href="assets/chart-review.war"><i class="glyphicon glyphicon-download"></i> Chart Review .war</a></li>
+                    <li><a href="assets/chart-review.xml"><i class="glyphicon glyphicon-download"></i> Chart Review example context file (chart-review.xml)</a></li>
+                    <li><a href="assets/chart-review-dump.sql"><i class="glyphicon glyphicon-download"></i> Chart Review example database dump</a></li>
+                </ul>
+                
+				<h3>Installation</h3>
+                <ol>
+                	<li>Install Java, Mysql, and Tomcat.</li>
+                    <li>Create the user and database in Mysql that will house Chart Review.
+                    	<pre><code>mysql -uroot -p
+    CREATE DATABASE 'chartreview';
+    CREATE USER 'chartreview'@'localhost' IDENTIFIED BY 'passw0rd';
+    GRANT ALL PRIVILEGES ON chartreview. * TO 'chartreview'@'localhost';
+    flush privileges;</code></pre></li>
+                    <li>Before starting up Tomcat, copy the chart-review context file (chart-review.xml) to the tomcat/conf/Catalina/localhost/ directory. <strong>Note: You may need to create this directory.</strong></li>
+                   <li>Edit the chart-review.xml and set the appropriate connection parameters:
+                <pre><code>&lt;Context&gt;
+        &lt;Resource name="jdbc/chartReviewDS" auth="Container" 
+                     type="javax.sql.DataSource" 
+                     username="chartreview" 
+                     password="passw0rd" 
+                     driverClassName="com.mysql.jdbc.Driver" 
+                     url="jdbc:mysql://localhost:3306/chartreview" maxActive="15" maxIdle="3"/&gt;
+&lt;/Context&gt;</code></pre>
+                </li>
+                <li>Import the example Mysql database dump: <strong>mysql -uroot -p &lt; chart-review-dump.sql</strong></li>
+                <li>Start Tomcat</li>
+                <li>Browse to <a href="http://localhost:8080/chart-review/">http://localhost:8080/chart-review/</a></li>
+                <li>Example users are username: <strong>admin</strong> password:<strong>admin</strong> and username: <strong>u1</strong> password:<strong>u1</strong>.
+                </ol>
+                <h3>More Detailed Instructions &amp; User Guide</h3>
+                <p>
+                For detailed installation instructions, see the <a href="assets/CRInstallationGuide.pdf">installation guide</a>. The user guide is available in the <strong>Help</strong> link of 
+                the Chart Review application, or as a <a href="assets/CRUserManual.pdf">downloadable pdf</a>. 
+                </p>
+			</div>
+		  </div>
+		</div><!--/ .container -->
+	</div><!--/ #features -->
+   
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/js/bootstrap.js"></script>
+	<script>
+	$('.carousel').carousel({
+	  interval: 3500
+	})
+	</script>
+  </body>
+</html>

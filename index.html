@@ -1,1 +1,180 @@
-My Page
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chart Review">
+    <link rel="shortcut icon" href="assets/ico/favicon.png">
+
+    <title>ChartReview</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/main.css" rel="stylesheet">
+    
+    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
+    
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/smoothscroll.js"></script>
+    
+
+  </head>
+
+  <body data-spy="scroll" data-offset="0" data-target="#navigation">
+
+    <!-- Fixed navbar -->
+	    <div id="navigation" class="navbar navbar-default navbar-fixed-top">
+	      <div class="container">
+	        <div class="navbar-header">
+	          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </button>
+	          <p><strong><a class="navbar-brand" href="#">ChartReview </a></strong></p>
+	        </div>
+	        <div class="navbar-collapse collapse">
+	          <ul class="nav navbar-nav">
+	            <li class="active"><a href="#home" class="smothscroll">Home</a></li>
+	            <li><a href="#features" class="smothscroll">Features</a></li>
+	            <li><a href="#showcase" class="smothScroll">Showcase</a></li>
+	            <li><a href="#download" class="smothScroll">Get Started</a></li>
+	          </ul>
+	        </div><!--/.nav-collapse -->
+	      </div>
+	    </div>
+
+
+	<section id="home" name="home"></section>
+	<div id="headerwrap">
+	    <div class="container">
+	    	<div class="row centered" style="padding-bottom: 20px">
+	    		<div class="col-lg-12">
+	    		  <h1>Welcome To <strong>ChartReview</strong></h1>
+	    		  <h3>Easy. Intuitive. <strong>Productive</strong>.</h3>
+	    		  <br>
+	    		</div>
+	    		
+    		  <div class="col-lg-3">
+    		    <h5>Easy To Use</h5>
+				<p>Add annotations and metadata about annotations easily and quickly. </p>
+<img class="hidden-xs hidden-sm hidden-md" src="assets/img/arrow1.png" style="float: right">
+	    		</div>
+	    		<div class="col-lg-6" style="text-align:center;">
+    			  <img class="img-responsive" src="assets/img/screenshots/1.png" alt="">
+	    		</div>
+    		  <div class="col-lg-3">
+              <h5>Flexible</h5>
+	    		  <p>Show labs, patient notes, or any other information you need to see to make decisions. Cofigurable for each different stage of the project. </p>
+	    			<img class="hidden-xs hidden-sm hidden-md" src="assets/img/arrow1-mirror.png">    		  </div>
+	  	</div>
+	    	</div>
+	    </div> <!--/ .container -->
+
+
+	<!-- FEATURES WRAP -->
+	<section id="features" name="features"></section>
+    <div id="featuresDiv">
+		<div class="container">
+			<div class="row">
+			  <h1 class="centered">Features and Requirements</h1>
+			  <br>
+				<br>
+				
+			  <div class="col-lg-12	"> <br>
+              	<h3>First Class Design</h3>
+                <p>Designed with the enterprise in mind, the codebase is robust, extendable, scalable, and unit tested.
+                </p>
+              	<h3>Access <strong>YOUR</strong> Data</h3>
+                <p>Chart Review should support most JDBC data sources, though is currently only tested against MySQL and Microsoft SQL Server. &nbsp;How a patient is defined, and what data elements make up particluar medical records are configured by the user in the application. This provides unparallelled views into your existing medical database withtout requiring database or workflow changes. </p>
+                <h3>Requirements</h3>
+				<p style="margin-bottom: 0px">ChartReview requires:</p>
+                <ul>
+                  <li>A Java Servlet Container. Tomcat is recommended, but any standard Servlet Container 3.0+ is supported. </li>
+                  <li>A Mysql Database for holding ChartReview metadata</li>
+                  <li>A JDBC accessible medical record database.</li> 
+                </ul>	
+		            <!-- Accordion -->
+				</div>
+		  </div>
+		</div><!--/ .container -->
+	</div><!--/ #features -->
+   
+	<section id="showcase" name="showcase"></section>
+	<div id="showcaseDiv">
+		<div class="container">
+			<div class="row">
+				<h1 class="centered">Screenshots</h1>
+				<br>
+				<div class="col-lg-8 col-lg-offset-2">
+					<div id="carousel-example-generic" class="carousel slide">
+					  <!-- Indicators -->
+					  <ol class="carousel-indicators">
+					    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+					    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+					  </ol>
+					
+					  <!-- Wrapper for slides -->
+					  <div class="carousel-inner">
+					    <div class="item active">
+					      <img src="assets/img/screenshots/2.png" alt="">
+					    </div>
+                        <div class="item">
+					      <img src="assets/img/screenshots/3.png" alt="">
+					    </div>
+					    <div class="item">
+					      <img src="assets/img/screenshots/4.png" alt="">
+					    </div>
+					  </div>
+					</div>
+				</div>
+			</div>
+			<br>
+			<br>
+			<br>	
+		</div><!-- /container -->
+	</div>	
+
+
+	<section id="download" name="download"></section>
+	<div id="footerwrap">
+		<div class="container">
+			
+			<div class="col-lg-6">
+				<h3>Download and Get Started</h3>
+				<br>
+                <h4 style="color: white;">Get the Source</h4>
+                <p>
+                The code is currently available in <a href="https://github.com/department-of-veterans-affairs/ChartReview">github</a>.
+				</p>
+                <h4 style="color: white;">Get the Web Archive</h4>
+                <p>
+                	The web archive (.war) is <a href="">available to download</a>. 
+                </p>
+                <p>
+                	For more detailed information, see the <a href="installation.html">installation instructions</a> to get ChartReview up and running quickly. 
+                </p>  
+                <p>
+                	Need help? Have a question or feedback?<br/> 
+                    Contact us at <a href="mailto:vinciservices@va.gov">vinciservices@va.gov</a>
+                </p>
+			</div>
+		</div>
+	</div>
+	
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/js/bootstrap.js"></script>
+	<script>
+	$('.carousel').carousel({
+	  interval: 3500
+	})
+	</script>
+  </body>
+</html>
