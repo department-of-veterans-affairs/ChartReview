@@ -1,0 +1,30 @@
+A clinical element configuration defines the metadata and query needed for a clinical element. A clinical element is an abstraction on top of the database tables and columns to define a logical unit. For example, a Lab clinical element may consist of a query that joins several lookup tables to construct a Lab concept. Clinical Element Configuration require a query that uniquely defines a single clinical element entry and takes a patient id.
+
+h2. Supporting Database Schema
+
+h3. Clinical_Element_Configuration
+
+{table}
+	*Name* | *Type*
+	id | Char(32)
+	name | Varchar(100)
+	description | Varchar(500)
+	configuration\*|	Text
+	jdbc_driver | Varchar(100)
+	version | Timestamp
+	created_by | Varchar(10)
+	created_date | Timestamp
+	active | Boolean
+{table}
+
+h3. Project_Clinical_Element_Configuration
+
+{table}
+	*Name* | *Type*
+	project_id | Char(32)
+	clinical_element_configuration_id | Char(32)
+{table}
+
+\*Note: Configuration is a JSON formatted representation of the query, columns from the query, and metadata about each column. 
+
+

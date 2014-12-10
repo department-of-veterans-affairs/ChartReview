@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <mapping class="gov.va.vinci.chartreview.model.ActivitiRuntimeProperty" />
+        <mapping class="gov.va.vinci.siman.model.ClinicalElementConfiguration" />
+        <mapping class="gov.va.vinci.chartreview.model.Project" />
+        <mapping class="gov.va.vinci.chartreview.model.ProjectDocument" />
+        <mapping class="gov.va.vinci.chartreview.model.Role" />
+        <mapping class="gov.va.vinci.chartreview.model.User" />
+        <mapping class="gov.va.vinci.chartreview.model.UserProjectRole" />
+
+        <!--
+            Annotation Schema Related Classes
+          -->
+        <mapping class="gov.va.vinci.chartreview.model.schema.AnnotationSchema" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.AnnotationSchemaRef" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.AttributeDef" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.AnnotationSchemaAttributeDefSortOrder" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.AnnotationSchemaClassDefSortOrder" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.AnnotationSchemaClassRelDefSortOrder" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.AttributeDefOptionDef" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.AttributeDefAttributeDefOptionDefSortOrder" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.ClassDef" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.ClassDefAttributeDefSortOrder" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.ClassDefClassDefSortOrder" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.ClassRelDef" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.ClassRelDefAttributeDefSortOrder" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.ClassRelDefLeftClassDefSortOrder" />
+        <mapping class="gov.va.vinci.chartreview.model.schema.ClassRelDefRightClassDefSortOrder" />
+    </session-factory>
+</hibernate-configuration>

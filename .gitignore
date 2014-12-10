@@ -1,0 +1,12 @@
+/.classpath
+/.project
+target/
+/bin
+.DS_Store
+/.idea/
+flap.iml
+.metadata/
+.settings/
+out/
+chart-review-grailsPlugins.iml
+chart-review.iml

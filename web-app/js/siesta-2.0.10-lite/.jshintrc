@@ -1,0 +1,41 @@
+{
+    "undef"     : true,
+    "browser"   : true,
+    "smarttabs" : true,
+    "scripturl" : true,
+
+    "predef"    : [
+        "Ext",
+        "Siesta",
+        "$",
+        "jQuery",
+        "Scope",
+        "Class",
+        "process",
+        "require",
+        "Joose",
+        "Role",
+        "Singleton",
+        "ActiveXObject",
+        "JooseX",
+        "rootjQuery",
+        "startTest",
+        "StartTest",
+        "describe",
+        "console",
+        "__REPORT_OPTIONS__",
+        "rootjQuerySub",
+        "alert"
+    ],
+    "onecase"   : true,
+    "debug"     : false,
+    "asi"       : true,
+    "supernew"  : false,
+    "expr"      : true,         // allow fn && fn()
+    "loopfunc"  : true,
+    "eqnull"    : true,
+    "boss"      : true,
+    "evil"      : true,
+    "multistr"  : true,
+    "maxerr"    : 50000
+}

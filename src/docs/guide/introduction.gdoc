@@ -1,0 +1,54 @@
+h1. Reducing the manual burden of medical record review through informatics
+
+h2. Background
+
+A patient medical record contains rich detail about disease state and
+progression, treatment decisions, and outcomes, but much of this
+information is stored in narrative text. Medical record review (MRR) is a
+time consuming and costly process used to extract clinical measures and
+other variables from patient charts that are not available in
+administrative data.
+
+h2. Objective
+
+To show how informatics tools and methods can provide approaches to
+increase efficiency and accuracy of MRR.
+
+h2. Methods
+
+Our team analyzed the MRR process over the course of a dozen projects. We
+identified four potential areas of improvement: workflow management,
+informative displays, intuitive interfaces, and automated assistance. We
+developed VINCI ChartReview, a light-weight medical record review tool
+with functionality to address these challenges. The administrative
+functions allow management of users, data, and assignment of patient
+charts to users. Complex medical record review tasks can be defined using
+the Business Process Modeling Notation 2.0 standard and are executed
+seamlessly in the background using the open-source Activiti platform.
+Each task can use information from previous tasks, pre-specified
+variables, or patient data to provide a customized view of which parts of
+the chart to display, what order to display data elements, and how to
+filter the data (i.e., only data 30-days prior to index date). The
+display and review capability are split into three interfaces, each
+supporting a distinct task (validation, clinical note markup, full
+patient chart review). In each of the interfaces, annotation and markup
+capability is overlaid directly on the patient chart, eliminating the
+need to read from one tool and perform data entry in another. ChartReview
+incorporates natural language processing and administrative data query
+capability to pre-annotate and find similar wording in other parts of the
+chart or across charts. ChartReview can be configured to display patient
+records from different database models.
+
+h2. Results
+
+Identifying and addressing each bottleneck in the MRR workflow has
+reduced administrative burden, increased reviewer efficiency, and
+supports consistency across review tasks. Specific examples of reduction
+of number of files to manage, simplification of task tracking, reduction
+in number of clicks, and reviewer perception of ease of use will be
+presented.
+
+h2. Conclusions
+
+Automated and information-driven approaches can greatly reduce the burden
+of manual MRR.

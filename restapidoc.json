@@ -1,0 +1,342 @@
+{
+   "basePath": "/chart-review",
+   "apis": [
+      {
+         "methods": [
+            {
+               "headers": [],
+               "bodyobject": null,
+               "jsondocId": "8253e449-8c37-4a93-861b-b6fa79b5889e",
+               "consumes": [],
+               "response": {
+                  "mapKeyObject": "",
+                  "jsondocId": "af3c3e6a-6a4b-4ffa-ba90-ed39292bc35b",
+                  "mapValueObject": "",
+                  "object": "annotation",
+                  "multiple": "Unknow"
+               },
+               "pathparameters": [
+                  {
+                     "jsondocId": "9b01fa94-5355-4301-bd9c-df3eb2e4d86a",
+                     "description": "The id of the clinical element whose annotations are requested",
+                     "name": "clinicalElementId",
+                     "allowedvalues": [],
+                     "format": "",
+                     "required": "true",
+                     "type": "string"
+                  },
+                  {
+                     "jsondocId": "5bdc86a9-6d35-489c-bb03-8d91e6dd57ed",
+                     "description": "The id of the on which the requested annotations will be pre-annotations (not the tasks for which the annotations were created)",
+                     "name": "taskId",
+                     "allowedvalues": [],
+                     "format": "",
+                     "required": "true",
+                     "type": "string"
+                  }
+               ],
+               "apierrors": [],
+               "verb": "GET",
+               "description": "Returns the list of annotations for the given clinical element, task.",
+               "queryparameters": [],
+               "path": "/annotation/getAnnotations",
+               "produces": ["text/xml"],
+               "methodName": "getAnnotations"
+            },
+            {
+               "headers": [],
+               "bodyobject": null,
+               "jsondocId": "5c5dad5c-f702-4f99-9809-d1cf089a3640",
+               "consumes": [],
+               "response": {
+                  "mapKeyObject": "",
+                  "jsondocId": "b2b354ee-d24d-4081-8145-cb455ddb8f20",
+                  "mapValueObject": "",
+                  "object": "annotation",
+                  "multiple": "Unknow"
+               },
+               "pathparameters": [
+                  {
+                     "jsondocId": "d8d834e5-448a-477a-8254-c5c33df4b380",
+                     "description": "The project id to get a task for ",
+                     "name": "projectId",
+                     "allowedvalues": [],
+                     "format": "",
+                     "required": "true",
+                     "type": "string"
+                  },
+                  {
+                     "jsondocId": "ed8dc6f1-9226-4c5f-be2b-dad69307520f",
+                     "description": "The processId id to get a task for ",
+                     "name": "processId",
+                     "allowedvalues": [],
+                     "format": "",
+                     "required": "true",
+                     "type": "string"
+                  }
+               ],
+               "apierrors": [],
+               "verb": "GET",
+               "description": "Get an assigned task for the currently logged in user.",
+               "queryparameters": [],
+               "path": "/annotation/getTask",
+               "produces": ["text/xml"],
+               "methodName": "getTask"
+            },
+            {
+               "headers": [],
+               "bodyobject": null,
+               "jsondocId": "2a79253a-ec0d-4af2-be94-9219b44fd8d7",
+               "consumes": [],
+               "response": {
+                  "mapKeyObject": "",
+                  "jsondocId": "874d3ed3-3be4-4b6d-81e8-39645492e41a",
+                  "mapValueObject": "",
+                  "object": "annotation",
+                  "multiple": "Unknow"
+               },
+               "pathparameters": [{
+                  "jsondocId": "fce917cb-e200-40fa-be94-839f9540c485",
+                  "description": "The task id to get",
+                  "name": "taskId",
+                  "allowedvalues": [],
+                  "format": "",
+                  "required": "true",
+                  "type": "string"
+               }],
+               "apierrors": [],
+               "verb": "GET",
+               "description": "Get an task by task id",
+               "queryparameters": [],
+               "path": "/annotation/getTaskByTaskId",
+               "produces": ["text/xml"],
+               "methodName": "getTaskByTaskId"
+            },
+            {
+               "headers": [],
+               "bodyobject": {
+                  "mapKeyObject": "",
+                  "jsondocId": "d082625e-5bc0-48a8-8d7e-2c2dce808bf3",
+                  "mapValueObject": "",
+                  "map": "",
+                  "object": "annotation",
+                  "multiple": "Unknow"
+               },
+               "jsondocId": "84e8eab8-1271-455e-8f21-d0db28d14e48",
+               "consumes": ["application/json"],
+               "response": {
+                  "mapKeyObject": "",
+                  "jsondocId": "5673e36c-90a1-4c11-98d9-4b187ab6d3fb",
+                  "mapValueObject": "",
+                  "object": "annotation",
+                  "multiple": "Unknow"
+               },
+               "pathparameters": [
+                  {
+                     "jsondocId": "11a45f83-9ac9-4afa-85a2-9f26bd8781d3",
+                     "description": "The new task status (hold/completed/save)",
+                     "name": "status",
+                     "allowedvalues": [],
+                     "format": "",
+                     "required": "true",
+                     "type": "string"
+                  },
+                  {
+                     "jsondocId": "7ec365c8-77eb-4bfc-838c-e57df48d277f",
+                     "description": "The task whose annotations these are and whose status should be changed.",
+                     "name": "taskId",
+                     "allowedvalues": [],
+                     "format": "",
+                     "required": "true",
+                     "type": "string"
+                  },
+                  {
+                     "jsondocId": "04d9decf-e45d-4a6f-be30-9aeafa5f5444",
+                     "description": "The comment on the status. Must be hold, completed, or in-progress.",
+                     "name": "statusComment",
+                     "allowedvalues": [],
+                     "format": "",
+                     "required": "true",
+                     "type": "string"
+                  }
+               ],
+               "apierrors": [],
+               "verb": "POST",
+               "description": "Submit annotations and change task status. The body of the post should contain the submission XML. ",
+               "queryparameters": [],
+               "path": "/annotation/submitAnnotations",
+               "produces": ["application/json"],
+               "methodName": "submitAnnotations"
+            }
+         ],
+         "jsondocId": "0735c0c3-0e1f-411a-a2e2-4a0ff40ab245",
+         "description": "Methods for managing annotations",
+         "name": "Annotation services",
+         "domain": "annotation"
+      },
+      {
+         "methods": [
+            {
+               "headers": [],
+               "bodyobject": null,
+               "jsondocId": "a7b1ec85-7a48-49da-9f00-743a722df120",
+               "consumes": [],
+               "response": {
+                  "mapKeyObject": "",
+                  "jsondocId": "a369ae45-0415-48b5-843a-80f7663d726c",
+                  "mapValueObject": "",
+                  "object": "clinical element configuration",
+                  "multiple": "Unknow"
+               },
+               "pathparameters": [{
+                  "jsondocId": "44722de5-3b04-49ce-8550-e892644dc862",
+                  "description": "The id of the clinical element configuration to get.",
+                  "name": "id",
+                  "allowedvalues": [],
+                  "format": "",
+                  "required": "true",
+                  "type": "string"
+               }],
+               "apierrors": [],
+               "verb": "GET",
+               "description": "Returns a single clinical element configuration",
+               "queryparameters": [],
+               "path": "/clinicalElementConfiguration/configuration",
+               "produces": ["application/json"],
+               "methodName": "configuration"
+            },
+            {
+               "headers": [],
+               "bodyobject": null,
+               "jsondocId": "1d508ef5-1145-4663-b375-eb304b139d40",
+               "consumes": [],
+               "response": {
+                  "mapKeyObject": "",
+                  "jsondocId": "5990866a-f79d-40ec-97db-1b520605e59f",
+                  "mapValueObject": "",
+                  "object": "clinical element configuration",
+                  "multiple": "Unknow"
+               },
+               "pathparameters": [],
+               "apierrors": [],
+               "verb": "GET",
+               "description": "Returns all ACTIVE clinical element definitions in JSON.",
+               "queryparameters": [],
+               "path": "/clinicalElementConfiguration/active",
+               "produces": ["application/json"],
+               "methodName": "active"
+            },
+            {
+               "headers": [],
+               "bodyobject": null,
+               "jsondocId": "b74633b0-9981-4612-9e6a-6b869464f029",
+               "consumes": [],
+               "response": {
+                  "mapKeyObject": "",
+                  "jsondocId": "b2efdc32-e723-4b49-9215-f5431037d665",
+                  "mapValueObject": "",
+                  "object": "clinical element configuration",
+                  "multiple": "Unknow"
+               },
+               "pathparameters": [{
+                  "jsondocId": "4e8bc339-5b54-4291-b28b-b9031d11e85c",
+                  "description": "The id of the clinical element configuration to export.",
+                  "name": "id",
+                  "allowedvalues": [],
+                  "format": "",
+                  "required": "true",
+                  "type": "string"
+               }],
+               "apierrors": [],
+               "verb": "GET",
+               "description": "Exports a single clinical element configuration to JSON.",
+               "queryparameters": [],
+               "path": "/clinicalElementConfiguration/export",
+               "produces": ["application/json"],
+               "methodName": "export"
+            },
+            {
+               "headers": [],
+               "bodyobject": null,
+               "jsondocId": "8f643cd3-30d9-41eb-889c-596fae20d86b",
+               "consumes": [],
+               "response": {
+                  "mapKeyObject": "",
+                  "jsondocId": "165b18d5-dcae-4160-ba0f-c8b46a4ed34c",
+                  "mapValueObject": "",
+                  "object": "clinical element configuration",
+                  "multiple": "Unknow"
+               },
+               "pathparameters": [{
+                  "jsondocId": "e353927d-2d61-42d6-bbb9-757eca49d89a",
+                  "description": "The id of the project to get clinical element configurations for.",
+                  "name": "id",
+                  "allowedvalues": [],
+                  "format": "",
+                  "required": "true",
+                  "type": "string"
+               }],
+               "apierrors": [],
+               "verb": "GET",
+               "description": "Returns all clinical element configurations associated with a project",
+               "queryparameters": [],
+               "path": "/clinicalElementConfiguration/byProject",
+               "produces": ["application/json"],
+               "methodName": "byProject"
+            }
+         ],
+         "jsondocId": "9c7c2c92-0ec7-41bc-9a6c-76a1b7415be7",
+         "description": "Methods for managing and querying clinical element configurations.",
+         "name": "Clinical Element Configuration services",
+         "domain": "clinical element configuration"
+      },
+      {
+         "methods": [{
+            "headers": [],
+            "bodyobject": null,
+            "jsondocId": "4aecded2-39c7-4943-be58-a9367f1fb923",
+            "consumes": [],
+            "response": {
+               "mapKeyObject": "",
+               "jsondocId": "4501bf8a-5d3b-4749-a99f-fa932c870094",
+               "mapValueObject": "",
+               "object": "schema",
+               "multiple": "Unknow"
+            },
+            "pathparameters": [],
+            "apierrors": [],
+            "verb": "GET",
+            "description": "Get the UIMA Type Descriptor XML representation of an annotation schema",
+            "queryparameters": [
+               {
+                  "jsondocId": "60f2a5d6-89f3-4b33-9705-68c9918f24f8",
+                  "description": "The annotation schema id",
+                  "name": "id",
+                  "allowedvalues": [],
+                  "format": "",
+                  "required": "true",
+                  "type": "string"
+               },
+               {
+                  "jsondocId": "b67affe8-d81c-4fe7-965f-a0e29bbcf0a4",
+                  "description": "The project name to put as part of the package. Should not have spaces or any special characters. The type system classes will have the package chartreview.<projectName>.<class>",
+                  "name": "projectName",
+                  "allowedvalues": [],
+                  "format": "",
+                  "required": "true",
+                  "type": "string"
+               }
+            ],
+            "path": "/annotation/uimaTypeSystem",
+            "produces": ["text/xml"],
+            "methodName": "uimaTypeSystem"
+         }],
+         "jsondocId": "180d4975-1e9d-40ad-ba4b-c3192a267429",
+         "description": "Methods for managing annotation schemas",
+         "name": "Schema services",
+         "domain": "schema"
+      }
+   ],
+   "objects": [],
+   "version": "0.1.1"
+}

@@ -1,0 +1,86 @@
+Security will have 3 roles with the following permissions levels:
+
+h2.	System Administrator
+
+Add users to Project Administrators role for the Chart Review application.
+
+h2. Project Administrator
+
+Two types of Project Administrators, global and project specific.
+
+h3. Global (Project Administrator to the ChartReview Application)
+
+	    * Can create new projects.
+		* Project specific administrator privileges to all projects they create.
+
+
+h3. Project Specific Administrator
+
+		* View and edit all information about a project.
+		* Change user access to the project.
+
+h2. User
+
+        * Created the first time they access the site.
+		* Can be assigned to work on a workflow.
+		* Username, if added manually, should be the VINCI username without the domain (e.g. - vhaslccornir)
+
+h1. Supporting Database Schema
+
+h2. Project
+
+{table}
+    *Name* | *Type*
+    id|Char(32)
+    name|Varchar(100)
+    description|Varchar(500)
+    database_connection_url|Varchar(200)
+    jdbc_driver|Varchar(100)
+    version|Timestamp
+{table}
+
+h2. Role
+
+{table}
+    *Name* | *Type*
+    id|Char(32)
+    name|Varchar(10)
+    version|Timestamp
+{table}
+
+h2. User
+
+{table}
+    *Name* | *Type*
+    id|Char(32)
+    username|Varchar(10)
+    password|Varchar(10)
+    enabled|Boolean
+    account_non_expired|Boolean
+    account_non_locked|Boolean
+    credentials_non_expired|Boolean
+    version|Timestamp
+{table}
+
+h2. User_Project_Role
+
+{table}
+    *Name* | *Type*
+    id|Char(32)
+    user_guid|Char(32)
+    project_guid|Char(32)
+    role_guid|Char(32)
+    workflow_step_id|Integer
+    version|Timestamp
+{table}
+
+h2. Implementation
+
+Security inside of VINCI will use Single-Sign-On (SSO) authentication via either Tomcat or IIS Windows username
+propagation. Ideally this will propagate to the database layer as well. If SSO is not available at the database level,
+the IMPERSONATE functionality of SQL Server will be used to insure all SQL executed is executed as the logged in user.
+
+Aside from data access, the application will handle who can see which projects, and getting assignments.
+
+Outside of VINCI, a custom Authentication Provider will need to be provided for the application to meet the specific
+environment requirements.  These are configured in *grails-app/conf/spring/resources.groovy* and *grails-app/conf/Config.groovy*.

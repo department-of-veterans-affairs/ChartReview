@@ -1,0 +1,340 @@
+.saveTask{background-image: url("../images/save_edit.png") !important;}
+.holdTask{background-image: url("../images/firsteps16.png") !important;}
+.submitTask{background-image: url("../images/forward_nav.png") !important;}
+.doneTask{background-image: url("../images/backward_nav.png") !important;}
+.taskInfo{background-image: url("../images/information.png") !important;}
+.filterShow{background-image: url("../images/filter-icon.png") !important;}
+.filterDelete{background-image: url("../images/filter-delete-icon.png") !important;}
+.annotationDelete{background-image: url("../images/delete.gif") !important;}
+.annotationsRefresh{background-image: url("../images/refresh.gif") !important;}
+.gridNoDetail{background-image: url("../images/grid_no_detail.gif") !important;}
+.gridDetail{background-image: url("../images/grid_detail.gif") !important;}
+.autoSelect{background-image: url("../images/auto_select.gif") !important;}
+/*.buttons input.cancel {*/
+    /*background: transparent url(../images/cancel.png) 5px 50% no-repeat;*/
+    /*padding-left: 28px;*/
+/*}*/
+
+html, body {
+    overflow: hidden;
+}
+
+/*#annotationcontrolpanel .x-panel-body{*/
+    /*background-color: #B8B2BD;*/
+/*}*/
+
+#annotationpanel .x-panel-body{
+    /*background-color: #DBD7DE;*/
+}
+
+#taskinfosavebuttonpanel {
+    /*background-color: #B8B2BD;*/
+    padding: 2px 2px 2px 2px;
+}
+
+#annotationlistbuttontoolbar {
+    /*background-color: #B8B2BD;*/
+    padding: 2px 2px 2px 2px;
+}
+
+#taskInfoInlinePanel .x-panel-body{
+    /*background-color: #ffffff;*/
+}
+
+#schemapanel .x-panel-body{
+    /*background-color: #ffffff;*/
+}
+
+#annotationlist .x-panel-body{
+    /*background-color: #ffffff;*/
+}
+
+#annotationeditor .x-panel-body{
+    /*background-color: #ffffff;*/
+}
+
+#app-viewport {
+    /*background: #B8B2BD;*/
+}
+
+#app-portal {
+    /*background: #B8B2BD;*/
+}
+
+#app-header {
+    padding: 5px 30px;
+}
+
+#app-msg {
+    /*background: #B8B2BD;*/
+    padding: 3px 15px;
+    font-weight: bold;
+    font-size: 13px;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.x-panel-ghost {
+    z-index: 1;
+}
+.x-border-layout-ct {
+    /*background: #DFE8F6;*/
+}
+.x-portal-body {
+    padding: 0 0 0 8px;
+    background: #e1e3e2;
+}
+.x-portal .x-portal-column {
+    /* columns must have vertical padding to avoid losing dimensions when empty */
+    padding: 8px 8px 0 0;
+}
+.x-portal .x-panel-dd-spacer {
+    border: 2px dashed; /* #000000;*/
+    /*background: #DBD7DE;*/
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    margin-bottom: 10px;
+}
+.x-portlet {
+    margin-bottom:10px;
+    padding: 1px;
+    /*background: #fff;*/
+}
+.x-portlet .x-panel-body {
+    /*background: #fff;*/
+}
+.portlet-content {
+    padding: 10px;
+    font-size: 11px;
+}
+
+#app-options .portlet-content {
+    padding: 5px;
+    font-size: 12px;
+}
+.settings {
+    background-image:url(../images/folder_wrench.png);
+}
+.nav {
+    background-image:url(../images/folder_go.png);
+}
+.info {
+    background-image:url(../images/information.png);
+}
+
+
+
+/**
+ * Item Viewer html level style
+ */
+
+.x-menu-item div.detail-right, .detail-right {
+    background-image: url(../images/detail-right.gif);
+}
+.x-menu-item div.detail-bottom, .detail-bottom {
+    background-image: url(../images/detail-bottom.gif);
+}
+.x-menu-item div.detail-hide, .detail-hide {
+    background-image: url(../images/detail-hide.gif);
+}
+
+#reading-menu .x-menu-item-checked {
+    /*border: 1px dotted #a3bae9 !important;*/
+    border: 1px dotted #a3bae9 !important;
+    /*background: #DFE8F6;*/
+    padding: 0;
+    margin: 0;
+}
+
+/**
+ * Item Viewer
+ */
+
+.description {
+    background-image: url(../images/details.gif) !important;
+}
+
+.reading {
+    background-image: url(../images/article.gif) !important;
+}
+
+.tab-new {
+    background-image: url(../images/tab_new.gif) !important;
+}
+
+.details {
+    background-image: url(../images/details.gif) !important;
+}
+
+.open-all {
+    background-image: url(../images/tabs.gif) !important;
+}
+
+.item {
+    width: 16px;
+    height: 16px;
+}
+
+/**
+ * Other Item Viewer styles
+ */
+.item-picker-url {
+    float: left;
+    width: 425px;
+}
+.item-picker-title {
+    /*    float: left;*/
+    /*color: #777;*/
+    font-size: 10px;
+}
+
+.item-list {
+    padding: 0 3px 0 3px;
+}
+
+.item-list-item {
+    margin-top: 3px;
+    padding-left: 20px;
+    font-size: 11px;
+    line-height: 20px;
+    cursor: pointer;
+    border: 1px solid;/* #fff;*/
+}
+
+.item-list .x-item-selected {
+    font-weight: bold;
+    /*color: #15428B;*/
+    /*background-color: #DFE8F6;*/
+    border: 1px dotted;/* #A3BAE9;*/
+}
+
+.item-list-item-hover {
+    /*background-color: #eee;*/
+}
+
+.doneAnnotating {
+    /*background-image: url(../images/check-mark.gif) !important;*/
+    background:transparent url(../images/check-mark.gif) no-repeat;
+}
+
+.doneAnnotatingDisabled {
+    /*background-image: url(../images/check-mark.gif) no-repeat;*/
+    background:transparent no-repeat;
+}
+
+.x-rtl .topic {
+    padding: 2px 20px 0 0;
+}
+
+.author {
+    /*color: #333*/
+}
+
+.content-date {
+    font-weight:bold;
+    /*color:#333;*/
+}
+
+.itemlist-grid .x-grid-rowbody {
+    margin: 5px 20px 10px 25px !important;
+    /*color: #555;*/
+    font-size: 11px;
+}
+
+.itemlist-grid .x-rtl .x-grid-rowbody {
+    margin: 5px 25px 10px 20px !important;
+}
+
+/* Item Viewer Preview classes */
+
+.preview .x-panel-body {
+    /*background:#fff;*/
+    /*color:#222;*/
+    font:normal 12px tahoma,verdana,arial,sans-serif;
+}
+
+.preview .x-panel-body p {
+    line-height:18px;
+    margin:8px 0;
+}
+
+.preview .x-panel-body ul {
+    margin-left:18px;
+}
+
+.preview .x-panel-body ul li {
+    display:list-item;
+    list-style-image:none !important;
+    list-style-position:outside !important;
+    list-style-type:disc !important;
+    margin-left:18px;
+}
+
+.x-rtl .preview .x-panel-body ul li {
+    margin-left: 0;
+    margin-right: 18px;
+}
+
+.preview .x-panel-body pre, #preview .x-panel-body code {
+    /*background:#f1f1f1;*/
+    display:block;
+}
+
+.preview .x-panel-body h4.content-author {
+    font-weight:normal;
+    /*color:#555;*/
+    font-size:11px;
+}
+.preview .x-panel-body span.content-date {
+    font-weight:normal;
+    /*color:#555;*/
+    float:right;
+    font-size:11px;
+}
+.x-rtl .preview .x-panel-body span.content-date {
+    float:left;
+}
+.preview .x-panel-body div.content-data {
+    /*background:#f1f2f4;*/
+    padding:5px;
+    border-bottom:1px solid #dadadb;
+}
+.preview .x-panel-body div.content-body {
+    padding:10px;
+}
+
+.taskInfoTable {
+    font-size: 12px;
+}
+
+.taskInfoTableTD {
+     vertical-align: top;
+}
+
+#taskInfoButtonPanel {
+    /*background: #B8B2BD;*/
+}
+
+.breadcrumbMenu {
+   /*background: #FFFFFF;*/
+    padding-bottom: 5px;
+}
+
+/**
+ * Wrap cell text...
+ */
+#annotationlist .x-grid-cell-inner{
+    white-space: normal!important;
+}
+/*.itemlist-grid .x-grid-cell-inner{*/
+    /*white-space: normal!important;*/
+/*}*/
+
+.cellTextWrap {
+    white-space: normal!important;
+}
+
+.cellTextNowrap {
+    white-space: nowrap!important;
+}

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:complexType name="idType">
+    <xs:attribute name="id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!--saveSchema -->
+  <xs:element name="annotationSchemas">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="annotationSchema" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!--schema -->
+  <xs:element name="annotationSchema">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="id" type="xs:string" minOccurs="0" maxOccurs="1"/><!--This is getting output by the groovy "as XML"...should only be an attribute, but is included to let export be import -->
+        <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="type" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="attributeDefs" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="classDefs" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="classRelDefs" minOccurs="0" maxOccurs="1"/>
+      </xs:all>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- attributeDefs -->
+  <xs:element name="attributeDefs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="attributeDef" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!--attributeDef -->
+  <xs:element name="attributeDef">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="id" type="xs:string" minOccurs="0" maxOccurs="1"/><!--This is getting output by the groovy "as XML"...should only be an attribute, but is included to let export be import -->
+        <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="color" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="numericLow" type="xs:double" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="numericHigh" type="xs:double" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="minDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="maxDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="attributeDefOptionDefs" minOccurs="0" maxOccurs="1"/>
+      </xs:all>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="51"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <!--attributeDefOptionDefs -->
+  <xs:element name="attributeDefOptionDefs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="attributeDefOptionDef" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!--classDefs -->
+  <xs:element name="classDefs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="classDef" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!--classDef -->
+  <xs:element name="classDef">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="id" type="xs:string" minOccurs="0"/><!--This is getting output by the groovy "as XML"...should only be an attribute, but is included to let export be import -->
+        <xs:element name="name" type="xs:string" minOccurs="1"/>
+        <xs:element name="color" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="attributeDefIds" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="classDefIds" minOccurs="0" maxOccurs="1"/>
+      </xs:all>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!--classRels -->
+  <xs:element name="classRelDefs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="classRelDef" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!--classRel -->
+  <xs:element name="classRelDef">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="id" type="xs:string" minOccurs="0"/><!--This is getting output by the groovy "as XML"...should only be an attribute, but is included to let export be import -->
+        <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="color" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="type" type="xs:integer" minOccurs="0"/>
+        <xs:element ref="attributeDefIds" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="leftClassDefIds" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="rightClassDefIds" minOccurs="0" maxOccurs="1"/>
+      </xs:all>
+      <xs:attribute name="id" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!--leftClassDefIds -->
+  <xs:element name="leftClassDefIds">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="classDefId" type="idType" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!--rightClassDefIds -->
+  <xs:element name="rightClassDefIds">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="classDefId" type="idType" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!--attributeDefIds -->
+  <xs:element name="attributeDefIds">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="attributeDefId" type="idType" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!--attributeDefOptionDef -->
+  <xs:element name="attributeDefOptionDef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="id" use="required" type="xs:string"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+    <!--classDefIds -->
+    <xs:element name="classDefIds">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="classDefId" type="idType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

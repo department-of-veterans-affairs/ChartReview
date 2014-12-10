@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <!-- user defined types -->
+  <xs:complexType name="idType">
+    <xs:attribute name="id" use="required" type="xs:long"/>
+  </xs:complexType>
+
+  <!-- tempid -->
+  <xs:complexType name="tempidType">
+    <xs:attribute name="tempid" use="required" type="xs:long"/>
+  </xs:complexType>
+
+  <!-- tempid and id allowed for element -->
+  <xs:complexType name="flexidType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="tempid" type="xs:long"/>
+        <xs:attribute name="id" type="xs:string"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  
+  
+
+  <!-- submit Annotations -->
+  <xs:element name="submitAnnotations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="newAnalytes" minOccurs="0"/>
+        <xs:element ref="newAnalyteAssignments" minOccurs="0"/>
+        <xs:element ref="annotations" minOccurs="0"/>
+        <xs:element ref="messages" minOccurs="0"/>
+        <xs:element ref="problems" minOccurs="0"/>
+        <xs:element ref="changes" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="method" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="request"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- newAnalytes -->
+  <xs:element name="newAnalytes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="newAnalyte" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- newAnalyte abstract -->
+  <xs:element name="newAnalyte">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string" minOccurs="0"/>
+        <xs:element name="type" type="xs:decimal"/>
+        <xs:element name="resourceSystem" type="xs:string" minOccurs="0"/>
+        <xs:element name="resourceLocator" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="tempid" type="xs:long" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- newAnalyteAssignments -->
+  <xs:element name="newAnalyteAssignments">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="newAnalyteAssignment" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- newAnalyteAssignment abstract -->
+  <xs:element name="newAnalyteAssignment">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="assignment" type="idType"/>
+        <xs:element name="principalAnalyte" type="idType"/>
+        <xs:element name="task" type="idType"/>
+        <xs:element name="user" type="idType"/>
+        <xs:element name="name" type="xs:string" minOccurs="0"/>
+        <xs:element name="dateCompleted" type="xs:dateTime"/>
+        <xs:element name="percentComplete" type="xs:double" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="tempid" type="xs:long" use="required"/>
+      <xs:attribute name="analyteId" type="xs:long"/>     
+      <xs:attribute name="analyteTempId" type="xs:long"/>      
+    </xs:complexType>
+  </xs:element>
+
+  <!-- annotations -->
+  <xs:element name="annotations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="annotation" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="analyteAssignmentId" type="xs:long"/>     
+      <xs:attribute name="analyteAssignmentTempId" type="xs:long"/>      
+    </xs:complexType>
+  </xs:element>
+
+  <!-- annotation abstract -->
+  <xs:element name="annotation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string" minOccurs="0"/>
+        <xs:element name="schema" type="idType"/>
+        <xs:element name="creationDate" type="xs:dateTime"/>
+        <xs:element name="user" type="idType"/>
+        <xs:element name="interAnnotatorAgreement" type="xs:double" minOccurs="0"/>
+        <xs:element ref="schemaRef"/>
+        <xs:element ref="annotationAnalyteRefs" maxOccurs="unbounded"/>
+        <xs:element ref="features" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="tempid" type="xs:long" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- schemaRef -->
+  <xs:element name="schemaRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="tempid" type="xs:long" use="required"/>
+          <xs:attribute name="uri" type="xs:string" use="required"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- annotationAnalyteRefs -->
+  <xs:element name="annotationAnalyteRefs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="annotationAnalyteRef" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- annotationAnalyteRef -->
+  <xs:element name="annotationAnalyteRef">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="analyte" type="flexidType"/>
+        <xs:element ref="spans" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="tempid" type="xs:long" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- spans -->
+  <xs:element name="spans">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="span" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- span -->
+  <xs:element name="span">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="filter" type="xs:string" minOccurs="0"/>
+        <xs:element name="startOffset" type="xs:decimal"/>
+        <xs:element name="endOffset" type="xs:decimal"/>
+        <xs:element name="spannedText" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="tempid" type="xs:long" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- features -->
+  <xs:element name="features">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="feature" type="featureType" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- feature -->
+    <xs:complexType name="featureType">
+      <xs:sequence>
+        <xs:element name="name" type="xs:string" minOccurs="0"/>
+        <xs:element ref="schemaRef"/>
+        <xs:element ref="elements" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="features" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="tempid" type="xs:long" use="required"/>
+      <!-- feature types are :1 attribute; 2 classification; 3 class relationship -->
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="5"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+
+  <xs:element name="elements">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="element" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- elements -->
+  <xs:element name="element">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="value" type="xs:string"/>
+        <xs:element ref="schemaRef" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="tempid" type="xs:long" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- messages -->
+  <xs:element name="messages">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="message" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- messages -->
+  <xs:element name="message">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string" minOccurs="0"/>
+        <xs:element name="annotation" type="flexidType"/>
+        <xs:element name="fromUser" type="idType"/>
+        <xs:element name="toUser" type="idType" minOccurs="0"/>
+        <xs:element name="delivered" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="content" type="xs:string"/>
+        <xs:element name="responseToMessage" type="flexidType" minOccurs="0"/>
+        <xs:element name="date" type="xs:dateTime"/>
+        <xs:element name="feature" type="flexidType" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="tempid" type="xs:long" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- problems -->
+  <xs:element name="problems">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="problem" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- problem -->
+  <xs:element name="problem">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string" minOccurs="0"/>
+        <xs:element name="annotation" type="tempidType"/>
+        <xs:element name="type" type="xs:decimal"/>
+        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="date" type="xs:dateTime"/>
+        <xs:element name="dateAdjudicated" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="feature" type="flexidType" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="tempid" type="xs:long" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- changes -->
+  <xs:element name="changes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="change" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="change">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string" minOccurs="0"/>
+        <xs:element name="annotation1" type="flexidType"/>
+        <xs:element name="feature1" type="flexidType" minOccurs="0"/>
+        <xs:element name="annotation2" type="flexidType" minOccurs="0"/>
+        <xs:element name="feature2" type="flexidType" minOccurs="0"/>
+        <xs:element name="message" type="flexidType" minOccurs="0"/>
+        <xs:element name="user" type="idType"/>
+        <xs:element name="type" type="xs:decimal"/>
+        <xs:element name="date" type="xs:dateTime"/>
+        <xs:element name="purpose" type="xs:integer"/>
+        <xs:element name="percentCertainty" type="xs:decimal"/>
+        <xs:element name="origin" type="xs:integer" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="tempid" type="xs:long" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

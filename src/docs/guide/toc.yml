@@ -1,0 +1,14 @@
+introduction:
+  title: Introduction
+security: 
+  title: Security
+projects:
+  title: Projects
+clinical_element_configuration:
+  title: Clinical Element Configurations
+web_services:
+  title: Web Services
+activiti_and_variables:
+  title: Acitivi Integration and Variable Storage
+annotation_ui_flow:
+  title: Annotation User Interface Flow

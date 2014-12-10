@@ -1,0 +1,8 @@
+Projects contain one-to-many workflows.
+
+A project contains the following:
+ * GUID
+ * User permissions for who are administrators of the project.
+ * A name, description, JDBC connection string, and JDBC Driver classname.
+ * A list of clinical elements that project will be using. (e.g. – Labs, TIU Documents, etc..)
+

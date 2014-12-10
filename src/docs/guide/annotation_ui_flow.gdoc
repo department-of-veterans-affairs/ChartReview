@@ -1,0 +1,32 @@
+When the annotation ui is loaded for a particular chart, the following flow occurs:
+
+h2. Step 1a - Opening A Task
+
+h3. First Time Opening A Task
+
+If the task has a pre-annotation group, annotations with the specific project, clinical element group, and pre-annotation
+group are return to the user.
+
+If the task does not have a pre-annotation group, no annotations are returned.
+
+h3. Re-loading An In Progress Task
+
+The task, and all annotations for the specific project, clinical element group, and the annotation group are returned
+to the user.
+
+h2. Step 2 - User Annotates
+
+The user makes annotation and features changes en mas, before submitting the work.
+
+h2. Step 3 - User Submits The Annotations
+
+When the user submits the annotations, for finalization, hold, or a periodic save:
+
+* Annotations for the specific project, clinical element group, the annotation group for the task, and the user are deleted.
+* The new annotations submitted are persisted in the database.
+
+{warning}
+This means if two tasks a user is doing have the same annotation group for the same project/clinical element group, other work may be lost!
+
+Alternatively, instead of deleting all existing annotations, maybe the UI needs to keep track of the annotations that are deleted and send them as a list as well??
+{warning}

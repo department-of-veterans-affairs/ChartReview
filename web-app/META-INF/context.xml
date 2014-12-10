@@ -1,0 +1,12 @@
+<Context>
+<Resource name="jdbc/chartReviewDS"
+auth="Container"
+type="javax.sql.DataSource"
+username="chartreview"
+password="passw0rd"
+driverClassName="com.mysql.jdbc.Driver"
+url="jdbc:mysql://localhost:3306/chartreview"
+validationQuery="select 1"
+maxActive="25"
+maxIdle="3"/>
+</Context>

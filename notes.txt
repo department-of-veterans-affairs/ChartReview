@@ -1,0 +1,39 @@
+For Release:
+ * Update application.properties to have the correct version.
+ * Commit and push all changes ( git add .; git commit -m "message"; git push )
+ * Tag the changes ( git tag -a v2014.09.2 -m 'Version 2014.09.2'; git push --tags )
+ * Create the war ( grails clean; grails war)
+ * Upload the war to nexus ( http://decipher.chpc.utah.edu/nexus/#nexus-search;quick~chart-review  )
+
+
+CREATE DATABASE 'chartreview';
+CREATE USER 'chartreview'@'localhost' IDENTIFIED BY 'passw0rd';
+GRANT ALL PRIVILEGES ON chartreview. * TO 'chartreview'@'localhost';
+flush privileges;
+
+
+DROP TABLE `chartreview`.`class_def_attribute_defs`;
+DROP TABLE `chartreview`.`class_rel_def_attribute_defs`;
+DROP TABLE `chartreview`.`class_rel_def_left_class_defs`;
+DROP TABLE `chartreview`.`class_rel_def_right_class_defs`;
+DROP TABLE `chartreview`.`class_rel_def`;
+DROP TABLE `chartreview`.`class_def`;
+DROP TABLE `attribute_def_attribute_def_option_defs`;
+DROP TABLE `chartreview`.`attribute_def_option_def`;
+DROP TABLE `chartreview`.`attribute_def`;
+DROP TABLE `chartreview`.`annotation_schema`;
+
+
+To expand packet size in mysql on osx:
+
+/usr/local/mysql/my.conf
+
+[mysqld]
+max_allowed_packet=16M
+
+
+alter table activiti_runtime_property modify name varchar(10000);
+alter table activiti_runtime_property modify process_display_name varchar(10000);
+alter table activiti_runtime_property modify value varchar(10000);
+
+

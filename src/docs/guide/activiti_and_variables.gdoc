@@ -1,0 +1,38 @@
+h2. activiti_runtime_property
+
+This the main property holding table in the database. It holds variables that are used in running Acitivi processes.
+They are stored outside of activiti so that multiple running processes can use the same properties without having
+to create and store many copies.
+
+At the process level, the following variables are set:
+
+* processUsers - A comma seperated list of users on this process.
+* processCreationQuery - The query used to launch the processes. For instance (select id from patient) would create
+ processes for each patient id.
+* processOrTask - set as task or process, this defines the assignment style for the process.
+
+At the process level, the taskName column in the table will be null.
+
+Task level properties use the same format, however task_name is filled in with the corresponding task name in the
+.bpm.xml file.
+
+h2. Activiti Process Variables and Key Values
+
+Processes in activiti have a business key. This key has to be unique, and is set as:
+
+ ${projectId}::${processId}::${patientId}::${System.currentTimeMillis()}
+
+In addition, several variables are set on the process to allow referencing the individual processes as a group of
+processes that were started. The variable processId set on the process has the following format:
+
+${projectId}::${processId}::${UUID}
+
+When a process is started for a project, new processes instances are created and started, one instance for each patient.
+All of the created processes have the same processId variable set, in order to be able to group them together.
+
+These additional variables are set on each individual process that is started:
+
+* projectId - the project guid this process belongs to.
+* displayName - the user entered display name for this process.
+* processOrTask - set as task or process, this defines the assignment style for the process.
+* processUsers - a comma separated list of users that are candidates for this process.
