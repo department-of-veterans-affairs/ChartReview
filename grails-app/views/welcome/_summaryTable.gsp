@@ -5,6 +5,7 @@
         <tr>
             <th>Task Id</th>
             <th>Type</th>
+            <th>Primary Id</th>
             <th>Status</th>
             <th>Comment</th>
             <th>Date</th>
@@ -17,6 +18,9 @@
                 </td>
                 <td>
                     ${summaryTableDTO.taskType}
+                </td>
+                <td>
+                    ${summaryTableDTO.patientId}
                 </td>
                 <td>
                     ${summaryTableDTO.status}

@@ -327,7 +327,10 @@ class ProcessService {
                 .orderByTaskId().desc()
                 .list().each {
             def variables = taskService.getVariables(it.id);
-            results.add(new SummaryTableDTO(taskId:  it.id, patientId: "",
+
+            Map<String, String> businessKey = parseBusinessKey(getProcessBusinessKeyForTask(it.id));
+
+            results.add(new SummaryTableDTO(taskId:  it.id, patientId: businessKey.get("patientId"),
                     status: "hold", date: it.getCreateTime(),
                     taskType: SummaryTableDTO.TaskType.ASSIGNED,
                     statusComment: variables.get(TaskVariablesEnum.STATUS_COMMENT.getName())));
@@ -343,7 +346,10 @@ class ProcessService {
                 .taskVariableValueNotEquals("status", "hold")
                 .orderByTaskId().desc()
                 .list().each {
-            results.add(new SummaryTableDTO(taskId:  it.id, patientId: "",
+            def variables = taskService.getVariables(it.id);
+            Map<String, String> businessKey = parseBusinessKey(getProcessBusinessKeyForTask(it.id));
+
+            results.add(new SummaryTableDTO(taskId:  it.id, patientId: businessKey.get("patientId"),
                     status: "open", date: it.getCreateTime(),
                     taskType: SummaryTableDTO.TaskType.ASSIGNED));
 
@@ -367,7 +373,8 @@ class ProcessService {
         taskQuery.parameter("status", "completed");
 
         taskQuery.list().each{
-            results.add(new SummaryTableDTO(taskId:  it.id, patientId: "",
+            Map<String, String> businessKey = parseBusinessKey(getProcessBusinessKeyForTask(it.id));
+            results.add(new SummaryTableDTO(taskId:  it.id, patientId: businessKey.get("patientId"),
                     status: it.deleteReason, date: it.endTime,
                     taskType: SummaryTableDTO.TaskType.COMPLETED));
         }
