@@ -1,0 +1,9 @@
+{
+    "id": "b9d363b0-1c9e-4576-8875-5e199db919d8",
+    "createdBy": "admin",
+    "description": "Patient element based off demo database.",
+    "name": "Patient Element",
+    "active": true,
+    "configuration": "{\n   \"hasContent\": false,\n   \"hasSummary\": true,\n   \"hasContentTemplate\": true,\n   \"contentTemplate\": \"<p><h2>>${NAME}</h2><b>SSN: ${SSN}</b></p>\",\n   \"description\": \"Patient element based off demo database.\",\n   \"titleField\": \"NAME\",\n   \"descriptionField\": \"NAME\",\n   \"query\": \"select name, ssn, id from patient where id=?\",\n   \"name\": \"Patient Element\",\n    \"dataQueryColumns\": [\n      {\n         \"keyField\": false,\n          \"sort\": \"ASC\",\n         \"hidden\": false,\n         \"columnName\": \"NAME\",\n         \"exclude\": false,\n         \"type\": \"VARCHAR\",\n         \"displayName\": \"NAME\"\n      },\n      {\n         \"keyField\": false,\n         \"sort\": \"ASC\",\n         \"hidden\": false,\n         \"columnName\": \"SSN\",\n         \"exclude\": false,\n         \"type\": \"VARCHAR\",\n         \"displayName\": \"SSN\"\n      },\n      {\n         \"keyField\": true,\n          \"sort\": \"ASC\",\n         \"hidden\": true,\n         \"columnName\": \"ID\",\n         \"exclude\": false,\n         \"type\": \"BIGINT\",\n         \"displayName\": \"ID\"\n      }\n   ],\n   \"singleElementQuery\":  \"select name, ssn, id from patient where id=?\"\n}",
+    "createdDate": "2014-01-14T20:50:00Z"
+}

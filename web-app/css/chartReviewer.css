@@ -37,11 +37,11 @@ html, body {
     padding: 2px 2px 2px 2px;
 }
 
-#taskInfoInlinePanel .x-panel-body{
+#taskinfoinlinepanel .x-panel-body{
     /*background-color: #ffffff;*/
 }
 
-#schemapanel .x-panel-body{
+#annotationschemapanel .x-panel-body{
     /*background-color: #ffffff;*/
 }
 
