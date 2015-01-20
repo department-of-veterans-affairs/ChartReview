@@ -5,11 +5,11 @@ Ext.define('CR.app.view.ItemListGrid', {
     scrollable: true,
 
     alias: 'widget.itemlistgrid',
-    requires: [],
     mixins: {
         itemsBase: 'CR.app.store.ItemBase',
         annotationaware: 'CR.app.controller.AnnotationNatureController'
     },
+    plugins: 'gridfilters',
     clinicalElementConfigurationName: 'Notes',
 
     listeners: {
@@ -48,7 +48,6 @@ Ext.define('CR.app.view.ItemListGrid', {
                     width: 30,
                     renderer: this.formatDoneAnnotating,
                     variableRowHeight: true,
-                    filterable: true,
                     filter:{type:'boolean'}
                 }
             ],
@@ -97,7 +96,6 @@ Ext.define('CR.app.view.ItemListGrid', {
             hidden: true,
             width: 30,
             variableRowHeight: true,
-            filterable: true,
             filter:{type:'string'}
         }
         newColumns.push(column);
@@ -113,7 +111,7 @@ Ext.define('CR.app.view.ItemListGrid', {
                 width: 30,
                 renderer: this.formatDoneAnnotating,
                 variableRowHeight: true,
-                filterable: true,
+                sortable: true,
                 filter:{type:'boolean'}
             }
             newColumns.push(column);
@@ -140,12 +138,8 @@ Ext.define('CR.app.view.ItemListGrid', {
                         flex: 1,  // expand or contract columns equally with grid width until manually changed
                         renderer: renderer,
                         variableRowHeight: true,
-                        filterable: true,
                         filter:{type:field.type},
-                        //  filter: {
-//                              type: 'string',
-//                              value: 'in'
-//                          }
+                        sortable: true,
                         lockable: true
                     }
                     newColumns.push(column);

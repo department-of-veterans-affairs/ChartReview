@@ -10,6 +10,7 @@ Ext.define('App.overrides.data.Model', {
         this.callParent(arguments);
     }
 });
+Ext.override(Ext.data.proxy.Ajax, {timeout:300000});
 Ext.application({
     name: 'ChartReview',
 

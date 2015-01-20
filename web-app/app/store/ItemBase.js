@@ -35,6 +35,7 @@ Ext.define('CR.app.store.ItemBase', {
             modelName = clinicalElementConfiguration.text;
             // Add columns from clinical element def
             modelFields = new Array();
+            filterInfos = new Array();
             sortInfos = new Array();
             var fields = clinicalElementConfiguration.fields;
 
@@ -61,6 +62,11 @@ Ext.define('CR.app.store.ItemBase', {
                     }
                     sortInfos.push(sortInfo);
                 }
+                var filterInfo = {
+                    property: field.dataIndex,
+                    type: field.type
+                }
+                filterInfos.push(filterInfo);
             }
         }
 
@@ -77,8 +83,13 @@ Ext.define('CR.app.store.ItemBase', {
                 model: modelName,
                 sortInfo: sortInfos,
                 autoLoad: false,
+//                remoteFilter: true,
+//                buffered: true,
+//                pageSize: 100,
+//                remoteSort: true,
 //                filterOnLoad: true,
 //                groupField: 'doneAnnotating',
+//                filters: filterInfos,
                 proxy: {
                     type: 'rest',
                     url: 'clinicalElement/elements',
