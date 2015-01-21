@@ -3,8 +3,10 @@ Ext.define('CR.app.view.ClinicalElementPortlet', {
     alias: 'widget.clinicalelementportlet',
     title: 'Notes',
     height: 400,
+    width: 1000,
     resizable: true,
-    resizeHandles: 'n s',
+//    resizeHandles: 'n s',
+    resizeHandles: 'all',
     mixins: {
         annotationaware: 'CR.app.controller.AnnotationNatureController'
     },

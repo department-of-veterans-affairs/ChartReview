@@ -48,11 +48,11 @@ Ext.define('CR.app.view.ItemInfo', {
             this.openListOrSummaryTab();
         },
         afterlayout: function(thePanel, width, height, eOpts) {
-            for(var i = 0; i < this.items.items.length; i++)
-            {
-                var comp = this.items.items[i];
-                comp.doResize(this.lastBox);
-            }
+//            for(var i = 0; i < this.items.items.length; i++)
+//            {
+//                var comp = this.items.items[i];
+//                comp.doResize(this.lastBox);
+//            }
         }
     },
 

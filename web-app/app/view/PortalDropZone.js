@@ -1,7 +1,7 @@
 /**
- * @class CR.app.view.PortalDropZone
+ * @class Ext.app.PortalDropZone
  * @extends Ext.dd.DropTarget
- * Internal class that manages drag/drop for {@link CR.app.view.PortalPanel}.
+ * Internal class that manages drag/drop for {@link Ext.app.PortalPanel}.
  */
 Ext.define('CR.app.view.PortalDropZone', {
     extend: 'Ext.dd.DropTarget',
@@ -76,12 +76,8 @@ Ext.define('CR.app.view.PortalDropZone', {
         }
 
         // find insert position
-        var overPortlet, pos = 0,
-            h = 0,
-            match = false,
-            overColumn = portal.items.getAt(colIndex),
-            portlets = overColumn.items.items,
-            overSelf = false;
+        overColumn = portal.items.getAt(colIndex);
+        portlets = overColumn.items.items;
 
         len = portlets.length;
 
@@ -189,10 +185,8 @@ Ext.define('CR.app.view.PortalDropZone', {
 
     // unregister the dropzone from ScrollManager
     unreg: function() {
-        if(typeof Ext.app.PortalDropZone != 'undefined')
-        {
-            Ext.dd.ScrollManager.unregister(this.portal.body);
-            Ext.app.PortalDropZone.superclass.unreg.call(this);
-        }
+        Ext.dd.ScrollManager.unregister(this.portal.body);
+        CR.view.PortalDropZone.superclass.unreg.call(this);
+        delete this.portal.afterLayout;
     }
 });

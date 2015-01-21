@@ -231,14 +231,14 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                                     },
                                     items:
                                     [
-                                        {
-                                            id: 'app-header-column-button',
-                                            xtype: 'button',
-                                            icon: 'images/column-double-icon_small.png',
-                                            tooltip: 'Single column, double column toggle',
-                                            enableToggle: true,
-                                            handler: this.onNumPortalColumnsChange
-                                        },
+//                                        {
+//                                            id: 'app-header-column-button',
+//                                            xtype: 'button',
+//                                            icon: 'images/column-double-icon_small.png',
+//                                            tooltip: 'Single column, double column toggle',
+//                                            enableToggle: true,
+//                                            handler: this.onNumPortalColumnsChange
+//                                        },
                                         {
                                             id: 'app-header-clinical-view-menu',
                                             xtype: 'button',
@@ -255,18 +255,9 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                                 ,
                                 {
                                     id: 'app-portal',
-//                                    xtype: 'portalpanel',
-                                    xtype: 'container',
+                                    xtype: 'portalpanel',
                                     scrollable: true,
-                                    flex: 100,
-                                    items:
-                                    [
-                                        {
-                                            id: 'app-portal-col-1',
-//                                            type: 'portalcolumn'
-                                            type: 'container'
-                                        }
-                                    ]
+                                    flex: 100
                                 }
                             ]
                         }
@@ -346,63 +337,6 @@ Ext.define('CR.app.view.ChartReviewPanel', {
         }
     },
 
-    onNumPortalColumnsChange: function(btn) {
-        var col1 = Ext.getCmp('app-portal-col-1');
-        var col1portals = col1.items.items;
-        var col2 = Ext.getCmp('app-portal-col-2');
-        if(col2)
-        {
-            // move column 2 portals to column 1
-            var col2portals = col2.items.items;
-            var col2portalsToMove = new Array();
-            for (key in col2portals)
-            {
-                var col2portal = col2portals[key];
-                col2portalsToMove.push(col2portal);
-            }
-            for (key in col2portalsToMove)
-            {
-                var col2portal = col2portalsToMove[key];
-                // Note: add removes from old parent and adds to new parent
-                col1.add(col2portal);
-            }
-
-            // Remove the column
-            CR.app.view.ChartReviewPanel.removePortalColumn2IfPossible()
-
-            // Change button icon to double-column
-            var btn = Ext.getCmp('app-header-column-button');
-            btn.setIcon('images/column-double-icon_small.png');
-        }
-        else
-        {
-            // Change button icon to single-column
-            var btn = Ext.getCmp('app-header-column-button');
-            btn.setIcon('images/column-single-icon_small.png');
-
-            // Add the column
-            CR.app.view.ChartReviewPanel.addPortalColumn2IfNecessary();
-            col2 = Ext.getCmp('app-portal-col-2');
-            // move half of column 1 portals to column 2
-            var numCol1Portals = col1portals.length;
-            if(numCol1Portals > 1)
-            {
-                var col1portalsToMove = new Array();
-                for (var i = Math.round(numCol1Portals/2); i < numCol1Portals; i++)
-                {
-                    var col1portal = col1portals[i];
-                    col1portalsToMove.push(col1portal);
-                }
-                for (key in col1portalsToMove)
-                {
-                    var col1portal = col1portalsToMove[key];
-                    // Note: add removes from old parent and adds to new parent
-                    col2.add(col1portal);
-                }
-            }
-        }
-    },
-
     getPortletName: function(clinicalElementConfigurationId)
     {
         var clinicalElementConfiguration = this.getClinicalElementConfiguration(clinicalElementConfigurationId);
@@ -458,13 +392,8 @@ Ext.define('CR.app.view.ChartReviewPanel', {
     },
 
     addPortlet: function(clinicalElementConfigurationId, ifNotFound) {
-        var col1s = Ext.ComponentQuery.query('component[id="app-portal-col-1"]');
-        var col1 = col1s[0];
-        var col1portals = col1.items.items;
-        var col2s = Ext.ComponentQuery.query('component[id="app-portal-col-2"]');
-        var col2 = col2s[0];
+        var dashboard = Ext.ComponentQuery.query('component[id="dashboard"]')[0];
         var portletType = this.getPortletType(clinicalElementConfigurationId);
-        var comps1 = Ext.ComponentQuery.query('[clinicalElementConfigurationId]');
         var portlet = this.getFirstPortletByType(clinicalElementConfigurationId);
         if(!ifNotFound || ifNotFound && !portlet)
         {
@@ -475,29 +404,12 @@ Ext.define('CR.app.view.ChartReviewPanel', {
             var clinicalElementConfiguration = this.getClinicalElementConfiguration(clinicalElementConfigurationId);
             portlet.title = clinicalElementConfiguration.text;
             portlet.setClinicalElementConfigurationId(clinicalElementConfigurationId);
-
-//            // Drag and drop ability
-//            var dd = new Ext.dd.DD(portlet, 'portletsDDGroup', {
-//                isTarget  : false
-//            });
-//            //Apply the overrides object to the newly created instance of DD
-//            Ext.apply(dd, overrides);
-//            portlet.addToGroup('portletsDDGroup');
-//            var portletDDTarget = new Ext.dd.DDTarget('portlet', 'portletsDDGroup');
+            portlet.columnIndex = 0; // distribute between columns?
 
             var portletAdded = false;
-            if(col2)
-            {
-                var col2portals = col2.items.items;
-                if(col2portals.length < col1portals.length)
-                {
-                    col2.add(portlet);
-                    portletAdded = true;
-                }
-            }
             if(!portletAdded)
             {
-                col1.add(portlet);
+                dashboard.add(portlet);
             }
         }
         return portlet;

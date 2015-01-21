@@ -31,6 +31,7 @@
         Ext.Loader.setPath('CR.app.view', 'app/view');
         Ext.Loader.setPath('CR.ux', 'app/ux');
         Ext.Loader.setPath('Ext.draw', 'ext/packages/ext-charts/src/draw');
+        Ext.Loader.setPath('Ext.chart', 'ext/packages/ext-charts/src/chart');
         Ext.Loader.setPath('Ext.ux', 'ext/src/ux');
     </script>
     <script type="text/javascript" src="app.js"></script>

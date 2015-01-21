@@ -1,7 +1,7 @@
 /**
- * @class Ext.app.PortalColumn
+ * @class Portal.view.PortalColumn
  * @extends Ext.container.Container
- * A layout column class used internally be {@link Ext.app.PortalPanel}.
+ * A layout column class used internally be {@link Portal.view.PortalPanel}.
  */
 Ext.define('CR.app.view.PortalColumn', {
     id: 'app-portal-col-1',
