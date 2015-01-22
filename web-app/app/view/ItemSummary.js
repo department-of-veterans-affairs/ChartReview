@@ -36,6 +36,11 @@ Ext.define('CR.app.view.ItemSummary', {
 
     doResize: function(box)
     {
+        var curBox = this.getBox();
+        if(box.width != curBox.width || box.height != curBox.height)
+        {
+            this.setBox(box);
+        }
         for(var i = 0; i < this.items.items.length; i++)
         {
             var comp = this.items.items[i];

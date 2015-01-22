@@ -15,19 +15,43 @@ Ext.define('CR.app.view.PortalPanel', {
     layout: {
         type: 'border'
     },
-    items: [
-    {
-        xtype: 'dashboard',
-        reference: 'dashboard',
-        id: 'dashboard',
-        region: 'center',
-        stateful: false,
-        columnWidths: [
-            0.50,
-            0.50
-        ],
-        parts: {
-//            rss: 'google-rss',
+//    listeners: {
+//        resize: function(comp, width, height, oldWidth, oldHeight, eOpts )
+//        {
+//            alert('width='+width+' height='+height+' oldWidth='+oldWidth+' oldHeight='+oldHeight);
+//
+//        }
+//    },
+    initComponent: function(){
+        this.dashboard = Ext.create({
+            xtype: 'dashboard',
+            reference: 'dashboard',
+            id: 'dashboard',
+            region: 'center',
+            stateful: true,
+            layout: {
+                type: 'column',
+                padding: '3 3 3 3'
+            },
+            columnWidth: 0.5
+//            listeners: {
+//                resize: function (comp, width, height, oldWidth, oldHeight, eOpts) {
+//                    alert('222 width=' + width + ' height=' + height + ' oldWidth=' + oldWidth + ' oldHeight=' + oldHeight);
+//
+//                }
+//            }
+//            parts: {
+//                justpanel: {
+//                    viewTemplate: {
+//                        title: 'Panel',
+//                        items: [{
+//                            xtype: 'panel',
+//                            width: 200,
+//                            height: 200
+//                        }]
+//                    }
+//                }
+//            rss: 'google-rss'
 //
 //            stocks: {
 //                viewTemplate: {
@@ -45,10 +69,27 @@ Ext.define('CR.app.view.PortalPanel', {
 //                        xtype: 'stocks'
 //                    }]
 //                }
-//            }
-        }
-
-//        defaultContent: [
+//            },
+//            defaultContent: [
+//                {
+//                    type: 'justpanel',
+//                    columnIndex: 0
+////                    width: 1000,
+////                    height: 300
+//                },
+//                {
+//                    type: 'justpanel',
+//                    columnIndex: 1
+////                    width: 1000,
+////                    height: 300
+//                },
+//                {
+//                    type: 'justpanel',
+//                    columnIndex: 1
+////                    width: 1000,
+////                    height: 300
+//                }
+//            ]
 //         {
 //            type: 'rss',
 //            columnIndex: 0,
@@ -68,7 +109,10 @@ Ext.define('CR.app.view.PortalPanel', {
 //            height: 350,
 //            feedUrl: 'http://rss.cnn.com/rss/edition.rss'
 //        }
-//        ]
+        });
+        Ext.apply(this, {
+            items: [this.dashboard]
+        });
+        this.callParent(arguments);
     }
-    ]
 });

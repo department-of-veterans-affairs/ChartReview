@@ -17,8 +17,6 @@ Ext.define('CR.app.view.ItemList', {
     layout: {
         type: 'border'
     },
-//    width: 1500,
-//    height: 1500,
     height: 350,
     width: 1000,
 
@@ -37,8 +35,11 @@ Ext.define('CR.app.view.ItemList', {
 
     doResize: function(box)
     {
-        this.width = box.width;
-        this.height = box.height;
+        var curBox = this.getBox();
+        if(box.width != curBox.width || box.height != curBox.height)
+        {
+            this.setBox(box);
+        }
     },
 
     /**

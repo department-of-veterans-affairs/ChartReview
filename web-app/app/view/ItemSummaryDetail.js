@@ -135,8 +135,11 @@ Ext.define('CR.app.view.ItemSummaryDetail', {
 
     doResize: function(box)
     {
-        this.width = box.width;
-        this.height = box.height;
+        var curBox = this.getBox();
+        if(box.width != curBox.width || box.height != curBox.height)
+        {
+            this.setBox(box);
+        }
     },
 
     doReconfigure: function(){

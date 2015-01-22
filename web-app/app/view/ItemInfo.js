@@ -38,6 +38,18 @@ Ext.define('CR.app.view.ItemInfo', {
     },
 
     listeners: {
+        resize: function(comp, width, height, oldWidth, oldHeight, eOpts )
+        {
+//            alert('width='+width+' oldWidth='+oldWidth);
+            for(var i = 0; i < this.items.items.length; i++)
+            {
+                var comp = this.items.items[i];
+                if(typeof comp.doResize != "undefined")
+                {
+//                    comp.doResize(this.getBox());
+                }
+            }
+        },
         annotationSelectedByUserInList: function()
         {
             // Should probably be a method in the AnnotationAware mixin.
@@ -48,11 +60,13 @@ Ext.define('CR.app.view.ItemInfo', {
             this.openListOrSummaryTab();
         },
         afterlayout: function(thePanel, width, height, eOpts) {
-//            for(var i = 0; i < this.items.items.length; i++)
-//            {
-//                var comp = this.items.items[i];
-//                comp.doResize(this.lastBox);
-//            }
+            // We want to resize the children, but we cannot do it in resize listener, because the box is not available yet.
+            // NOTE: the children doResize needs to check for different width and height before doing setBox so that we don't get an infinite recursion here...
+            for(var i = 0; i < this.items.items.length; i++)
+            {
+                var comp = this.items.items[i];
+                comp.doResize(this.getBox());
+            }
         }
     },
 

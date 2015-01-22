@@ -5,8 +5,8 @@ Ext.define('CR.app.view.ClinicalElementPortlet', {
     height: 350,
     width: 1000,
     resizable: true,
-//    resizeHandles: 'n s',
-    resizeHandles: 'all',
+    resizeHandles: 's e',
+//    resizeHandles: 'all',
     mixins: {
         annotationaware: 'CR.app.controller.AnnotationNatureController'
     },
