@@ -159,7 +159,6 @@ Ext.define('CR.app.view.AnnotationSchemaPanel',
 		this.store.setRootNode(root);
 		this.selModel.deselectAll(false);
 		this.store.proxy.reader.read(CR.app.controller.AnnotationNatureController.getSelectedSchema());
-		alert('AnnotationSchema loaded.');
     },
 
     getChildFromNode: function(node)

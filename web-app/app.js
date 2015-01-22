@@ -68,7 +68,6 @@ Ext.application({
     autoCreateViewport: false,
 
     launch: function() {
-alert('HI');
         if(!hasParameter('projectId'))
         {
             // A project id is necessary to proceed.
