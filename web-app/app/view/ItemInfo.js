@@ -19,11 +19,11 @@ Ext.define('CR.app.view.ItemInfo', {
     layout:
     {
         type: 'fit',
-        padding: '0 0 0 0',
-        bodyStyle: {
-            background: '#777777'
-        }
+        padding: '0 0 0 0'
     },
+//    bodyStyle: {
+//        background: '#737373'
+//    },
 
     maxTabWidth: 230,
     border: false,

@@ -9,7 +9,7 @@ Ext.define('CR.app.view.Portlet', {
     layout: 'fit',
     anchor: '100%',
     frame: true,
-    padding: '8 8 0 0',
+    padding: '3 3 3 3',
     closable: true,
     collapsible: true,
     animCollapse: true,
@@ -17,7 +17,8 @@ Ext.define('CR.app.view.Portlet', {
         moveOnDrag: false
     },
     // Important: Portlets are fixed width. Only height may change, and then only from bottom
-    resizeHandles: 's',
+//    resizeHandles: 's',
+    resizeHandles: 'all',
     resizable: true,
     cls: 'x-portlet',
 

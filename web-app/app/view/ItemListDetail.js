@@ -287,8 +287,10 @@ Ext.define('CR.app.view.ItemListDetail', {
                 handler: this.openTab,
                 text: 'View in new tab',
                 tooltip: 'Save this clinical element view in a separate tab, to be able to come back to it.',
+                margin:'2 1 1 2',
                 iconCls: 'tab-new'
-            }, '-');
+            });
+//           }, '-');
         }
         items.push({
             id: this.id + '-doneAnnotatingButton',
@@ -302,10 +304,11 @@ Ext.define('CR.app.view.ItemListDetail', {
             },
             text: 'Done',
             tooltip: 'Mark this clinical element as done for this task.',
+            margin:'2 1 1 2',
             iconCls: 'doneAnnotatingDisabled'
         });
         config.items = items;
-//        config.id = 'itemlistdetailtoolbar';
+        config.id = 'itemlistdetailtoolbar-' + this.id;
         return Ext.create('widget.toolbar', config);
     },
 

@@ -28,12 +28,32 @@ html, body {
 }
 
 #taskinfosavebuttonpanel {
-    /*background-color: #B8B2BD;*/
+    background-color: #f6f8f7;
     padding: 2px 2px 2px 2px;
 }
 
 #annotationlistbuttontoolbar {
-    /*background-color: #B8B2BD;*/
+    background-color: #f6f8f7;
+    padding: 2px 2px 2px 2px;
+}
+
+#level-menu {
+    background-color: #f6f8f7;
+    padding: 2px 2px 2px 2px;
+}
+
+#app-header {
+    background-color: #f6f8f7;
+    padding: 2px 2px 2px 2px;
+}
+
+[id^="itemlistdetailtoolbar"] {
+    background-color: #f6f8f7;
+    padding: 2px 2px 2px 2px;
+}
+
+[id^="itemlisttoolbar"] {
+    background-color: #f6f8f7;
     padding: 2px 2px 2px 2px;
 }
 

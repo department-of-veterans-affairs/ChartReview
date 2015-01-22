@@ -17,8 +17,10 @@ Ext.define('CR.app.view.ItemList', {
     layout: {
         type: 'border'
     },
-    width: 1500,
-    height: 1500,
+//    width: 1500,
+//    height: 1500,
+    height: 350,
+    width: 1000,
 
     initComponent: function(){
         this.detail = Ext.create('widget.itemlistdetail', {});
@@ -86,6 +88,7 @@ Ext.define('CR.app.view.ItemList', {
                     xtype: 'cycle',
                     text: 'Detail Pane',
                     tooltip: 'Show the clinical element detail to the right/bottom, or hide it.',
+                    margin:'2 1 1 2',
                     prependText: 'Detail: ',
                     showText: true,
                     scope: this,
@@ -111,6 +114,7 @@ Ext.define('CR.app.view.ItemList', {
                     iconCls: 'description',
                     text: 'Description',
                     tooltip: 'Show the clinical element brief description',
+                    margin:'2 1 1 2',
                     enableToggle: true,
                     pressed: true,
                     scope: this,
@@ -137,6 +141,7 @@ Ext.define('CR.app.view.ItemList', {
                     toggleHandler: this.onAutoSelectToggle
                 }]
         });
+        this.toolbar.id = 'itemlistdetailtoolbar-' + this.id;
         return this.toolbar;
     },
 

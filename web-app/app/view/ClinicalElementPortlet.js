@@ -2,7 +2,7 @@ Ext.define('CR.app.view.ClinicalElementPortlet', {
     extend: 'CR.app.view.Portlet',
     alias: 'widget.clinicalelementportlet',
     title: 'Notes',
-    height: 400,
+    height: 350,
     width: 1000,
     resizable: true,
 //    resizeHandles: 'n s',
@@ -36,7 +36,8 @@ Ext.define('CR.app.view.ClinicalElementPortlet', {
 
         Ext.apply(this, {
             layout: {
-                type: 'border',
+                type: 'border'
+                ,
                 padding: 0
             },
             items: [this.createItemInfo()]

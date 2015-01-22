@@ -131,7 +131,7 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                     {
                         type: 'hbox',
                         align: 'stretch',
-                        padding: '5 5 5 5'
+                        padding: '3 3 3 3'
                     },
                     items:
                     [
@@ -145,7 +145,7 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                             layout: {
                                 type: 'vbox',
                                 align: 'stretch',
-                                padding: '5 5 5 5'
+                                padding: '3 3 3 3'
                             },
                             items: [
                                 {
@@ -160,7 +160,7 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                                     layout: {
                                         type: 'vbox',
                                         align: 'stretch',
-                                        padding: '5 5 5 5'
+                                        padding: '3 3 3 3'
                                     },
                                     items: [
                                         {
@@ -192,7 +192,7 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                                     {
                                         type: 'vbox',
                                         align: 'stretch',
-                                        padding: '5 5 5 5'
+                                        padding: '3 3 3 3'
                                     },
                                     items:
                                     [
