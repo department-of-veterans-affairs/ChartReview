@@ -433,15 +433,16 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
 //                bodyStyle: {
 //                    background: '#123123'
 //                },
+                id: 'annotationtoolbar-' + this.id,
                 layout:
                 {
                     type: 'hbox',
-                    align: 'stretch',
-                    padding: '0 0 0 0'
+                    align: 'stretch'
+//                    padding: '0 0 0 0'
                 },
-                bodyStyle: {
-                    background: '#888888'
-                },
+//                bodyStyle: {
+//                    background: '#888888'
+//                },
                 items: toolbarParts
             });
 

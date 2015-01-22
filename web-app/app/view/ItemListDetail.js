@@ -128,8 +128,13 @@ Ext.define('CR.app.view.ItemListDetail', {
 
     doResize: function(box)
     {
-        this.width = box.width;
-        this.height = box.height;
+        var curBox = this.getBox();
+        if(box.width != curBox.width || box.height != curBox.height)
+        {
+            curBox.width = box.width;
+            curBox.height = box.height;
+            this.setBox(curBox);
+        }
     },
 
     /**

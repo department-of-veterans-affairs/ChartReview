@@ -138,7 +138,9 @@ Ext.define('CR.app.view.ItemSummaryDetail', {
         var curBox = this.getBox();
         if(box.width != curBox.width || box.height != curBox.height)
         {
-            this.setBox(box);
+            curBox.width = box.width;
+            curBox.height = box.height;
+            this.setBox(curBox);
         }
     },
 
@@ -357,6 +359,7 @@ Ext.define('CR.app.view.ItemSummaryDetail', {
             config.cls = 'x-docked-noborder-top';
         }
         config.items = items;
+        config.id = 'itemsummarydetailtoolbar-' + this.id;
         return Ext.create('widget.toolbar', config);
     },
 

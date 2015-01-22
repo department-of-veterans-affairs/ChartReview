@@ -39,7 +39,9 @@ Ext.define('CR.app.view.ItemSummary', {
         var curBox = this.getBox();
         if(box.width != curBox.width || box.height != curBox.height)
         {
-            this.setBox(box);
+            curBox.width = box.width;
+            curBox.height = box.height;
+            this.setBox(curBox);
         }
         for(var i = 0; i < this.items.items.length; i++)
         {

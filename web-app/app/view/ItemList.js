@@ -38,7 +38,9 @@ Ext.define('CR.app.view.ItemList', {
         var curBox = this.getBox();
         if(box.width != curBox.width || box.height != curBox.height)
         {
-            this.setBox(box);
+            curBox.width = box.width;
+            curBox.height = box.height;
+            this.setBox(curBox);
         }
     },
 

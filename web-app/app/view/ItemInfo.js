@@ -18,7 +18,7 @@ Ext.define('CR.app.view.ItemInfo', {
     },
     layout:
     {
-        type: 'fit',
+        type: 'border',
         padding: '0 0 0 0'
     },
 //    bodyStyle: {
@@ -46,7 +46,7 @@ Ext.define('CR.app.view.ItemInfo', {
                 var comp = this.items.items[i];
                 if(typeof comp.doResize != "undefined")
                 {
-//                    comp.doResize(this.getBox());
+                    comp.doResize(this.getBox());
                 }
             }
         },
@@ -58,15 +58,6 @@ Ext.define('CR.app.view.ItemInfo', {
                 this.initAnnotationAwareness();
             }
             this.openListOrSummaryTab();
-        },
-        afterlayout: function(thePanel, width, height, eOpts) {
-            // We want to resize the children, but we cannot do it in resize listener, because the box is not available yet.
-            // NOTE: the children doResize needs to check for different width and height before doing setBox so that we don't get an infinite recursion here...
-            for(var i = 0; i < this.items.items.length; i++)
-            {
-                var comp = this.items.items[i];
-                comp.doResize(this.getBox());
-            }
         }
     },
 
@@ -112,6 +103,7 @@ Ext.define('CR.app.view.ItemInfo', {
                 xtype: xtype,
                 title: title,
                 closable: false,
+                region: 'center',
                 listeners: {
                     scope: this,
                     opentab: this.onTabOpen,
@@ -126,6 +118,7 @@ Ext.define('CR.app.view.ItemInfo', {
                 xtype: xtype,
                 title: title,
                 closable: false,
+                region: 'center',
                 listeners: {
                     scope: this,
                     opentab: this.onTabOpen,
