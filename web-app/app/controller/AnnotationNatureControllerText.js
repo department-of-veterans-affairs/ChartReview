@@ -233,7 +233,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
             var textOrBreakNodes = [];
             if (Ext.ieVersion > 0) {
                 // On IE, we need to look for a node name, recursing ourselves, without a tree walker.
-                this.getAllRawTextNodesFromInternetExplorerJavaScriptImplementation(element, textNodes);
+                this.getAllRawTextNodesFromInternetExplorerJavaScriptImplementation(element, textOrBreakNodes);
             }
             else {
                 // All other browsers, use a tree walker, filtering for text nodes.
@@ -293,16 +293,15 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
          * @param textOrBreakNodes - the text or break nodes that have been found.
          */
         getAllRawTextNodesFromInternetExplorerJavaScriptImplementation: function (element, textOrBreakNodes) {
-            if (element.nodeName == "#text" || element.nodeName == "#stext"){// || element.nodeName == 'BR') {
+            var nodeName = element.nodeName.toLowerCase();
+            if (nodeName == "#text" || nodeName == "#stext" && nodeName == "text" || nodeName == "stext"){// || element.nodeName == 'BR') {
                 textOrBreakNodes.push(element);
             }
-            else {
-                var kids = element.childNodes;
-                if (kids && kids.length > 0) {
-                    for (i = 0; i < kids.length; i++) {
-                        this.getAllRawTextOrBreakNodes(kids[i], textOrBreakNodes);
-                    }
-                }
+            var child = element.firstChild;
+            while(child)
+            {
+                this.getAllRawTextNodesFromInternetExplorerJavaScriptImplementation(child, textOrBreakNodes);
+                child = child.nextSibling;
             }
         },
 
@@ -512,7 +511,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
                     }
                     var startContainer = oneRange.startContainer;
                     var endContainer = oneRange.endContainer;
-                    var annotationId = startContainer.parentElement.getAttribute("annotationId");
+                    var annotationId = startContainer.parentNode.getAttribute("annotationId");
                     var annotations = CR.app.controller.AnnotationNatureController.annotationsById[annotationAware.clinicalElementId];
                     var annotation = null;
                     if(annotationId)

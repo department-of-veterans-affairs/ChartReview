@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="web" name="Web">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/src/templates/war/web.xml" />
+        </descriptors>
+        <webroots>
+          <root url="file://$MODULE_DIR$/src/templates/war" relative="/WEB-INF" />
+        </webroots>
+        <sourceRoots />
+      </configuration>
+    </facet>
+    <facet type="hibernate" name="Hibernate">
+      <configuration>
+        <datasource-map>
+          <unit-entry name="Gorm" />
+          <unit-entry name="grails-app:conf:hibernate:hibernate.cfg.xml" />
+          <unit-entry name="src:templates:artifacts:hibernate.cfg.xml" />
+        </datasource-map>
+        <naming-strategy-map />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/grails-app/conf/hibernate/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/out/production/chart-review-grailsPlugins/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/templates/artifacts/hibernate.cfg.xml" />
+      </configuration>
+    </facet>
+    <facet type="Spring" name="Spring">
+      <configuration>
+        <fileset id="fileset" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/web-app/WEB-INF/applicationContext.xml</file>
+        </fileset>
+      </configuration>
+    </facet>
+    <facet type="web" name="GrailsWeb">
+      <configuration>
+        <webroots>
+          <root url="file://$MODULE_DIR$/web-app" relative="/" />
+          <root url="file://$MODULE_DIR$/grails-app/views" relative="/" />
+        </webroots>
+        <sourceRoots />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/grails-app/utils" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/groovy" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/grails-app/i18n" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/grails-app/controllers" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/grails-app/domain" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/grails-app/services" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/grails-app/taglib" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test/unit" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/test/integration" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/target/classes" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="grails-2.3.4" level="application" />
+    <orderEntry type="library" name="grails-2.3.4" level="application" />
+    <orderEntry type="module-library" exported="">
+      <library name="Grails User Library (chart-review-windows)">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-continuation/7.6.7.v20120910/jetty-continuation-7.6.7.v20120910.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-http/7.6.7.v20120910/jetty-http-7.6.7.v20120910.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-io/7.6.7.v20120910/jetty-io-7.6.7.v20120910.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-util/7.6.7.v20120910/jetty-util-7.6.7.v20120910.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-websocket/7.6.7.v20120910/jetty-websocket-7.6.7.v20120910.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/activemq-pool/5.7.0/activemq-pool-5.7.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/sun/xml/bind/jaxb-impl/2.2.5/jaxb-impl-2.2.5.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/camel/camel-spring/2.10.1/camel-spring-2.10.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/camel/camel-core/2.10.1/camel-core-2.10.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/camel/camel-jms/2.10.1/camel-jms-2.10.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/activemq-camel/5.7.0/activemq-camel-5.7.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/jasypt/jasypt/1.9.0/jasypt-1.9.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-net/commons-net/3.1/commons-net-3.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/protobuf/activemq-protobuf/1.1/activemq-protobuf-1.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/activemq-core/5.7.0/activemq-core-5.7.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/activemq-web/5.7.0/activemq-web-5.7.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/activemq-jaas/5.7.0/activemq-jaas-5.7.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/activemq-all/5.7.0/activemq-all-5.7.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/uima/uimaj-as-activemq/2.6.0/uimaj-as-activemq-2.6.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/uima/uimaj-core/2.6.0/uimaj-core-2.6.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-jms/3.0.7.RELEASE/spring-jms-3.0.7.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/xmlbeans/xmlbeans/2.4.0/xmlbeans-2.4.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/xmlpull/xmlpull/1.1.3.1/xmlpull-1.1.3.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/xstream/xstream/1.4.3/xstream-1.4.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-pool/commons-pool/1.6/commons-pool-1.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/uima/uimaj-as-core/2.6.0/uimaj-as-core-2.6.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache/2.8.3/ehcache-2.8.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-log4j12/1.7.5/slf4j-log4j12-1.7.5.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-dbutils/commons-dbutils/1.5/commons-dbutils-1.5.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/gov/va/vinci/leo/leo-core/2014.08.0/leo-core-2014.08.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/gov/va/vinci/leo/leo-service/2014.08.0/leo-service-2014.08.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/13.0.1/guava-13.0.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.2.1/commons-lang3-3.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jdt/core/compiler/ecj/3.7.2/ecj-3.7.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/mysema/codegen/codegen/0.6.1/codegen-0.6.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/mysema/querydsl/querydsl-codegen/3.3.1/querydsl-codegen-3.3.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/mysema/querydsl/querydsl-sql-codegen/3.3.1/querydsl-sql-codegen-3.3.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/validation/validation-api/1.0.0.GA/validation-api-1.0.0.GA.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/joda-time/joda-time/1.6/joda-time-1.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/mysema/commons/mysema-commons-lang/0.2.4/mysema-commons-lang-0.2.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/mysema/querydsl/querydsl-core/3.3.1/querydsl-core-3.3.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/mysema/querydsl/querydsl-sql/3.3.1/querydsl-sql-3.3.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-commons-annotations/3.2.0.Final/hibernate-commons-annotations-3.2.0.Final.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-core/3.6.10.Final/hibernate-core-3.6.10.Final.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/spring-js/2.0.8.RELEASE/spring-js-2.0.8.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/spring-binding/2.0.8.RELEASE/spring-binding-2.0.8.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/webflow/spring-webflow/2.0.8.RELEASE/spring-webflow-2.0.8.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-web/3.2.3.RELEASE/spring-security-web-3.2.3.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/security/spring-security-core/3.2.3.RELEASE/spring-security-core-3.2.3.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/bull/javamelody/javamelody-core/1.52.0/javamelody-core-1.52.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/lowagie/itext/2.1.7/itext-2.1.7.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/jrobin/jrobin/1.5.9/jrobin-1.5.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/dk/brics/automaton/automaton/1.11-8/automaton-1.11-8.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/mybatis/mybatis/3.2.2/mybatis-3.2.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-email/1.2/commons-email-1.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/jackson/jackson-core-asl/1.9.9/jackson-core-asl-1.9.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/activiti/activiti-bpmn-model/5.14/activiti-bpmn-model-5.14.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/activiti/activiti-bpmn-converter/5.14/activiti-bpmn-converter-5.14.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/activiti/activiti-engine/5.14/activiti-engine-5.14.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/mail/mail/1.4.1/mail-1.4.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/persistence/persistence-api/1.0.2/persistence-api-1.0.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/gov/va/vinci/leo-siman/2014.08.12/leo-siman-2014.08.12.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/sf/opencsv/opencsv/2.3/opencsv-2.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/gov/va/vinci/leo/leo-client/2014.08.0/leo-client-2014.08.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/uima/jVinci/2.6.0/jVinci-2.6.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/uima/uimaj-adapter-vinci/2.6.0/uimaj-adapter-vinci-2.6.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/uima/uimaj-cpe/2.6.0/uimaj-cpe-2.6.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/uima/uimaj-tools/2.6.0/uimaj-tools-2.6.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpcore/4.2.1/httpcore-4.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpclient/4.2.1/httpclient-4.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/orbit/javax.annotation/1.1.0.v201108011116/javax.annotation-1.1.0.v201108011116.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/orbit/javax.activation/1.1.0.v201105071233/javax.activation-1.1.0.v201105071233.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/orbit/javax.mail.glassfish/1.4.1.v201005082020/javax.mail.glassfish-1.4.1.v201005082020.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/orbit/javax.security.auth.message/1.0.0.v201108011116/javax.security.auth.message-1.0.0.v201108011116.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/orbit/javax.servlet/2.5.0.v201103041518/javax.servlet-2.5.0.v201103041518.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/aggregate/jetty-all-server/7.6.7.v20120910/jetty-all-server-7.6.7.v20120910.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/geronimo/specs/geronimo-servlet_2.5_spec/1.2/geronimo-servlet_2.5_spec-1.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/geronimo/specs/geronimo-j2ee-management_1.1_spec/1.0.1/geronimo-j2ee-management_1.1_spec-1.0.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/uima/uimaj-as-jms/2.6.0/uimaj-as-jms-2.6.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/kahadb/5.7.0/kahadb-5.7.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/servicemix/bundles/org.apache.servicemix.bundles.josql/1.5_5/org.apache.servicemix.bundles.josql-1.5_5.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/velocity/velocity/1.7/velocity-1.7.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-server/7.6.7.v20120910/jetty-server-7.6.7.v20120910.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-security/7.6.7.v20120910/jetty-security-7.6.7.v20120910.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-servlet/7.6.7.v20120910/jetty-servlet-7.6.7.v20120910.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-xml/7.6.7.v20120910/jetty-xml-7.6.7.v20120910.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-webapp/7.6.7.v20120910/jetty-webapp-7.6.7.v20120910.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-daemon/commons-daemon/1.0.10/commons-daemon-1.0.10.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/activemq-console/5.7.0/activemq-console-5.7.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/activeio-core/3.1.4/activeio-core-3.1.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/activemq-optional/5.7.0/activemq-optional-5.7.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/osgi/spring-osgi-io/1.2.1/spring-osgi-io-1.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/osgi/spring-osgi-core/1.2.1/spring-osgi-core-1.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/geronimo/specs/geronimo-jta_1.0.1B_spec/1.0.1/geronimo-jta_1.0.1B_spec-1.0.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/activemq/activemq-spring/5.7.0/activemq-spring-5.7.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/xpp3/xpp3/1.1.4c/xpp3-1.1.4c.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/xbean/xbean-spring/3.11.1/xbean-spring-3.11.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/jdom/jdom/1.0/jdom-1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/rome/rome/1.0/rome-1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.3.175/h2-1.3.175.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/mysql/mysql-connector-java/5.1.22/mysql-connector-java-5.1.22.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-ehcache/3.6.10.Final/hibernate-ehcache-3.6.10.Final.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-entitymanager/3.6.10.Final/hibernate-entitymanager-3.6.10.Final.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm-hibernate-core/2.0.6.RELEASE/grails-datastore-gorm-hibernate-core-2.0.6.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-web/2.0.6.RELEASE/grails-datastore-web-2.0.6.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm-plugin-support/2.0.6.RELEASE/grails-datastore-gorm-plugin-support-2.0.6.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/hibernate/hibernate-validator/4.1.0.Final/hibernate-validator-4.1.0.Final.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/sf/ehcache/ehcache-core/2.4.6/ehcache-core-2.4.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/antlr/antlr/2.7.7/antlr-2.7.7.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/grails/grails-datastore-gorm-hibernate/2.0.6.RELEASE/grails-datastore-gorm-hibernate-2.0.6.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/ognl/ognl/2.7.3/ognl-2.7.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/liquibase/liquibase-core/2.0.5/liquibase-core-2.0.5.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-orm/3.1.2.RELEASE/spring-orm-3.1.2.RELEASE.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/activiti/activiti-spring/5.14/activiti-spring-5.14.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/sourceforge/spnego/spnego/r7/spnego-r7.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/microsoft/sqlserver/sqljdbc4/4.0/sqljdbc4-4.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/wagon/wagon-provider-api/1.0-beta-6/wagon-provider-api-1.0-beta-6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/nekohtml/nekohtml/1.9.6.2/nekohtml-1.9.6.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/nekohtml/xercesMinimal/1.9.6.2/xercesMinimal-1.9.6.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/wagon/wagon-http-shared/1.0-beta-6/wagon-http-shared-1.0-beta-6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/wagon/wagon-http-lightweight/1.0-beta-6/wagon-http-lightweight-1.0-beta-6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/wagon/wagon-file/1.0-beta-6/wagon-file-1.0-beta-6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-settings/2.2.1/maven-settings-2.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-error-diagnostics/2.2.1/maven-error-diagnostics-2.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-plugin-registry/2.2.1/maven-plugin-registry-2.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-profile/2.2.1/maven-profile-2.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-project/2.2.1/maven-project-2.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/2.2.1/maven-model-2.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-repository-metadata/2.2.1/maven-repository-metadata-2.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-artifact-manager/2.2.1/maven-artifact-manager-2.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-artifact/2.2.1/maven-artifact-2.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-interpolation/1.11/plexus-interpolation-1.11.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/1.5.15/plexus-utils-1.5.15.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-container-default/1.0-alpha-9-stable-1/plexus-container-default-1.0-alpha-9-stable-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/classworlds/classworlds/1.1-alpha-2/classworlds-1.1-alpha-2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/embed/tomcat-embed-core/7.0.47/tomcat-embed-core-7.0.47.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/embed/tomcat-embed-jasper/7.0.47/tomcat-embed-jasper-7.0.47.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-catalina-ant/7.0.47/tomcat-catalina-ant-7.0.47.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/xml-resolver/xml-resolver/1.2/xml-resolver-1.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.9.1/xercesImpl-2.9.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/sourceforge/nekohtml/nekohtml/1.9.16/nekohtml-1.9.16.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/sf/ezmorph/ezmorph/1.0.6/ezmorph-1.0.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-beanutils/commons-beanutils/1.8.0/commons-beanutils-1.8.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/sf/json-lib/json-lib/2.3/json-lib-2.3-jdk15.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/modules/http-builder/http-builder/0.6/http-builder-0.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/gov/va/vinci/jtds/2.0.1/jtds-2.0.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="grails-2.3.4" level="application" />
+    <orderEntry type="library" name="grails-2.3.4 (2)" level="application" />
+    <orderEntry type="module" module-name="chart-review-windows-grailsPlugins" />
+  </component>
+</module>
+

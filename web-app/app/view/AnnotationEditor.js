@@ -244,7 +244,7 @@ Ext.define('CR.app.view.AnnotationEditor', {
         return tf;
     },
     onComboBoxSelect: function(cmp, record, index){
-    	CR.app.controller.AnnotationNatureControllerAnnotations.updateAttributeFeatureForSelectedAnnotation(cmp.myAttr, record[0].data.field1);
+    	CR.app.controller.AnnotationNatureControllerAnnotations.updateAttributeFeatureForSelectedAnnotation(cmp.myAttr, record.data.field1);
     },
     onTextChange: function(cmp, newValue, oldValue){
         CR.app.controller.AnnotationNatureControllerAnnotations.updateAttributeFeatureForSelectedAnnotation(cmp.myAttr, newValue);

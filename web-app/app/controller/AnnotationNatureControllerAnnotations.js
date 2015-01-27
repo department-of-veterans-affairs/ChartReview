@@ -769,39 +769,19 @@ Ext.define('CR.app.controller.AnnotationNatureControllerAnnotations', {
 
             if(component.body && component.body.dom) /* TODO: REDIRECT */
             {
-                if(Ext.ieVersion>0)
+                var debug = document;
+                var achilds = document.getElementsByName('annotatable');
+                for(i=0; i<achilds.length; i++)
                 {
-                    var bdy = component.body;
-                    var achilds = component.body.dom.all;
-                    for(i=0; i<achilds.length; i++)
+                    var child = achilds[i];
+                    if(component.body.contains(child)) /* TODO: REDIRECT */
                     {
-                        var child = achilds[i];
-                        if(child.getAttributeNode('name') && child.getAttributeNode('name').value=='annotatable')
+                        var xpath = '';
+                        if(child.getAttributeNode('clinicalElementFieldId'))
                         {
-                            if(child.getAttributeNode('clinicalElementFieldId'))
-                            {
-                                var xpath = child.getAttributeNode('clinicalElementFieldId').value;
-                                rslt[xpath] = child;
-                            }
+                            xpath = child.getAttributeNode('clinicalElementFieldId').value;
                         }
-                    }
-                }
-                else
-                {
-                    var debug = document;
-                    var achilds = document.getElementsByName('annotatable');
-                    for(i=0; i<achilds.length; i++)
-                    {
-                        var child = achilds[i];
-                        if(component.body.contains(child)) /* TODO: REDIRECT */
-                        {
-                            var xpath = '';
-                            if(child.getAttributeNode('clinicalElementFieldId'))
-                            {
-                                xpath = child.getAttributeNode('clinicalElementFieldId').value;
-                            }
-                            rslt[xpath] = child;
-                        }
+                        rslt[xpath] = child;
                     }
                 }
             }
@@ -820,7 +800,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerAnnotations', {
             var annotations = [];
             var spanSegmentText = spanContainer.data;
             var annotationsOverlappingSpanSegment = [];
-            var pel = spanContainer.parentElement;
+            var pel = spanContainer.parentNode;
             var annotationIdsStr = pel.getAttribute("annotationIds");
             if(annotationIdsStr)
             {
