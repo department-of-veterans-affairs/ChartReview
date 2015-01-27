@@ -769,13 +769,12 @@ Ext.define('CR.app.controller.AnnotationNatureControllerAnnotations', {
 
             if(component.body && component.body.dom) /* TODO: REDIRECT */
             {
-                if(Ext.ieVersion>0)
+                if(false && Ext.ieVersion>0)
                 {
                     var bdy = component.body;
-                    var achilds = component.body.dom.all;
-                    for(i=0; i<achilds.length; i++)
+                    var child = component.body.dom.firstChild;
+                    while(child)
                     {
-                        var child = achilds[i];
                         if(child.getAttributeNode('name') && child.getAttributeNode('name').value=='annotatable')
                         {
                             if(child.getAttributeNode('clinicalElementFieldId'))
@@ -784,6 +783,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerAnnotations', {
                                 rslt[xpath] = child;
                             }
                         }
+                        child = child.nextSibling;
                     }
                 }
                 else
