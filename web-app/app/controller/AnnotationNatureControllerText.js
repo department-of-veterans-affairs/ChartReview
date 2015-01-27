@@ -292,7 +292,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
          * @param element - the element to search.
          * @param textOrBreakNodes - the text or break nodes that have been found.
          */
-        getAllRawTextOrBreakNodes: function (element, textOrBreakNodes) {
+        getAllRawTextNodesFromInternetExplorerJavaScriptImplementation: function (element, textOrBreakNodes) {
             if (element.nodeName == "#text" || element.nodeName == "#stext"){// || element.nodeName == 'BR') {
                 textOrBreakNodes.push(element);
             }
