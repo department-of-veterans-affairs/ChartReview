@@ -292,17 +292,25 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
          * @param element - the element to search.
          * @param textOrBreakNodes - the text or break nodes that have been found.
          */
-        getAllRawTextOrBreakNodes: function (element, textOrBreakNodes) {
-            if (element.nodeName == "#text" || element.nodeName == "#stext"){// || element.nodeName == 'BR') {
-                textOrBreakNodes.push(element);
-            }
-            else {
-                var kids = element.childNodes;
-                if (kids && kids.length > 0) {
-                    for (i = 0; i < kids.length; i++) {
-                        this.getAllRawTextOrBreakNodes(kids[i], textOrBreakNodes);
-                    }
-                }
+        getAllRawTextNodesFromInternetExplorerJavaScriptImplementation: function (element, textOrBreakNodes) {
+//            var noteName = element.nodeName.toLowerCase();
+//            if (nodeName == "#text" || nodeName == "#stext" || nodeName == "text" || nodeName == "stext"){// || element.nodeName == 'BR') {
+//                textOrBreakNodes.push(element);
+//            }
+//            var child = element.firstChild;
+//            while(child)
+//            {
+//                this.getAllRawTextNodesFromInternetExplorerJavaScriptImplementation(child, textOrBreakNodes);
+//                child = child.nextSibling;
+//            }
+            // All other browsers, use a tree walker, filtering for text nodes.
+            var iterator = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, { acceptNode: function (node) {
+                return NodeFilter.FILTER_ACCEPT;
+            } }, false);
+            var child = iterator.nextNode();
+            while (child) {
+                textOrBreakNodes[textOrBreakNodes.length] = child;
+                child = iterator.nextNode();
             }
         },
 
