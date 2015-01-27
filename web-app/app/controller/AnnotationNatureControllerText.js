@@ -231,7 +231,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
              * The purpose here is to find all elements that show text and process them.
              */
             var textOrBreakNodes = [];
-            if (false && Ext.ieVersion > 0) {
+            if (Ext.ieVersion > 0) {
                 // On IE, we need to look for a node name, recursing ourselves, without a tree walker.
                 this.getAllRawTextNodesFromInternetExplorerJavaScriptImplementation(element, textNodes);
             }

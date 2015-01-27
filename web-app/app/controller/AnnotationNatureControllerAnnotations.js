@@ -769,7 +769,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerAnnotations', {
 
             if(component.body && component.body.dom) /* TODO: REDIRECT */
             {
-                if(false && Ext.ieVersion>0)
+                if(Ext.ieVersion>0)
                 {
                     var bdy = component.body;
                     var achilds = component.body.dom.all;
