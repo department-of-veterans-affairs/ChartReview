@@ -568,103 +568,48 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
             }
             if(CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement != null)
             {
-                // Is there a schema element already chosen in the schema panel?  Pass it as a
-                // a pre-select if so.
-                var schemaElement = null;
-                var schemaPanel = Ext.ComponentQuery.query('panel[id^=annotationschemapanel]')[0];
-                var selMdl = schemaPanel.getSelectionModel();
-                if (selMdl) {
-                    var selections = selMdl.selected;
-                    if (selections) {
-                        for (i = 0; i < selections.items.length; i++) {
-                            var selection = selections.items[i];
-                            if (selection && selection.data && selection.data.srcNode) {
-                                schemaElement = selection.data.srcNode;
-                            }
-                        }
-                    }
-                }
-                var pnl = this;
-                if(pnl.win)
+                if(!CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin)
                 {
-                    pnl.win.close();
-                    Ext.destroy(pnl.win);
-                    pnl.win = null;
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin = Ext.create('CR.app.view.AnnotationSchemaPopupWindow', {});
                 }
-                if(!pnl.win)
+                if (CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent != null)
                 {
-                    if(CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement != null) {
-                        var name = 'unknown';
-                        var taskName = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskName;
-                        var taskId = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskId;
-                        if (taskName != null) {
-                            name = taskName;
-                        }
-                        else if (taskId != null) {
-                            name = taskId;
-                        }
-                    }
-                    pnl.win = Ext.widget('window', {
-                        title: 'Choose Classification',
-//                        iconCls: 'taskInfo',
-                        closeAction: 'hide',
-                        width: 300,
-                        height: 300,
-                        layout: 'border',
-                        resizable: true,
-                        modal: false,
-                        items: [
-                            {
-                                xtype: 'annotationschemapopuppanel',
-                                region: 'center',
-                                scrollable: true,
-                                width: '100%',
-                                height: '100%'
-                            },
-                            {
-                                xtype: 'container',
-                                width: '100%',
-                                region: 'south',
-                                layout: {
-                                    type: 'hbox',
-                                    align: 'middle',
-                                    pack: 'center'
-                                },
-                                items: [
-                                    {
-                                        xtype: 'button',
-                                        text: 'OK',
-                                        margin:'5 5 5 5',
-                                        tooltip: 'Annotate the selection with the chosen classification.',
-                                        handler: function() {
-                                            var schemaPopupPanel = this.up('window').getComponent('annotationschemapopuppanel');
-                                            var schemaElement = schemaPopupPanel.getSelectedSchemaElement();
-                                            this.up('window').fireEvent('classificationChosen', schemaElement);
-                                            this.up('window').close();
-                                        }
-                                    },
-                                    {
-                                        xtype: 'button',
-                                        text: 'Cancel',
-                                        margin:'5 5 5 5',
-                                        tooltip: 'Cancel the annotation.',
-                                        handler: function() {
-                                            this.up('window').close();
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    });
-                    pnl.win.schemaElement = schemaElement;
-                    pnl.win.addListener('classificationChosen', function(schemaElement) {
-                        pnl.handleAnnotationComponentTextSelectionSchemaPicked(annotationComponent, annotationAware, isDoubleClick, schemaElement);
-                    });
+                    alert("Another annotation is already progress.");
                 }
-                pnl.win.show();
+                else
+                {
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent = annotationComponent;
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware = annotationAware;
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick = isDoubleClick;
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.addListener('classificationChosen', CR.app.controller.AnnotationNatureControllerText.handleClassificationChosen);
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.addListener('cleanupClassificationChosen', CR.app.controller.AnnotationNatureControllerText.cleanupClassificationChosen);
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.show();
+                }
             }
         },
-
+        /**
+         * Temporary call back for annotation schema classification choosing.
+         * @param schemaElement
+         */
+        handleClassificationChosen: function(schemaElement)
+        {
+            var annotationComponent = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent;
+            var annotationAware = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware;
+            var isDoubleClick = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick;
+            CR.app.controller.AnnotationNatureControllerText.handleAnnotationComponentTextSelectionSchemaPicked(annotationComponent, annotationAware, isDoubleClick, schemaElement);
+        },
+        /**
+         * Remove listeners and data from annotationSchemaPopupWin.
+         * @param schemaElement
+         */
+        cleanupClassificationChosen: function()
+        {
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.removeListener('classificationChosen', CR.app.controller.AnnotationNatureControllerText.handleClassificationChosen);
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.removeListener('cleanupClassificationChosen', CR.app.controller.AnnotationNatureControllerText.cleanupClassificationChosen);
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent = null;
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware = null;
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick = null;
+        },
         /**
          * This method will:
          *  1) Obtain current document selection,
@@ -798,10 +743,6 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
                 if (startOffset == endOffset && startContainer == endContainer && !isDoubleClick) {
                     // If there is no span, select an existing annotation.
                     // Select the first annotation with a span surrounding the event text position.
-
-                    // TODO: Implement popup menu for single-clicks (?)
-                    //showPopupMenu(oneRange.commonAncestorContainer);
-
                     var id = annotationAware.clinicalElementId;
                     if (!id) {
                         alert('Cannot select annotation because id cannot be found for selected component.');

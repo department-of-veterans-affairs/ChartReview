@@ -118,41 +118,46 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
     {
         if(topElement)
         {
-            topElement.addListener("mouseup", this.mouseUpOnAnnotationComponent, this);
+            topElement.addListener("dragend", this.dragEndOnAnnotationComponent, this);
+            topElement.addListener("dblclick", this.dblClickOnAnnotationComponent, this);
         }
     },
 
     /**
-     * Triggers the work of creating or selecting an annotation with a single drag or click.
+     * Triggers the work of creating or selecting an annotation with a drag (not on a single click!!! users hate that).
      */
-    mouseUpOnAnnotationComponent: function(evt, el)
+    dragEndOnAnnotationComponent: function(evt, el)
     {
         if(this.clinicalElementId != null)
         {
-            // Get the document element in which the document selection mouse event happened.
-            var annotationComponent = this.getAnnotationComponent();
+            if (typeof(this.getAnnotationComponent) == typeof(Function))
+            {
+                // Get the document element in which the document selection mouse event happened.
+                var annotationComponent = this.getAnnotationComponent();
 
-            // Is NOT double click; However, this happens on double click too - just treat it as a single click and handle the double click after...
-            CR.app.controller.AnnotationNatureControllerText.handleAnnotationComponentTextSelection(annotationComponent, this, false);
+                // Is NOT double click; However, this happens on double click too - just treat it as a single click and handle the double click after...
+                CR.app.controller.AnnotationNatureControllerText.handleAnnotationComponentTextSelection(annotationComponent, this, false);
 //            this.fireEvent('clinicalElementchanged'); // Indirectly makes this paint annotations. Should probably be methodized.
 //            Ext.getCmp('annotationlist').fireEvent('annotationschanged');
-            CR.app.controller.AnnotationNatureControllerText.removeCurrentAnnotationComponentTextSelection();
+                CR.app.controller.AnnotationNatureControllerText.removeCurrentAnnotationComponentTextSelection();
+            }
         }
     },
 
-    /**
-     * Triggers the work of creating an annotation with a double click.
-     */
-    listeners: {
-        dblclick: function(e, t, eOpts) {
-            if(typeof(this.getAnnotationComponent) == typeof(Function))
-            {
+    dblClickOnAnnotationComponent: function(e, t, eOpts)
+    {
+        if(this.clinicalElementId != null)
+        {
+            if (typeof(this.getAnnotationComponent) == typeof(Function)) {
                 // Get the document element in which the document selection mouse event happened.
                 var annotationComponent = this.getAnnotationComponent();
 
                 CR.app.controller.AnnotationNatureControllerText.handleAnnotationComponentTextSelection(annotationComponent, this, true); // Is double click
             }
-        },
+        }
+    },
+
+    listeners: {
         element: 'body'
     },
 
@@ -174,9 +179,46 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
             disabled: CR.app.model.CRAppData.readOnly ? true : false,
             handler: function(btn)
             {
-                btn.prnt.classifyWholeClinicalElement(btn.prnt.getAnnotationComponent());
+                if(CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement != null)
+                {
+                    if(!CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin)
+                    {
+                        CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin = Ext.create('CR.app.view.AnnotationSchemaPopupWindow', {});
+                    }
+                    if (CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent != null)
+                    {
+                        alert("Another annotation is already progress.");
+                    }
+                    else
+                    {
+                        CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent = btn.prnt.getAnnotationComponent();
+                        CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.addListener('classificationChosen', btn.prnt.handleClassificationChosen);
+                        CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.addListener('cleanupClassificationChosen', btn.prnt.cleanupClassificationChosen);
+                        CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.show();
+                    }
+                }
             }
         });
+    },
+    /**
+     * Temporary call back for annotation schema classification choosing.
+     * @param schemaElement
+     */
+    handleClassificationChosen: function(schemaElement)
+    {
+        var annotationComponent = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent;
+        this.classifyWholeClinicalElement(annotationComponent, schemaElement);
+    },
+
+    /**
+     * Remove listeners and data from annotationSchemaPopupWin.
+     * @param schemaElement
+     */
+    cleanupClassificationChosen: function()
+    {
+        CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.removeListener('classificationChosen', this.handleClassificationChosen);
+        CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.removeListener('cleanupClassificationChosen', this.cleanupClassificationChosen);
+        CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent = null;
     },
 
     /**
@@ -334,10 +376,10 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
      * Creates an annotation that classifies the whole clinical element that this
      * annotation aware class represents, identified by the clinicalElementId property.
      */
-	classifyWholeClinicalElement: function(annotationComponent)
+	classifyWholeClinicalElement: function(annotationComponent, schemaElement)
 	{
-		var id = this.clinicalElementId;
-		if(!id)
+		var clinicalElementId = annotationComponent.clinicalElementId;
+		if(!clinicalElementId)
 		{
 			alert('An annotation cannot be added because a clinical element id cannot be found for the selected component.');
 			return;
@@ -346,40 +388,16 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
         var principalClinicalElement = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement;
 
         // Ensure that the context clinical element exists if it does not already.
-        var clinicalElement = CR.app.controller.AnnotationNatureController.principalClinicalElementsById[this.clinicalElementId];
+        var clinicalElement = CR.app.controller.AnnotationNatureController.principalClinicalElementsById[clinicalElementId];
         if(!clinicalElement)
         {
             var clinicalElementConfiguration = CR.app.model.CRAppData.getClinicalElementConfiguration(annotationComponent.clinicalElementConfigurationId);
-            clinicalElement = CR.app.controller.AnnotationNatureController.createClinicalElementFromPrincipalClinicalElement(this.clinicalElementId, clinicalElementConfiguration.dataIndex, clinicalElementConfiguration.text, principalClinicalElement);
-            CR.app.controller.AnnotationNatureController.principalClinicalElementsById[this.clinicalElementId] = clinicalElement;
+            clinicalElement = CR.app.controller.AnnotationNatureController.createClinicalElementFromPrincipalClinicalElement(clinicalElementId, clinicalElementConfiguration.dataIndex, clinicalElementConfiguration.text, principalClinicalElement);
+            CR.app.controller.AnnotationNatureController.principalClinicalElementsById[clinicalElementId] = clinicalElement;
 
             // In the this case of direct annotation creation on a record, set this clinical element as the selected clinical element as well.
             CR.app.controller.AnnotationNatureController.setSelectedClinicalElement(clinicalElement);
         }
-
-        var schemaElement = null;
-        var comp = Ext.ComponentQuery.query('component[id=annotationschemapanel]')[0];
-        var selMdl = comp.getSelectionModel();
-        if(selMdl)
-        {
-            var selections = selMdl.selected;
-            if(selections)
-            {
-                for(i = 0; i<selections.items.length; i++)
-                {
-                    var selection = selections.items[i];
-                    if(selection && selection.data && selection.data.srcNode)
-                    {
-                        schemaElement = selection.data.srcNode;
-                    }
-                }
-            }
-        }
-		if(!schemaElement)
-		{
-			alert('A schema element must be selected for annotation.');
-			return;
-		}
 
 		var d1 = new Date();
 		var today = Ext.Date.format(d1, "Y-m-d\\TH:i:s\\Z");
@@ -839,6 +857,10 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
          * Temporary id counter
          */
         newIdCounter: 1,
+        /**
+         * The annotation schema popup window to be used throughout the page.
+         */
+        annotationSchemaPopupWin: null,
 
         /**
          * Resets the annotation awareness for static-global, shared resource, as well as for component-specific
