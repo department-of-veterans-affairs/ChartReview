@@ -53,6 +53,12 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
      */
      clinicalElementId: null,
 
+    /**
+     * This is used to save a window's text selection range while the popup schema classificaition chooser model window
+     * is up.  After a classification is chose, the selection range is used to create an annotation in AnnotationNatureControllerText.
+     */
+    oneRange: null,
+
     constructor: function(config) {
 		this.callParent(config);
 //
