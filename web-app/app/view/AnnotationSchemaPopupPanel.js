@@ -68,8 +68,8 @@ Ext.define('CR.app.view.AnnotationSchemaPopupPanel',
             }
         },
         itemdblclick: function () {
-            this.up('.window').fireEvent('classificationChosen', this.getSelectedSchemaElement());
-            this.up('.window').close();
+            this.up('window').fireEvent('classificationChosen', this.getSelectedSchemaElement());
+            this.up('window').close();
         }
     },
     getSelectedSchemaElement: function()
@@ -141,17 +141,17 @@ Ext.define('CR.app.view.AnnotationSchemaPopupPanel',
             if (!clazz['processed']) {
                 var child = this.getChildFromNode(clazz);
                 children.push(child);
-                var schemaElement = this.up('.window').schemaElement;
-                if(schemaElement && schemaElement == clazz)
-                {
-//                var record = this.getStore().getNodeById(schemaElement.id);
-//                    var idx = this.getStore().indexOf(schemaElement);
-//                    var child = this.getChildFromNode(schemaElement);
-//                    var node = this.getStore().getNodeById(schemaElement.id);
-//                    this.getSelectionModel().select(schemaElement);
-//                    node.select();
-                    childToSelect = child;
-                }
+//                var schemaElement = this.up('window').schemaElement;
+//                if(schemaElement && schemaElement == clazz)
+//                {
+////                var record = this.getStore().getNodeById(schemaElement.id);
+////                    var idx = this.getStore().indexOf(schemaElement);
+////                    var child = this.getChildFromNode(schemaElement);
+////                    var node = this.getStore().getNodeById(schemaElement.id);
+////                    this.getSelectionModel().select(schemaElement);
+////                    node.select();
+//                    childToSelect = child;
+//                }
             }
         }
 
@@ -173,7 +173,7 @@ Ext.define('CR.app.view.AnnotationSchemaPopupPanel',
         this.store.setRootNode(root);
         this.selModel.deselectAll(false);
         this.store.proxy.reader.read(CR.app.controller.AnnotationNatureController.getSelectedSchema());
-        this.selModel.select(childToSelect);
+//        this.selModel.select(childToSelect);
     },
 
     getChildFromNode: function (node) {

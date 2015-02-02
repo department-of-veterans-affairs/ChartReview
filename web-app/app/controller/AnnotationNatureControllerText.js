@@ -637,10 +637,10 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
                                         margin:'5 5 5 5',
                                         tooltip: 'Annotate the selection with the chosen classification.',
                                         handler: function() {
-                                            var schemaPopupPanel = this.up('.window').getComponent('annotationschemapopuppanel');
+                                            var schemaPopupPanel = this.up('window').getComponent('annotationschemapopuppanel');
                                             var schemaElement = schemaPopupPanel.getSelectedSchemaElement();
-                                            this.up('.window').close();
-                                            this.up('.window').fireEvent('classificationChosen', schemaElement);
+                                            this.up('window').fireEvent('classificationChosen', schemaElement);
+                                            this.up('window').close();
                                         }
                                     },
                                     {
@@ -649,7 +649,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
                                         margin:'5 5 5 5',
                                         tooltip: 'Cancel the annotation.',
                                         handler: function() {
-                                            this.up('.window').close();
+                                            this.up('window').close();
                                         }
                                     }
                                 ]
