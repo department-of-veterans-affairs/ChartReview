@@ -4,8 +4,11 @@
 		<meta name="layout" content="main"/>
 		<g:title>Welcome to ChartReview</g:title>
         <r:require modules="bootstrap"/>
-	</head>
+        <script type="text/javascript" src="${request.contextPath}/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="${request.contextPath}/js/dataTables.bootstrap.js"></script>
+    </head>
 	<body>
+
         <h1>Welcome to ChartReview</h1>
         <br/>
         <div class="hero-unit">

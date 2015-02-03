@@ -7,11 +7,13 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<g:layoutHead/>
-        <r:require module="jquery-ui"/>
-		<r:layoutResources />
+	    <r:require module="jquery-ui"/>
+        <r:layoutResources />
+        <g:layoutHead/>
+
         <link rel="shortcut icon" href="${createLinkTo(dir:'images',file:'favicon.ico')}" type="image/x-icon" />
         <link  media="screen, projection" rel="stylesheet" type="text/css" href="${request.contextPath}/css/dataTables.bootstrap.css" />
+
     </head>
 	<body style="min-height: 600px; width: 100%">
         <g:render template="/layouts/mainmenu" />
