@@ -259,6 +259,7 @@ class ClinicalElementConfigurationController {
                 }
 
                 Project project = Project.get(params.projectId);
+                conversation.project = project;
                 details.jdbcDriver = project.getJdbcDriver();
                 details.jdbcPassword = project.getJdbcPassword();
                 details.jdbcUsername = project.getJdbcUsername();
@@ -297,6 +298,7 @@ class ClinicalElementConfigurationController {
                     }
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     flash.message = "Error: ${e.getMessage()}";
                     conversation.dataSetConfigurationInstance = dto;
                     return step1();
@@ -518,13 +520,9 @@ class ClinicalElementConfigurationController {
     }
 
     protected ClinicalElementConfigurationDetails setStep1Params(Map params, ClinicalElementConfigurationDetails dto) {
-        dto.jdbcDriver = params.jdbcDriver;
         dto.query = params.query;
         dto.singleElementQuery = params.singleElementQuery;
-        dto.connectionString = params.connectionString;
         dto.examplePatientId = params.examplePatientId;
-        dto.jdbcUsername = params.jdbcUsername;
-        dto.jdbcPassword = params.jdbcPassword;
         return dto;
     }
 
