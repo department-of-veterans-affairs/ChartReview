@@ -11,7 +11,7 @@
     <g:render template="/templates/showErrors" model="[model: "${dataSetConfigurationInstance}"]" />
     <g:form >
         <fieldset class="form">
-            <legend>Step 4 - Name and Description</legend>
+            <legend>Step 1 - Name and Description</legend>
             <table class="table table-bordered table-striped">
                 <tr>
                     <th style="width: 150px;">Name</th>
@@ -32,11 +32,9 @@
             </table>
             <br/>
             <div>
-            <g:submitButton name="prev" value="Previous" class="btn btn-primary" />
-            <g:submitButton name="finish" value="Finish" class="btn btn-success" style="float: right"/>
+            <g:submitButton name="next" value="Next" class="btn btn-primary" style="float: right"/>
             </div>
-            <div style="margin-top: 20px"><g:submitButton name="reset" value="Start Over" class="btn btn-danger"
-                                                        onclick="return confirm('Start over?');"/></div>
+
         </fieldset>
     </g:form>
 </div>

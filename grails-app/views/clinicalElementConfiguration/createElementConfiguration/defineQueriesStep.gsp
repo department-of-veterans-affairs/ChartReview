@@ -8,7 +8,7 @@
 	<body>
 		<div id="create-dataSetConfiguration" class="content scaffold-create" role="main">
             <fieldset class="form">
-            <legend>Step 1 - Define Test Connection and Queries</legend>
+            <legend>Step 2 - Define Queries</legend>
                 <g:render template="/templates/showErrors" model="[model: "${dataSetConfigurationInstance}"]" />
                 <g:form >
 				    <g:render template="/clinicalElementConfiguration/templates/elementConnectionAndQuery" model="[dto: dto]"/>
@@ -28,6 +28,7 @@
                     In the above example, lab.lab_id uniquely identifies the lab row for this clinical element.
                     </p>
                     </blockquote>
+                    <g:submitButton name="prev" value="Previous" class="btn btn-primary" style="float:left;"/>
                     <g:submitButton name="next" value="Next" class="btn btn-primary" style="float:right;"/><br/><br/>
                 </fieldset>
 			</g:form>

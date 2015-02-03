@@ -7,7 +7,7 @@
 <g:if test="${message}">
     <div class="alert alert-warning">
         <a class="close" data-dismiss="alert" href="#">&times;</a>
-        ${message}
+          ${message}
     </div>
 </g:if>
 <g:if test="${model}">

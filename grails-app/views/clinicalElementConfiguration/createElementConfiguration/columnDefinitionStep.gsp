@@ -13,7 +13,7 @@
     <g:render template="/templates/showErrors" model="[model: "${dataSetConfigurationInstance}"]" />
     <g:form>
         <fieldset class="form">
-            <legend>Step 2 - Data Set Column Definition &amp; Other Metadata</legend>
+            <legend>Step 3 - Data Set Column Definition &amp; Other Metadata</legend>
             <table class="table table-bordered table-striped">
                 <tr>
                     <th style="width: 200px">
@@ -105,7 +105,7 @@
                 </tr>
             </table>
 
-            <g:submitButton name="reset" value="Back" class="btn btn-primary"/>
+            <g:submitButton name="reset" value="Previous" class="btn btn-primary"/>
 
             <span style="float: right;"><g:submitButton name="next" value="Next" class="btn btn-primary" /></span>
         </fieldset>

@@ -9,8 +9,9 @@
 	<body>
         <div style="float:right">Project: <strong>${project.name}</strong>&nbsp;&nbsp;&nbsp;<g:link action="chooseProject">Change</g:link></div>
 		<div id="list-dataSetConfiguration" class="content scaffold-list" role="main">
-		   <g:render template="/templates/showErrors"  />
             <br/><br/>
+		   <g:render template="/templates/showErrors"  />
+            <br/>
             <legend>Project Clinical Element Configurations</legend>
             <table class="table table-bordered table-striped" style="width: 100%">
                 <thead>
@@ -25,7 +26,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <g:each in="${projectClinicalElementConfigurations}" status="i" var="dataSetConfigurationInstance">
+                <g:each in="${projectClinicalElementConfigurations.sort{it.name}}" status="i" var="dataSetConfigurationInstance">
                     <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
                         <td><g:link action="show" params="${[id: dataSetConfigurationInstance.id, projectId: params.projectId]}">${fieldValue(bean: dataSetConfigurationInstance, field: "name")}</g:link></td>
                         <td>${fieldValue(bean: dataSetConfigurationInstance, field: "description")}</td>
@@ -55,7 +56,7 @@
                     <tr>
                         <td colspan="5" style="font-weight: bold">Project: ${project.name}</td>
                     </tr>
-                    <g:each in="${otherProjectClinicalElementConfigurations.get(project)}" var="dataSetConfigurationInstance">
+                    <g:each in="${otherProjectClinicalElementConfigurations.get(project).sort{it.name}}" var="dataSetConfigurationInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
                         <td>&nbsp;&nbsp;</td>
                         <td>${fieldValue(bean: dataSetConfigurationInstance, field: "name")}</td>
