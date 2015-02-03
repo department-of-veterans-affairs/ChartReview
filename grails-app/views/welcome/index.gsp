@@ -17,8 +17,7 @@
             <br/>
             <g:form>
             <div class="form-horizontal">
-                <div class="control-group">
-
+                <div class="control-group" style="vertical-align: middle;">
                     <div class="control-label">
                         Project
                     </div>
@@ -26,7 +25,7 @@
                         <g:select id="projectId" name="projectId"
                               noSelection="${['-1':'Select...']}"
                               from="${projects.sort{it.name}}" optionKey="id" optionValue="name"
-                              class="form-control" value="${projectId}"/>
+                              class="form-control input-xlarge" value="${projectId}"/>
                         <g:checkBox id="showCompletedProcesses" name="showCompletedProcesses" value = "${session.getAttribute(WelcomeController.SESSION_VARIABLE_NAME_SHOW_COMPLETED)}" class="form-control"/> Show Completed Processes
                     </div>
                 </div>
@@ -46,7 +45,7 @@
                                       noSelection="${['-1':'Select...']}"
                                       optionKey="key"
                                       optionValue="value"
-                                      class="form-control"
+                                      class="form-control input-xxlarge"
                                       value="${session.getAttribute(chartreview.WelcomeController.SESSION_VARIABLE_NAME_PROCESS_ID)}"
                             />
 
