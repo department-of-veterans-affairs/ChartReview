@@ -231,9 +231,9 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
              * The purpose here is to find all elements that show text and process them.
              */
             var textOrBreakNodes = [];
-            if (Ext.ieVersion > 0) {
+            if (Ext.isIE > 0) {
                 // On IE, we need to look for a node name, recursing ourselves, without a tree walker.
-                this.getAllRawTextNodesFromInternetExplorerJavaScriptImplementation(element, textNodes);
+                this.getAllRawTextNodesFromInternetExplorerJavaScriptImplementation(element, textOrBreakNodes);
             }
             else {
                 // All other browsers, use a tree walker, filtering for text nodes.
@@ -293,25 +293,25 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
          * @param textOrBreakNodes - the text or break nodes that have been found.
          */
         getAllRawTextNodesFromInternetExplorerJavaScriptImplementation: function (element, textOrBreakNodes) {
-//            var noteName = element.nodeName.toLowerCase();
-//            if (nodeName == "#text" || nodeName == "#stext" || nodeName == "text" || nodeName == "stext"){// || element.nodeName == 'BR') {
-//                textOrBreakNodes.push(element);
-//            }
-//            var child = element.firstChild;
-//            while(child)
-//            {
-//                this.getAllRawTextNodesFromInternetExplorerJavaScriptImplementation(child, textOrBreakNodes);
-//                child = child.nextSibling;
-//            }
-            // All other browsers, use a tree walker, filtering for text nodes.
-            var iterator = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, { acceptNode: function (node) {
-                return NodeFilter.FILTER_ACCEPT;
-            } }, false);
-            var child = iterator.nextNode();
-            while (child) {
-                textOrBreakNodes[textOrBreakNodes.length] = child;
-                child = iterator.nextNode();
+            var noteName = element.nodeName.toLowerCase();
+            if (nodeName == "#text" || nodeName == "#stext" || nodeName == "text" || nodeName == "stext"){// || element.nodeName == 'BR') {
+                textOrBreakNodes.push(element);
             }
+            var child = element.firstChild;
+            while(child)
+            {
+                this.getAllRawTextNodesFromInternetExplorerJavaScriptImplementation(child, textOrBreakNodes);
+                child = child.nextSibling;
+            }
+            // All other browsers, use a tree walker, filtering for text nodes.
+//            var iterator = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, { acceptNode: function (node) {
+//                return NodeFilter.FILTER_ACCEPT;
+//            } }, false);
+//            var child = iterator.nextNode();
+//            while (child) {
+//                textOrBreakNodes[textOrBreakNodes.length] = child;
+//                child = iterator.nextNode();
+//            }
         },
 
         /**
@@ -520,7 +520,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
                     }
                     var startContainer = oneRange.startContainer;
                     var endContainer = oneRange.endContainer;
-                    var annotationId = startContainer.parentElement.getAttribute("annotationId");
+                    var annotationId = startContainer.parentNode.getAttribute("annotationId");
                     var annotations = CR.app.controller.AnnotationNatureController.annotationsById[annotationAware.clinicalElementId];
                     var annotation = null;
                     if(annotationId)
@@ -554,6 +554,62 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
             }
         },
 
+        handleAnnotationComponentTextSelection: function (annotationComponent, annotationAware, isDoubleClick) {
+            if(CR.app.model.CRAppData.readOnly)
+            {
+                return;
+            }
+            var selRange;
+            if (window.getSelection) {  // all browsers, except IE before version 9
+                selRange = window.getSelection();
+                if (selRange && selRange.rangeCount > 0) {
+                    annotationAware.oneRange = selRange.getRangeAt(0);
+                }
+            }
+            if(CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement != null)
+            {
+                if(!CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin)
+                {
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin = Ext.create('CR.app.view.AnnotationSchemaPopupWindow', {});
+                }
+                if (CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent != null)
+                {
+                    alert("Another annotation is already progress.");
+                }
+                else
+                {
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent = annotationComponent;
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware = annotationAware;
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick = isDoubleClick;
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.addListener('classificationChosen', CR.app.controller.AnnotationNatureControllerText.handleClassificationChosen);
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.addListener('cleanupClassificationChosen', CR.app.controller.AnnotationNatureControllerText.cleanupClassificationChosen);
+                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.show();
+                }
+            }
+        },
+        /**
+         * Temporary call back for annotation schema classification choosing.
+         * @param schemaElement
+         */
+        handleClassificationChosen: function(schemaElement)
+        {
+            var annotationComponent = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent;
+            var annotationAware = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware;
+            var isDoubleClick = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick;
+            CR.app.controller.AnnotationNatureControllerText.handleAnnotationComponentTextSelectionSchemaPicked(annotationComponent, annotationAware, isDoubleClick, schemaElement);
+        },
+        /**
+         * Remove listeners and data from annotationSchemaPopupWin.
+         * @param schemaElement
+         */
+        cleanupClassificationChosen: function()
+        {
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.removeListener('classificationChosen', CR.app.controller.AnnotationNatureControllerText.handleClassificationChosen);
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.removeListener('cleanupClassificationChosen', CR.app.controller.AnnotationNatureControllerText.cleanupClassificationChosen);
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent = null;
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware = null;
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick = null;
+        },
         /**
          * This method will:
          *  1) Obtain current document selection,
@@ -564,21 +620,13 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
          * @param annotationAware - the annotation aware component whose text we are marking up
          * Good site to understand this code: http://www.w3.org/TR/2000/REC-DOM-Level-2-Traversal-Range-20001113/ranges.html
          */
-        handleAnnotationComponentTextSelection: function (annotationComponent, annotationAware, isDoubleClick) {
+        handleAnnotationComponentTextSelectionSchemaPicked: function (annotationComponent, annotationAware, isDoubleClick, schemaElement) {
             if(CR.app.model.CRAppData.readOnly)
             {
                 return;
             }
-            var selRange;
-            if (window.getSelection) {  // all browsers, except IE before version 9
-                selRange = window.getSelection();
-            }
-            else {
-                selRange = null;
-                // This code does not work in IE prior to version 9.
-            }
-            if (selRange && selRange.rangeCount > 0) {
-                var oneRange = selRange.getRangeAt(0);
+            if (annotationAware.oneRange) {
+                var oneRange = annotationAware.oneRange
 
                 var startOffset = oneRange.startOffset; // Offset WITHIN the scope of the element that triggered the event.
                 var endOffset = oneRange.endOffset; // Offset WITHIN the scope of the element that triggered the event.
@@ -695,10 +743,6 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
                 if (startOffset == endOffset && startContainer == endContainer && !isDoubleClick) {
                     // If there is no span, select an existing annotation.
                     // Select the first annotation with a span surrounding the event text position.
-
-                    // TODO: Implement popup menu for single-clicks (?)
-                    //showPopupMenu(oneRange.commonAncestorContainer);
-
                     var id = annotationAware.clinicalElementId;
                     if (!id) {
                         alert('Cannot select annotation because id cannot be found for selected component.');
@@ -729,24 +773,6 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
                     var spanArray = CR.app.controller.AnnotationNatureControllerText.createSpans(startContainer, startOffset, endContainer, endOffset, spanContainer, annotatableHTMLElements);
 
                     if (spanArray && spanArray.length > 0) {
-                        var schemaElement = null;
-                        var comp = Ext.ComponentQuery.query('panel[id^=annotationschemapanel]')[0];
-//                        console.log("COMP id="+comp.id + " itemId=" + comp.itemId);
-                        var selMdl = comp.getSelectionModel();
-                        if (selMdl) {
-                            var selections = selMdl.selected;
-                            if (selections) {
-                                for (i = 0; i < selections.items.length; i++) {
-                                    var selection = selections.items[i];
-                                    if (selection && selection.data && selection.data.srcNode) {
-                                        schemaElement = selection.data.srcNode;
-                                    }
-                                    if (selection && selection.data && selection.data.color) {
-                                        color = selection.data.color;
-                                    }
-                                }
-                            }
-                        }
                         if (!schemaElement) {
                             alert('A schema element must be selected for annotation.');
                             return;

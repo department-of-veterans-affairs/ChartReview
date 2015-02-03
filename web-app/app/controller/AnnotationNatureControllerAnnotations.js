@@ -769,7 +769,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerAnnotations', {
 
             if(component.body && component.body.dom) /* TODO: REDIRECT */
             {
-                if(false && Ext.ieVersion>0)
+                if(Ext.isIE)
                 {
                     var bdy = component.body;
                     var child = component.body.dom.firstChild;
@@ -820,7 +820,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerAnnotations', {
             var annotations = [];
             var spanSegmentText = spanContainer.data;
             var annotationsOverlappingSpanSegment = [];
-            var pel = spanContainer.parentElement;
+            var pel = spanContainer.parentNode;
             var annotationIdsStr = pel.getAttribute("annotationIds");
             if(annotationIdsStr)
             {

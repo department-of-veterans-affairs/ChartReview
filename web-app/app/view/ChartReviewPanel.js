@@ -166,7 +166,7 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                                     items: [
                                         {
                                             xtype: 'taskpanel'
-                                        },
+                                        }
 //                                        ,  // No list of tasks in this version of CR
 //                                        {
 ////                                            id: 'tasklistpanel',
@@ -175,9 +175,9 @@ Ext.define('CR.app.view.ChartReviewPanel', {
 ////                                            itemId: 'annotationtasklist',
 ////                                            flex: 100
 //                                        }
-                                        {
-                                            xtype: 'annotationschemapanel'
-                                        }
+//                                        {
+//                                            xtype: 'annotationschemapanel'
+//                                        }
                                     ]
                                 },
                                 {
