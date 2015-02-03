@@ -9,16 +9,36 @@ class WelcomeController {
     def activitiUserService;
     def processService;
     def projectService;
-
+    public static String SESSION_VARIABLE_NAME_PROJECT_ID="welcomeController:projectId";
+    public static String SESSION_VARIABLE_NAME_PROCESS_ID="welcomeController:processId";
+    public static String SESSION_VARIABLE_NAME_SHOW_COMPLETED="welcomeController:showCompleted";
 
     def index() {
+
+        String projectId = session.getAttribute(SESSION_VARIABLE_NAME_PROJECT_ID);
+        boolean showCompleted = false;
+
+
+
+
+        /** Project id changed. **/
+        if (params.containsKey('projectId') && params.projectId != "-1") {
+            if (!params.projectId.equals(projectId)) {
+                session.removeAttribute(SESSION_VARIABLE_NAME_PROCESS_ID);
+            }
+            projectId = params.projectId;
+            session.setAttribute(SESSION_VARIABLE_NAME_PROJECT_ID, projectId);
+        }
+
+        if (params.containsKey('projectId')) {
+            session.setAttribute(SESSION_VARIABLE_NAME_SHOW_COMPLETED, new Boolean(params.containsKey('showCompletedProcesses') && params.showCompletedProcesses == "on" ? true : false));
+        }
 
         if (activitiUserService.findUser(springSecurityService.principal.username) == null) {
             activitiUserService.createUser(springSecurityService.principal.username);
         }
 
         Map<String, String> processDisplayNames = new HashMap<String, String>();
-        Map<String, String> processDisplayNamesAll = new HashMap<String, String>();
 
         /**
          * Submission to move into annotation screen.
@@ -30,12 +50,9 @@ class WelcomeController {
             return;
         }
 
-        /**
-         * Select project submission.
-         */
-        Boolean showCompletedProcesses = new Boolean(params.containsKey('showCompletedProcesses') && params.showCompletedProcesses == "on" ? true : false);
-        if (params.containsKey('projectId') && params.projectId != "-1") {
-            processDisplayNames = processService.getAvailableProcessNameUserCanGetTasksFor(springSecurityService.principal.username, params.projectId, showCompletedProcesses);
+        Boolean showCompletedProcesses = session.getAttribute(SESSION_VARIABLE_NAME_SHOW_COMPLETED);
+        if (projectId != "-1") {
+            processDisplayNames = processService.getAvailableProcessNameUserCanGetTasksFor(springSecurityService.principal.username, projectId, showCompletedProcesses);
         }
 
         def processCounts =  processService.getProcessNamesAndTodoCountForProject(params.projectId);
@@ -49,6 +66,9 @@ class WelcomeController {
             }
             processDisplayNames.put(k, v);
         }
+
+
+        params.projectId = projectId;
 
         render(view: "index",
                 model: [
@@ -71,7 +91,9 @@ class WelcomeController {
 
         if (params.processId != "-1") {
             summaryTable = processService.getAssignedAndRecentTasksForUser(springSecurityService.principal.username, params.projectId, params.processId)
+            session.setAttribute(SESSION_VARIABLE_NAME_PROCESS_ID, params.processId);
         } else {
+            session.removeAttribute(SESSION_VARIABLE_NAME_PROCESS_ID);
             render "";
             return;
         }
