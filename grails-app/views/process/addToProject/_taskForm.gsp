@@ -54,11 +54,13 @@
         </table>
     </div>
 </g:if>
-<strong>Task Name
-    <i class="icon-question-sign" rel="tooltip" title="Brief name for this task that is shown to the user." id="taskNameToolTip"></i></strong></strong>
-<br/>
-<g:textField name="taskVariablesList[${i}].${TaskVariablesEnum.NAME.getName()}" class="input-xxlarge taskDisplayName" value="${model.taskVariablesList[i].parameters?.get(TaskVariablesEnum.NAME.getName())}"/>
-<br/><br/>
+<g:if test="${tasksWithVariables.size() > 1}">
+    <strong>Task Name
+        <i class="icon-question-sign" rel="tooltip" title="Brief name for this task that is shown to the user." id="taskNameToolTip"></i></strong></strong>
+    <br/>
+    <g:textField name="taskVariablesList[${i}].${TaskVariablesEnum.NAME.getName()}" class="input-xxlarge taskDisplayName" value="${model.taskVariablesList[i].parameters?.get(TaskVariablesEnum.NAME.getName())}"/>
+    <br/><br/>
+</g:if>
 <strong>Annotation Group
     <i class="icon-question-sign" rel="tooltip" title="Annotations created for this task will be stored using this annotation group." id="taskAnnotationGroupToolTip"></i></strong>
 <br/>

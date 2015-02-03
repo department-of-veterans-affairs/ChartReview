@@ -389,7 +389,9 @@ class ProcessController {
                     webTaskVariable.get(TaskVariablesEnum.DETAILED_DESCRIPTION.getName()));
 
 
-            if (GenericValidator.isBlankOrNull(webTaskVariable.get(TaskVariablesEnum.NAME.getName()))) {
+            if (model.taskVariablesList.size() == 1) {
+                webTaskVariable.put(TaskVariablesEnum.NAME.getName(), model.displayName);
+            } else if (GenericValidator.isBlankOrNull(webTaskVariable.get(TaskVariablesEnum.NAME.getName()))) {
                 validationErrors.add("Task name for task ${taskVariableIndex} is required.")
             }
             taskVariable.parameters.put(TaskVariablesEnum.NAME.getName(),
