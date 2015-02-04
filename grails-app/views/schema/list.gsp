@@ -34,7 +34,7 @@
                     <td><g:link action="startEdit" id="${schema.id}">${fieldValue(bean: schema, field: "name")}</g:link></td>
                     <td style="text-align: center"><g:link action="startEdit" id="${schema.id}"><i class="icon-pencil" title="Edit this schema"></i></g:link></td>
                     <td style="text-align: center"><g:link action="delete" id="${schema.id}" onclick="return confirm('Delete this schema?');"><i class="icon-trash" title="Delete this schema"></i></g:link></td>
-                    <td style="text-align: center"><g:link action="copy" id="${schema.id}" ><i class="icon-share"></g:link></i></td>
+                    <td style="text-align: center"><span  onclick='doModal("${schema.id}")'><i class="icon-share"></i></span></td>
                     <td style="text-align: center"><g:link action="export" id="${schema.id}" target="_blank"><i class="icon-arrow-down"></g:link></i></td>
                 </tr>
             </g:each>
@@ -58,6 +58,39 @@
             <g:link class="create btn btn-primary" action="create" title="Create a schema and start editing it">Create Schema</g:link>
         </div>
 
+
+        <!-- Modal -->
+        <div class="modal hide fade" id="myModal">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Schema Name</h3>
+            </div>
+            <div class="modal-body">
+                <p>Enter new schema name: <input type="text" name="newName" id="newName" />
+                   <input type="hidden" name="copyId" id="copyId"/></p>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn" onclick="$('#myModal').modal('hide');">Close</a>
+                <a href="#" class="btn btn-primary" onclick="submitCopy()">Copy</a>
+            </div>
+        </div>
     </div>
+
+<script>
+
+    $('#myModal').on('shown', function (e) {
+        e.preventDefault();
+        $('#newName').focus();
+    });
+
+    function submitCopy() {
+         window.location ='<g:createLink action="copy"></g:createLink>?id=' + $('#copyId').val() + "&newName=" + encodeURIComponent($('#newName').val());
+    }
+
+    function doModal(schemaId) {
+        $('#myModal').modal('show');
+        $('#copyId').val(schemaId);
+    }
+</script>
 </body>
 </html>
