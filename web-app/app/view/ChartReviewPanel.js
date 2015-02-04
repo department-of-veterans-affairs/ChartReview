@@ -157,6 +157,7 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                                     collapsible: true,
                                     collapseDirection: 'top',
                                     flex: 15,
+                                    minHeight: 115,
                                     split: true,
                                     layout: {
                                         type: 'vbox',
