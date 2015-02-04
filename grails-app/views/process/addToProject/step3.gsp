@@ -36,7 +36,43 @@
                         Enter the query to create process tasks.
                         <i class="icon-question-sign" rel="tooltip" title="Query should return a single column, the principal clinical element id." id="assignmentToolTip"></i>
                     </div>
-                    <textarea name="query" style="width: 100%; height: 200px" >${model.query}</textarea>
+                    <textarea name="query" id="query" style="width: 100%; height: 200px; margin-bottom: 5px" >${model.query}</textarea>
+
+                    <!-- Preview Button and code -->
+                    <g:if test="${!readOnly}">
+                        <a href="#" id="${project.id}" style="float: right;" class="btn btn-primary" onclick="doPreview();">Preview Query</a>
+                        <div style="clear: both"></div>
+                        <div id="queryPreviewDiv" style="margin-top: 5px; width: 100%; height: 200px; overflow-y: scroll; border: 1px solid #d3d3d3;display:none; padding: 5px;">
+
+                        </div>
+
+                        <script>
+                            function doPreview() {
+                                $('#queryPreviewDiv').show();
+                                $('#queryPreviewDiv').html("Getting data for preview....");
+
+                                var link = "${request.contextPath}/project/ajaxSql?id=${project.id}&sql=" + encodeURIComponent($('#query').val());
+                                $.ajax({
+                                    url: link,
+                                    type: "GET",
+                                    dataType: "html",
+                                    success: function (data) {
+                                        $('#queryPreviewDiv').html(data);
+                                    },
+                                    error: function (xhr, status) {
+                                        $('#queryPreviewDiv').html("Error doing query preview. (Status=" + status + ")");
+                                    },
+                                    complete: function (xhr, status) {
+                                        //$('#showresults').slideDown('slow')
+                                    }
+                                });
+                            }
+                        </script>
+                    </g:if>
+
+
+
+
                     <br/><br/>
                     <legend>Users</legend>
                     <div style="margin: 20px; margin-bottom: 60px;">
