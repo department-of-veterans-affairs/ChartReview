@@ -141,12 +141,13 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                             title: 'Annotation',
                             xtype: 'panel',
                             flex: 30,
+                            autoScroll: true,
                             collapsible: true,
                             collapseDirection: 'left',
                             layout: {
                                 type: 'vbox',
                                 align: 'stretch',
-                                padding: '3 3 3 3'
+                                padding: '3 0 3 0'
                             },
                             items: [
                                 {
@@ -155,13 +156,12 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                                     xtype: 'panel',
                                     collapsible: true,
                                     collapseDirection: 'top',
-                                    flex: 30,
-                                    split: false,
-                                    border: true,
+                                    flex: 15,
+                                    split: true,
                                     layout: {
                                         type: 'vbox',
                                         align: 'stretch',
-                                        padding: '3 3 3 3'
+                                        padding: '0 0 0 0'
                                     },
                                     items: [
                                         {
@@ -184,16 +184,15 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                                     id: 'annotationspanel',
                                     title: 'Annotations',
                                     xtype: 'panel',
-                                    flex: 60,
+                                    flex: 85,
                                     collapsible: true,
                                     collapseDirection: 'bottom',
                                     split: true,
-                                    border: true,
                                     layout:
                                     {
                                         type: 'vbox',
                                         align: 'stretch',
-                                        padding: '3 3 3 3'
+                                        padding: '0 0 0 0'
                                     },
                                     items:
                                     [
