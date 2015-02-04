@@ -465,7 +465,8 @@ class SchemaController {
         }
     }
 
-    def copy(String id) {
+    def copy(String id, String newName) {
+
         def annotationSchema = AnnotationSchema.get(id)
 
         if (!annotationSchema) {
@@ -474,11 +475,21 @@ class SchemaController {
             return
         }
 
-        def name = annotationSchema.name;
+        String name = newName;
+        def annotationSchemaByName = AnnotationSchema.findByName(newName);
+
+        if (annotationSchemaByName) {
+            name = name  + " " + UUID.randomUUID().toString();
+        }
+
         try {
-            AnnotationSchema objCopy = new AnnotationSchema(annotationSchema, true);
+            AnnotationSchema objCopy = new AnnotationSchema(annotationSchema, false);
+            objCopy.setName(name)
             objCopy.save(flush: true);
             flash.message = message(code: 'default.copied.message', args: [message(code: 'schema.label'), name])
+            if (annotationSchemaByName) {
+                flash.message = flash.message + "<br/>Schema name already in use. Unique identifier added to the end of the name.";
+            }
             redirect(action: "list")
         }
         catch (DataIntegrityViolationException e) {
