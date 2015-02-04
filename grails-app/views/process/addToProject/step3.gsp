@@ -44,19 +44,30 @@
                             <div class="form-horizontal" style="margin: 5px"><g:checkBox name="processUsers" value="${user.user.username}" checked="${model.processUsers.contains(user.user.username)}"/> ${user.user.username}</div>
                         </g:each>
                     </div>
-                    <legend>Other</legend>
-                    <div class="control-group">
-                        <label for="processOrTask" class="control-label">
-                            Assignment style
-                        <i class="icon-question-sign" rel="tooltip" title="If by process, an entire process is assigned to a single user. If by task, then tasks within a single process may be performed by different users." id="assignmentToolTip"></i>
-                        </label>
-                        <div class="controls">
-                            <g:select class="form-control" id="processOrTask" name="processOrTask"
-                                      from="${[[k:'process', v:'By Process'], [k:'task', v:'By Task']] }"
-                                      value="${model.processOrTask}"
-                                      optionKey="k" optionValue="v" />
+
+
+                    <!--
+                        Remove if single step process.
+                    -->
+                    <g:if test="${tasksWithVariables.size() > 1}">
+                        <legend>Other</legend>
+                        <div class="control-group">
+                            <label for="processOrTask" class="control-label">
+                                Assignment style
+                            <i class="icon-question-sign" rel="tooltip" title="If by process, an entire process is assigned to a single user. If by task, then tasks within a single process may be performed by different users." id="assignmentToolTip"></i>
+                            </label>
+                            <div class="controls">
+                                <g:select class="form-control" id="processOrTask" name="processOrTask"
+                                          from="${[[k:'process', v:'By Process'], [k:'task', v:'By Task']] }"
+                                          value="${model.processOrTask}"
+                                          optionKey="k" optionValue="v" />
+                            </div>
                         </div>
-                    </div>
+                    </g:if>
+                    <!--
+                        END Remove if single step process.
+                    -->
+
                     <br/><br/><br/>
                 </fieldset>
                 <g:submitButton name="previous" value="Previous" class="btn btn-primary" style="float:left"/>

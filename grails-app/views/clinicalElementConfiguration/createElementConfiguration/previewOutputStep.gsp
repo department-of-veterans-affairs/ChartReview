@@ -20,7 +20,7 @@ table {
     <g:render template="/templates/showErrors" model="[model: "${dataSetConfigurationInstance}"]" />
     <g:form >
         <fieldset class="form">
-            <legend>Step 3 - Preview Output</legend>
+            <legend>Step 4 - Preview Query Output</legend>
             <g:if test="${dto.elementType == 'LIST'}">
                 <div class="panel panel-default">
                    <table class="table table-condensed" >
@@ -55,7 +55,7 @@ table {
             <br/>
             <br/>
             <g:submitButton name="prev" value="Previous" class="btn btn-primary" />
-            <g:submitButton name="next" value="Next" class="btn btn-primary" style="float:right;" />
+            <g:submitButton name="finish" value="Finish" class="btn btn-primary" style="float:right;" />
         </fieldset>
     </g:form>
 </div>

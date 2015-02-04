@@ -1,11 +1,15 @@
+<%@ page import="chartreview.WelcomeController" %>
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta name="layout" content="main"/>
 		<g:title>Welcome to ChartReview</g:title>
         <r:require modules="bootstrap"/>
-	</head>
+        <script type="text/javascript" src="${request.contextPath}/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="${request.contextPath}/js/dataTables.bootstrap.js"></script>
+    </head>
 	<body>
+
         <h1>Welcome to ChartReview</h1>
         <br/>
         <div class="hero-unit">
@@ -13,17 +17,16 @@
             <br/>
             <g:form>
             <div class="form-horizontal">
-                <div class="control-group">
-
+                <div class="control-group" style="vertical-align: middle;">
                     <div class="control-label">
                         Project
                     </div>
-                    <div class="controls">
+                    <div class="controls" style="vertical-align: middle">
                         <g:select id="projectId" name="projectId"
                               noSelection="${['-1':'Select...']}"
                               from="${projects.sort{it.name}}" optionKey="id" optionValue="name"
-                              class="form-control" value="${projectId}"/>
-                        <g:checkBox id="showCompletedProcesses" name="showCompletedProcesses" value = "${showCompletedProcesses}" class="form-control"/> Show Completed Processes
+                              class="form-control input-xlarge" value="${projectId}"/>
+                        <g:checkBox id="showCompletedProcesses" name="showCompletedProcesses" value = "${session.getAttribute(WelcomeController.SESSION_VARIABLE_NAME_SHOW_COMPLETED)}" class="form-control"/> Show Completed Processes
                     </div>
                 </div>
                 <g:if test="${processDisplayNames && processDisplayNames.size() > 0}">
@@ -32,7 +35,7 @@
                             Process
                         </div>
                         <div class="controls">
-                            <g:select onchange="\$('#summaryTable').html('');\$('#getNextButton').hide(); ${remoteFunction(action: 'loadSummaryTable',
+                            <g:select onchange="loadingSummaryTable(); ${remoteFunction(action: 'loadSummaryTable',
                                                     update: [success: 'summaryTable', failure: 'summaryTable'],
                                                     onComplete:'finishUp()',
                                                     params: '\'processId=\' + this.value + \'&projectId=\' + $("#projectId").val()')}"
@@ -42,7 +45,9 @@
                                       noSelection="${['-1':'Select...']}"
                                       optionKey="key"
                                       optionValue="value"
-                                      class="form-control" />
+                                      class="form-control input-xxlarge"
+                                      value="${session.getAttribute(chartreview.WelcomeController.SESSION_VARIABLE_NAME_PROCESS_ID)}"
+                            />
 
                         </div>
                     </div>
@@ -67,9 +72,9 @@
         </div>
         <script>
             $(document).ready(function() {
-                if($("#processId").val())
+                if($("#processId").val() && $("#processId").val() != "-1")
                 {
-                    $('#summaryTable').html('');
+                    $('#summaryTable').html('Loading data....');
                     $('#getNextButton').hide();
                     ${remoteFunction(action: 'loadSummaryTable',
                                             update: [success: 'summaryTable', failure: 'summaryTable'],
@@ -77,6 +82,12 @@
                                             params: '\'processId=\' + $("#processId").val() + \'&projectId=\' + $("#projectId").val()')};
                 }
             });
+
+            function loadingSummaryTable() {
+                $('#getNextButton').hide();
+                $('#summaryTable').html('Loading data.....');
+            }
+
             function finishUp() {
                 if ($('#processId').val() == "-1") {
                     $('#getNextButton').hide();

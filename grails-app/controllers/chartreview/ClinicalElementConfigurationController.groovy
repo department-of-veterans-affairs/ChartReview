@@ -7,7 +7,6 @@ import gov.va.vinci.siman.model.ClinicalElementColumnDef
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
 import gov.va.vinci.siman.model.ClinicalElementConfigurationDetails
 import grails.plugin.gson.converters.GSON
-import groovy.text.SimpleTemplateEngine
 import org.apache.commons.validator.GenericValidator
 import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
@@ -259,6 +258,7 @@ class ClinicalElementConfigurationController {
                 }
 
                 Project project = Project.get(params.projectId);
+                conversation.project = project;
                 details.jdbcDriver = project.getJdbcDriver();
                 details.jdbcPassword = project.getJdbcPassword();
                 details.jdbcUsername = project.getJdbcUsername();
@@ -269,11 +269,33 @@ class ClinicalElementConfigurationController {
                 }
                 conversation.dto = details;
                 conversation.clinicalElementConfiguration  = configuration;
-                step1();
+                nameAndDescriptionStep();
             }
-            on("step1").to "step1"
+            on("nameAndDescriptionStep").to "nameAndDescriptionStep"
         }
-        step1 {
+        nameAndDescriptionStep {
+            on("next"){
+                ClinicalElementConfigurationDetails dto = conversation.dto;
+                if (!setNamdAndDescriptionsParams(params, dto, conversation.projectId)) {
+                    conversation.dto = dto;
+                    return nameAndDescriptionStep();
+                }
+                ClinicalElementConfiguration elementConfiguration = new ClinicalElementConfiguration();
+                elementConfiguration.setId(UUID.randomUUID().toString());
+                elementConfiguration.setName(dto.name);
+                elementConfiguration.setDescription(dto.description);
+                elementConfiguration.setCreatedBy(springSecurityService.authentication.principal.username);
+                elementConfiguration.setActive(dto.active);
+                elementConfiguration.setVersion(new Timestamp(System.currentTimeMillis()));
+                elementConfiguration.setCreatedDate(new Timestamp(new Date().getTime()));
+                conversation.clinicalElementConfiguration = elementConfiguration;
+            }.to "defineQueriesStep"
+            on("reset").to "reset"
+        }
+        defineQueriesStep {
+            on("prev") {
+
+            }.to "nameAndDescriptionStep"
             on("next"){
                 ClinicalElementConfigurationDetails dto = conversation.dto;
                 setStep1Params(params, dto);
@@ -299,20 +321,26 @@ class ClinicalElementConfigurationController {
                 } catch (Exception e) {
                     flash.message = "Error: ${e.getMessage()}";
                     conversation.dataSetConfigurationInstance = dto;
-                    return step1();
+                    return defineQueriesStep();
                 }
                 conversation.dto = dto;
-            }.to "step2"
+            }.to "columnDefinitionStep"
         }
-        step2 {
+        columnDefinitionStep {
             on("next"){
-
-               ClinicalElementConfigurationDetails dto = conversation.dto;
-               boolean success = copyStep2Params(dto);
+                ClinicalElementConfigurationDetails dto = conversation.dto;
+                def(boolean success, List<String> messages) = copyStep2Params(dto);
 
                conversation.dto = dto;
                if (!success) {
-                    return step2();
+                   if (flash.message == null) {
+                       flash.message = "";
+                   }
+                   messages.each {
+                       flash.message = flash.message + "<br/>" + it;
+                   }
+                   flash.message += "<br/>";
+                   return columnDefinitionStep();
                }
 
                 List<Map> results  = clinicalElementService.getExampleResults(dto);
@@ -320,47 +348,20 @@ class ClinicalElementConfigurationController {
                 if (dto.contentTemplate?.trim().length() > 0 && results.size()>0) {
                     conversation.exampleContentTemplate = clinicalElementService.resultSetToContentTemplate(results.get(0), dto.contentTemplate, true);
                 }
-            }.to "step3"
+            }.to "previewOutputStep"
             on("reset"){
                 ClinicalElementConfigurationDetails dto = conversation.dto;
                 copyStep2Params(dto);
-                flash.clear();
                 conversation.dto = dto;
-            }.to "step1"
+            }.to "defineQueriesStep"
         }
-        step3 {
+        previewOutputStep {
             on("prev"){
-            }.to "step2"
-            on("next"){
-            }.to "step4"
-            on("reset").to "reset"
-        }
-        step4 {
-            on("prev"){
-                ClinicalElementConfigurationDetails dto = conversation.dto;
-                if (!setStep4Params(params, dto, conversation.projectId)) {
-                    conversation.dto = dto;
-                    return step3();
-                }
-                conversation.dto = dto;
-            }.to "step3"
+            }.to "columnDefinitionStep"
             on("finish"){
-                ClinicalElementConfigurationDetails dto = conversation.dto;
-                if (!setStep4Params(params, dto, conversation.projectId)) {
-                    conversation.dto = dto;
-                    return step3();
-                }
-                ClinicalElementConfiguration elementConfiguration = new ClinicalElementConfiguration();
-                elementConfiguration.setId(UUID.randomUUID().toString());
-                elementConfiguration.setName(dto.name);
-                elementConfiguration.setDescription(dto.description);
-                elementConfiguration.setCreatedBy(springSecurityService.authentication.principal.username);
-                elementConfiguration.setActive(dto.active);
-                elementConfiguration.setConfiguration(new Gson().toJson(dto));
-                elementConfiguration.setVersion(new Timestamp(System.currentTimeMillis()));
-                elementConfiguration.setCreatedDate(new Timestamp(new Date().getTime()));
+                ClinicalElementConfiguration elementConfiguration = conversation.clinicalElementConfiguration;
+                elementConfiguration.setConfiguration(new Gson().toJson(conversation.dto));
                 clinicalElementConfigurationService.addClinicalElementConfiguration(conversation.projectId, elementConfiguration);
-
                 redirect(action: 'list', params: [projectId: conversation.projectId]);
             }.to "finish"
             on("reset").to "reset"
@@ -460,16 +461,17 @@ class ClinicalElementConfigurationController {
      *
      *
      ******************************************************************************************************************/
-    protected boolean updateColumnsFromParams(Map params, List<ClinicalElementColumnDef> columns)
+    protected updateColumnsFromParams(Map params, List<ClinicalElementColumnDef> columns)
     {
         boolean atLeastOneKeyField = false;
         boolean returnFalse = false;
+        List<String> messages = new ArrayList<>();
 
         columns.each { column ->
             column.keyField = false;
 
            if (GenericValidator.isBlankOrNull(params.get(column.columnName + "-displayName"))) {
-                appendToFlashMessage("Column ${column.columnName} display name cannot be empty. ");
+                messages.add("Column ${column.columnName} display name cannot be empty. ");
                 returnFalse=true;
             }
             column.displayName = params.get(column.columnName + "-displayName");
@@ -477,7 +479,7 @@ class ClinicalElementConfigurationController {
 
 
         if (returnFalse) {
-            return false;
+            return [false, messages];
         }
 
         params.each { param ->
@@ -493,7 +495,7 @@ class ClinicalElementConfigurationController {
         }
 
         /**
-         * Set exlcudes.
+         * Set excludes.
          */
         columns.each { column ->
             if (params["${column.columnName}-Exclude"] && "on".equals(params["${column.columnName}-Exclude"])) {
@@ -504,31 +506,27 @@ class ClinicalElementConfigurationController {
         }
 
         if (!atLeastOneKeyField) {
-            flash.message = "At least one key field must be selected that uniquely identifies a row.";
-            return false;
+            messages.add("At least one key field must be selected that uniquely identifies a row.");
+            return [false, messages];
         }
-        return true;
+        return [true, messages];
     }
 
-    protected void appendToFlashMessage(String message) {
-        if (flash.message == null) {
-            flash.message = "";
-        }
-        flash.message = flash.message + "<br/>" + message;
-    }
 
     protected ClinicalElementConfigurationDetails setStep1Params(Map params, ClinicalElementConfigurationDetails dto) {
-        dto.jdbcDriver = params.jdbcDriver;
         dto.query = params.query;
         dto.singleElementQuery = params.singleElementQuery;
-        dto.connectionString = params.connectionString;
         dto.examplePatientId = params.examplePatientId;
-        dto.jdbcUsername = params.jdbcUsername;
-        dto.jdbcPassword = params.jdbcPassword;
         return dto;
     }
 
-    protected boolean setStep4Params(Map params, ClinicalElementConfigurationDetails dto, String projectId) {
+    protected boolean setNamdAndDescriptionsParams(Map params, ClinicalElementConfigurationDetails dto, String projectId) {
+        dto.name = params.name;
+        dto.description = params.description;
+        dto.active= false;
+        if ("on".equals(params.active?.toLowerCase())) {
+            dto.active = true;
+        }
         if (GenericValidator.isBlankOrNull(params.name)) {
             flash.message = "Element name is required.";
             return false;
@@ -539,12 +537,7 @@ class ClinicalElementConfigurationController {
             flash.message = "Element with name '${params.name}' already exists.";
             return false;
         }
-        dto.name = params.name;
-        dto.description = params.description;
-        dto.active= false;
-        if ("on".equals(params.active?.toLowerCase())) {
-            dto.active = true;
-        }
+
         return true;
     }
 
@@ -577,7 +570,7 @@ class ClinicalElementConfigurationController {
         return outputObjectList;
     }
 
-    protected boolean copyStep2Params(ClinicalElementConfigurationDetails dto) {
+    protected  copyStep2Params(ClinicalElementConfigurationDetails dto) {
         dto.titleField = params.titleField;
         dto.descriptionField = params.descriptionField;
 

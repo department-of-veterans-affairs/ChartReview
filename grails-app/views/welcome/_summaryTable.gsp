@@ -1,16 +1,19 @@
 <br/>
 <g:if test="${summaryTableDTOs}">
     <h4>Your Recent Work</h4>
-    <table class="table table-bordered table-striped">
-        <tr>
-            <th>Task Id</th>
-            <th>Type</th>
-            <th>Primary Id</th>
-            <th>Status</th>
-            <th>Comment</th>
-            <th>Date</th>
-            <th>&nbsp;&nbsp;</th>
-        </tr>
+    <table class="table table-bordered table-striped" id="recentWorkTable">
+        <thead>
+            <tr>
+                <th>Task Id</th>
+                <th>Type</th>
+                <th>Primary Id</th>
+                <th>Status</th>
+                <th>Comment</th>
+                <th>Date</th>
+                <th>&nbsp;&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
         <g:each in="${summaryTableDTOs}" var="summaryTableDTO">
             <tr>
                 <td>
@@ -51,7 +54,18 @@
                 </td>
             </tr>
         </g:each>
+        </tbody>
     </table>
+    <script>
+        $(document).ready(function() {
+            $('#recentWorkTable').dataTable(
+                    {
+                        "paging":   false,
+                        "info":     false
+                    }
+            );
+        } );
+    </script>
 </g:if>
 <script>
     function doSubmitShowCompleted()
