@@ -14,11 +14,17 @@ Ext.define('CR.app.view.AnnotationEditor', {
     {
         type: 'vbox',
         align: 'stretch',
-        padding: '0 15 0 5' // top right bottom left
+        padding: '0 0 0 0' // top right bottom left
     },
     border: true,
     split: true,
     flex:20,
+    items: [
+        {
+            xtype:'textfield',
+            fieldLabel: 'hi'
+        }
+    ],
     clipFieldName: function(fieldName)
     {
     	var clippedFieldName = fieldName;
@@ -206,7 +212,7 @@ Ext.define('CR.app.view.AnnotationEditor', {
             name: 'textField-' + attribute.attributeDef.id,
             fieldLabel: attribute.attributeDef.name,//this.clipFieldName(attribute.attributeDef.name),
             myAttr: attribute,
-            fieldStyle: "font-size: 12px; padding: 0px 2px 0px 2px; ", // The bottom padding of zero (top, left, bottom, right) is key to getting the text to not be cut-off on the bottom in these ext form field text widgets...
+            fieldStyle: "font-size: 12px;", // The bottom padding of zero (top, left, bottom, right) is key to getting the text to not be cut-off on the bottom in these ext form field text widgets...
 //            labelStyle: {
 //                'fontSize'     : '11px'
 //            },
