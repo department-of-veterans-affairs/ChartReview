@@ -241,7 +241,8 @@ class ProcessController {
                     return;
                 }
 
-                conversation.model = processStep3Params(conversation.model, params);
+                boolean singleStep = (conversation.serviceParameters.size() == 1);
+                conversation.model = processStep3Params(conversation.model, params, singleStep);
                 conversation.model.schemas = getSchemaOptions();
             }.to "step2"
             on("finish"){
@@ -249,8 +250,8 @@ class ProcessController {
                     finish();
                     return;
                 }
-
-                AddProcessWorkflowModel model = processStep3Params(conversation.model, params);
+                boolean singleStep = (conversation.serviceParameters.size() == 1);
+                AddProcessWorkflowModel model = processStep3Params(conversation.model, params, singleStep);
                 List<Object[]> patientIdResultSet = null;
                 try {
                     patientIdResultSet = projectService.runQuery(model.project, model.query);
@@ -333,9 +334,13 @@ class ProcessController {
         return props
     }
 
-    protected AddProcessWorkflowModel processStep3Params(AddProcessWorkflowModel model, def params) {
+    protected AddProcessWorkflowModel processStep3Params(AddProcessWorkflowModel model, def params, boolean singleStep) {
         model.query = params.query;
-        model.processOrTask = params.processOrTask;
+        if (singleStep) {
+            model.processOrTask = "process";
+        } else {
+            model.processOrTask = params.processOrTask;
+        }
         model.processUsers = params.list('processUsers');
         return model;
     }
