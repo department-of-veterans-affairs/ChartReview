@@ -4,7 +4,7 @@ StartTest(function(t) {
 
         { click : "#username", offset : [49, 10] },
 
-        { action : "type", text : "project1[TAB]project1" },
+        { action : "type", text : "u1[TAB]u1" },
 
         { click : "#submit", offset : [29, 17] },
 

@@ -330,18 +330,31 @@
                         showSpectrum: false,
                         showAdvanced: true,
                         basicColors : {
-                            IndianRed: 'CD5C5C',
-                            red : 'f00',
-                            orange : 'f60',
-                            yellow : 'ff0',
-                            green : '008000',
-                            LawnGreen: '7CFC00',
-                            blue : '00f',
-                            peru: 'CD853F',
-                            purple : '800080',
-                            MediumTurquoise: '48D1CC',
-                            aqua: '00FFFF'
-
+                            color01    : '6DD7FF',
+                            color02    : '5D8BD0',
+                            color03    : '66A3FF',
+                            color04    : '708BE6',
+                            color05    : '86A25D',
+                            color06    : '4A8C8A',
+                            color07    : '60CDBB',
+                            color08    : 'A7F99A',
+                            color09    : 'FF7070',
+                            color10    : 'FF3535',
+                            color11    : 'FF8247',
+                            color12    : 'CE5575',
+                            color13    : 'FFA1C1',
+                            color14    : 'DDB3FF',
+                            color15    : '9E83DD',
+                            color16    : 'F4EC57',
+                            color17    : 'FFC60A',
+                            color18    : 'F9BD9F',
+                            color19    : 'FD8BF9',
+                            color20    : 'A5ABB1',
+                            color21    : '43FF62',
+                            color22    : 'DF7762',
+                            color23    : 'D4A746',
+                            color24    : 'A19C92',
+                            color25    : '8981EA'
                         }
                     }
             );
@@ -349,6 +362,6 @@
     </script>
 </g:form>
 <script src="${request.contextPath}/js/tinycolor-0.9.15.min.js"></script>
-<script src="${request.contextPath}/js/pick-a-color-1.1.8.min.js"></script>
+<script src="${request.contextPath}/js/pick-a-color-1.1.8.js"></script>
 </body>
 </html>

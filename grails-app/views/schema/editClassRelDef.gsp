@@ -364,6 +364,6 @@
     </script>
 </g:form>
 <script src="${request.contextPath}/js/tinycolor-0.9.15.min.js"></script>
-<script src="${request.contextPath}/js/pick-a-color-1.1.8.min.js"></script>
+<script src="${request.contextPath}/js/pick-a-color-1.1.8.js"></script>
 </body>
 </html>
