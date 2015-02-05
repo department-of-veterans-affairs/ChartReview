@@ -13,11 +13,13 @@
             if (l.showBasicColors) {
                 var j = a("<div>").addClass("basicColors-content active-content");
                 l.showSpectrum && j.append(a("<h6>").addClass("color-menu-instructions").text("Tap spectrum or drag band to change color"));
+                // CR ENHANCEMENT BEGIN
                 var tab = a("<table>").addClass("basic-colors-table");
                 tab.append("<tr>");
-                var count = 1;
+                var curCol = 1;
                 var k = a("<ul>").addClass("basic-colors-list");
                 var k2 = a("<ul>").addClass("basic-colors-list");
+                var k3 = a("<ul>").addClass("basic-colors-list");
                 a.each(l.basicColors, function (b, c) {
                     var d = a("<li>").addClass("color-item"), f = a("<a>").addClass(b + " color-link"), g = a("<span>").addClass("color-preview " + b), h = a("<span>").addClass("color-label").text(b);
                     if (f.append(g, h), g.append(), "#" !== c[0] && (c = "#" + c), g.css("background-color", c), l.showSpectrum) {
@@ -30,20 +32,54 @@
                             j.append(a("<span>").addClass("highlight-band-stripe"))
                         }), f.append(i.append(j))
                     }
-                    if(count % 2 === 0)
+                    if(curCol == 3)
+                    {
+                        k3.append(d.append(f));
+                    }
+                    else if(curCol == 2)
                     {
                         k2.append(d.append(f));
                     }
                     else
                     {
-                        k.append(d.append(f));a
+                        k.append(d.append(f));
                     }
-                    count++;
+                    if(curCol < 3)
+                    {
+                        curCol++;
+
+                    }
+                    else
+                    {
+                        curCol = 1;
+                    }
                 });
                 tab.append(a("<td>").append(k).append(a("</td>")));
                 tab.append(a("<td>").append(k2).append(a("</td>")));
+                tab.append(a("<td>").append(k3).append(a("</td>")));
                 tab.append(a("</tr></table>"));
-                g.append(tab);
+                j.append(tab);
+                g.append(j);
+                // CR ENHANCEMENT END
+                // OLD CODE BEGIN
+//                var j = a("<div>").addClass("basicColors-content active-content");
+//                l.showSpectrum && j.append(a("<h6>").addClass("color-menu-instructions").text("Tap spectrum or drag band to change color"));
+//                var k = a("<ul>").addClass("basic-colors-list");
+//                a.each(l.basicColors, function (b, c) {
+//                    var d = a("<li> hi").addClass("color-item"), f = a("<a>").addClass(b + " color-link"), g = a("<span>").addClass("color-preview " + b), h = a("<span>").addClass("color-label").text(b);
+//                    if (f.append(g, h), g.append(), "#" !== c[0] && (c = "#" + c), g.css("background-color", c), l.showSpectrum) {
+//                        var i = a("<span>").addClass("color-box spectrum-" + b);
+//                        e && a.each([0, 1], function (d) {
+//                            "fff" !== c && "000" !== b && i.append(a("<span>").addClass(b + "-spectrum-" + d + " ie-spectrum"))
+//                        });
+//                        var j = a("<span>").addClass("highlight-band");
+//                        a.each([0, 1, 2], function () {
+//                            j.append(a("<span>").addClass("highlight-band-stripe"))
+//                        }), f.append(i.append(j))
+//                    }
+//                    k.append(d.append(f))
+//                }), g.append(j.append(k))
+                // OLD CODE END
             }
             if (l.showSavedColors) {
                 var n = l.showBasicColors ? "inactive-content" : "active-content", o = a("<div>").addClass("savedColors-content").addClass(n);
