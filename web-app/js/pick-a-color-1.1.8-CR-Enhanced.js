@@ -112,7 +112,7 @@
                 });
                 var D = a("<span>").addClass("saturation-text").text("Saturation: ").append(a("<span>").addClass("saturation-value").text("100%"));
                 r.append(A.append(D).append(B.append(C)));
-                var E = a("<li>").addClass("preview-item").append(a("<span>").addClass("preview-text").text("Preview")), F = a("<span>").addClass("color-preview advanced").append("<button class='color-select btn btn-mini advanced' type='button'>Select</button>");
+                var E = a("<li>").addClass("preview-item").append(a("<span>").addClass("preview-text").text("Preview")), F = a("<span>").addClass("color-preview advanced").append("Text looks like this in this color.").append("<button class='color-select btn btn-mini advanced' type='button'>Select</button>");
                 r.append(E.append(F)), g.append(q.append(r))
             }
             return b.append(g), b
