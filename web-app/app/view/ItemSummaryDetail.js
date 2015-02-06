@@ -65,7 +65,7 @@ Ext.define('CR.app.view.ItemSummaryDetail', {
             }
             CR.app.controller.AnnotationNatureControllerText.markupAnnotationHTML(this);
         },
-        annotationSelectedByUserInList: function()
+        annotationSelectedByUserInList: function(drawEyeToSelectedAnnotationResult)
         {
             // Should probably be a method in the AnnotationAware mixin.
             if(!this.annotationAwareInitialized)

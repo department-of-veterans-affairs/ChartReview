@@ -83,7 +83,7 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
     annotationSelectionBlur: function()
     {
         CR.app.controller.AnnotationNatureController.setSelectedAnnotation(null);
-        CR.app.controller.AnnotationNatureController.fireAnnotationAwareEvent('annotationSelectedByUserInList');
+        CR.app.controller.AnnotationNatureController.fireAnnotationAwareEvent('annotationSelectedByUserInList', false);
     },
 
     /**
@@ -2037,11 +2037,11 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
          * that have the annotationAware property set to true.
          * @param eventName
          */
-		fireAnnotationAwareEvent: function(eventName)
+		fireAnnotationAwareEvent: function(eventName, arg)
 		{
 			var comps = Ext.ComponentQuery.query('component[annotationAware=true]');
 			for (key in comps) {
-				comps[key].fireEvent(eventName);
+				comps[key].fireEvent(eventName, arg);
 			}
 		},
 

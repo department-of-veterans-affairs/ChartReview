@@ -46,6 +46,7 @@ Ext.application({
         'CR.app.view.AnnotationListButtonToolbar',
         'CR.app.view.AnnotationSchemaPanel',
         'CR.app.view.AnnotationSchemaPopupPanel',
+        'CR.app.view.AnnotationSchemaPopupWindow',
         'CR.app.view.AnnotationTaskPanel',
         'CR.app.view.ChartPortlet',
         'CR.app.view.ChartReviewPanel',

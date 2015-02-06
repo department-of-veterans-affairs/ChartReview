@@ -34,7 +34,7 @@ Ext.define('CR.app.view.AnnotationEditor', {
     	}
     	return clippedFieldName;
     },
-    addEditorWidgets: function(){
+    addEditorWidgets: function(drawEyeToSelectedAnnotationResult){
         this.removeAll(true);
       	var attributes = CR.app.controller.AnnotationNatureControllerAnnotations.getAttributesForSelectedAnnotation();
       	if(attributes.length > 0)
@@ -44,20 +44,34 @@ Ext.define('CR.app.view.AnnotationEditor', {
                 var attribute = attributes[key];
                 if(typeof attribute != 'undefined')
                 {
+                    var fld;
                     if(attribute.attributeDef.options != null)
                     {
-                        var of = this.createOptionField(attribute);
-					    this.add(of);
+                        fld = this.createOptionField(attribute);
                     }
                     else if (Number(attribute.attributeDef.type) == CR.app.controller.AnnotationNatureController.ATTRIBUTE_DEF_TYPE_DATE)
                     {
-                        var df = this.createDateField(attribute);
-                        this.add(df);
+                        fld = this.createDateField(attribute);
                     }
                     else
                     {
-                        var tf = this.createTextField(attribute);
-                        this.add(tf);
+                        fld = this.createTextField(attribute);
+                    }
+                    this.add(fld);
+                    if(drawEyeToSelectedAnnotationResult)
+                    {
+                        var runner = new Ext.util.TaskRunner(),
+                            task = runner.start({
+                                counter: 0,
+                                colors: ['#FF0000', '#FF2929', '#FF4E4E', '#FF6868', '#FF8E8E', '#FFB2B2', '#FFC8C8', '#FFEEEE', '#FFFFFF', '#FFFFFF'],
+                                run: function () {
+                                    fld.setStyle({
+                                        backgroundColor: this.colors[this.counter++]
+                                    });
+                                },
+                                interval: 50,
+                                repeat: 10
+                            });
                     }
                 }
 			}
@@ -320,15 +334,15 @@ Ext.define('CR.app.view.AnnotationEditor', {
     	},
         beforeSync: function()
         {
-            this.addEditorWidgets();
+            this.addEditorWidgets(false);
         },
         principalClinicalElementLoaded: function()
         {
-            this.addEditorWidgets();
+            this.addEditorWidgets(false);
         },
-        annotationSelectedByUserInList: function()
+        annotationSelectedByUserInList: function(drawEyeToSelectedAnnotationResult)
     	{
-    		this.addEditorWidgets();
+    		this.addEditorWidgets(drawEyeToSelectedAnnotationResult);
     	}
     },
     getNewDate: function(attribute){

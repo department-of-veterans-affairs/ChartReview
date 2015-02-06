@@ -47,6 +47,7 @@ Ext.define('CR.app.view.AnnotationList', {
     selRec: null,
     curAnnotations: [],  // Current, unfiltered annotations list.
     doBroadcastNextAnnotationSelection: true,
+    drawEyeToSelectedAnnotationResult: false,
     listeners: {
     	render: function() {
     		var me = this;
@@ -70,7 +71,7 @@ Ext.define('CR.app.view.AnnotationList', {
     	},
         beforeSync: function()
         {
-            this.refreshAnnotationList();
+            this.refreshAnnotationList(false, false);
             // Remember - put anything you want to happen after the refresh into the timeout of refreshAnnotationList
         },
         schemaLoaded: function()
@@ -83,51 +84,51 @@ Ext.define('CR.app.view.AnnotationList', {
         },
         principalClinicalElementLoaded: function()
         {
-            this.refreshAnnotationList(true);
+            this.refreshAnnotationList(true, false);
             // Remember - put anything you want to happen after the refresh into the timeout of refreshAnnotationList
         },
         clinicalElementSelectedByUser: function()
         {
-            this.refreshAnnotationList(false); // Do not broadcast the auto-select of the currently selecting annotation to other components during on this event, especially the grid component that sent this event, because it will potentially change the user's selection in that component.
+            this.refreshAnnotationList(false, false); // Do not broadcast the auto-select of the currently selecting annotation to other components during on this event, especially the grid component that sent this event, because it will potentially change the user's selection in that component.
             // Remember - put anything you want to happen after the refresh into the timeout of refreshAnnotationList
         },
         portletClosed: function()
         {
             // The list of annotations displayed could be different, depending upon the annotation filter type...
-            this.refreshAnnotationList();
+            this.refreshAnnotationList(false, false);
             // Remember - put anything you want to happen after the refresh into the timeout of refreshAnnotationList
         },
         annotationListFilterTypeChangedByUser: function()
         {
-            this.refreshAnnotationList(true);
+            this.refreshAnnotationList(true, false);
             // Remember - put anything you want to happen after the refresh into the timeout of refreshAnnotationList
         },
         annotationCreatedByUserTextLevel: function()
         {
-            this.refreshAnnotationList(true);
+            this.refreshAnnotationList(true, true);
             // Remember - put anything you want to happen after the refresh into the timeout of refreshAnnotationList
         },
         annotationSelectedByUserTextLevel: function()
         {
-            this.refreshAnnotationList(true);
+            this.refreshAnnotationList(true, false);
             // Remember - put anything you want to happen after the refresh into the timeout of refreshAnnotationList
         },
         annotationCreatedByUserRecordLevel: function()
         {
-            this.refreshAnnotationList(true);
+            this.refreshAnnotationList(true, true);
             // Remember - put anything you want to happen after the refresh into the timeout of refreshAnnotationList
         },
         annotationSelectedByUserRecordLevel: function()
         {
-            this.refreshAnnotationList(true);
+            this.refreshAnnotationList(true, false);
             // Remember - put anything you want to happen after the refresh into the timeout of refreshAnnotationList
         },
         annotationSelectionBlur: function()
         {
             CR.app.controller.AnnotationNatureController.setSelectedAnnotation(null);
-            this.refreshAnnotationList(true);
+            this.refreshAnnotationList(true, false);
             // Remember - put anything you want to happen after the refresh into the timeout of refreshAnnotationList
-            CR.app.controller.AnnotationNatureController.fireAnnotationAwareEvent('annotationSelectedByUserInList');
+            CR.app.controller.AnnotationNatureController.fireAnnotationAwareEvent('annotationSelectedByUserInList', this.drawEyeToSelectedAnnotationResult);
         }
     },
 
@@ -261,7 +262,7 @@ Ext.define('CR.app.view.AnnotationList', {
 
         if(attributes)
         {
-            modelName = 'AnnotationListDynamicModel';
+            modelName = 'CR.app.model.AnnotationListModel';
 
             // Add columns from all schema attributes
             columns = new Array();
@@ -307,14 +308,15 @@ Ext.define('CR.app.view.AnnotationList', {
 		}
         if(this.doBroadcastNextAnnotationSelection)
         {
-            CR.app.controller.AnnotationNatureController.fireAnnotationAwareEvent('annotationSelectedByUserInList');
+            CR.app.controller.AnnotationNatureController.fireAnnotationAwareEvent('annotationSelectedByUserInList', this.drawEyeToSelectedAnnotationResult);
         }
         this.doBroadcastNextAnnotationSelection = true;
-	},
+        this.drawEyeToSelectedAnnotationResult = false;
+    },
 	doDeselect: function( that, selected, eOpts )
 	{
         CR.app.controller.AnnotationNatureController.setSelectedAnnotation(null);
-        CR.app.controller.AnnotationNatureController.fireAnnotationAwareEvent('annotationSelectedByUserInList');
+        CR.app.controller.AnnotationNatureController.fireAnnotationAwareEvent('annotationSelectedByUserInList', this.drawEyeToSelectedAnnotationResult);
 	},
 	visibilityCache:[],
 	columnListsAreEqual: function(columns1, columns2)
@@ -349,7 +351,7 @@ Ext.define('CR.app.view.AnnotationList', {
 		return isEqual;
 	},
 
-    selectSelectedAnnotation: function(doBroadcastSelectSelectedAnnotation)
+    selectSelectedAnnotation: function(doBroadcastSelectSelectedAnnotation, drawEyeToSelectedAnnotationResult)
     {
 		var selAnnotation = CR.app.controller.AnnotationNatureController.getSelectedAnnotation();
 	    if(selAnnotation)
@@ -388,6 +390,7 @@ Ext.define('CR.app.view.AnnotationList', {
 		    	}
 	    	}
             this.doBroadcastNextAnnotationSelection = doBroadcastSelectSelectedAnnotation;
+            this.drawEyeToSelectedAnnotationResult = drawEyeToSelectedAnnotationResult;
             this.selModel.select(selItems, false, false);  // This scrolls to the selected item :) TBD - not highlighting yet.
 	    }
     },
@@ -437,7 +440,7 @@ Ext.define('CR.app.view.AnnotationList', {
 	    return ret;
     },
 
-    refreshAnnotationList: function(broadcastSelectSelectedAnnotation, forceRebuildColumns)
+    refreshAnnotationList: function(broadcastSelectSelectedAnnotation, drawEyeToSelectedAnnotationResult)
     {
 		var selAnnotation = CR.app.controller.AnnotationNatureController.getSelectedAnnotation();
     	var annotations = CR.app.controller.AnnotationNatureControllerAnnotations.getAnnotationsForSelectedPrincipalClinicalElementByAnnotationFilterType();
@@ -583,7 +586,7 @@ Ext.define('CR.app.view.AnnotationList', {
         this.store.loadData(newList);
         if(reselectSelectedAnnotation)
         {
-            this.selectSelectedAnnotation(broadcastSelectSelectedAnnotation);
+            this.selectSelectedAnnotation(broadcastSelectSelectedAnnotation, drawEyeToSelectedAnnotationResult);
         }
     },
 
