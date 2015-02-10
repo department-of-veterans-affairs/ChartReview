@@ -564,6 +564,10 @@ Ext.define('CR.app.controller.AnnotationNatureControllerAnnotations', {
                 {
                     feature.type = CR.app.controller.AnnotationNatureController.FEATURE_TYPE_ATTRIBUTE_OPTION;
                 }
+                else if(attribute.attributeDef.type == CR.app.controller.AnnotationNatureController.ATTRIBUTE_DEF_TYPE_BLOB)
+                {
+                    feature.type = CR.app.controller.AnnotationNatureController.FEATURE_TYPE_ATTRIBUTE_BLOB;
+                }
                 else
                 {
                     feature.type = CR.app.controller.AnnotationNatureController.FEATURE_TYPE_ATTRIBUTE_TEXT; // Just use TEXT rather than FEATURE_TYPE_UNKNOWN here

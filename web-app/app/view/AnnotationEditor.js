@@ -53,6 +53,10 @@ Ext.define('CR.app.view.AnnotationEditor', {
                     {
                         fld = this.createDateField(attribute);
                     }
+                    else if (Number(attribute.attributeDef.type) == CR.app.controller.AnnotationNatureController.ATTRIBUTE_DEF_TYPE_BLOB)
+                    {
+                        fld = this.createTextAreaField(attribute);
+                    }
                     else
                     {
                         fld = this.createTextField(attribute);
@@ -218,10 +222,32 @@ Ext.define('CR.app.view.AnnotationEditor', {
         dateTimePanel.add(tf);
         return dateTimePanel;
     },
+    // Creates a text are field
+    createTextAreaField: function(attribute)
+    {
+        var tf = Ext.create('Ext.form.field.TextArea', {
+            id: 'textAreaField-' + attribute.attributeDef.id,
+            name: 'textAreaField-' + attribute.attributeDef.id,
+            fieldLabel: attribute.attributeDef.name,//this.clipFieldName(attribute.attributeDef.name),
+            myAttr: attribute,
+            fieldStyle: "font-size: 12px;", // The bottom padding of zero (top, left, bottom, right) is key to getting the text to not be cut-off on the bottom in these ext form field text widgets...
+//            labelStyle: {
+//                'fontSize'     : '11px'
+//            },
+            labelAlign: 'top',
+            disabled: CR.app.model.CRAppData.readOnly ? true : false
+        });
+        tf.setValue(attribute.value);  // Set this BEFORE the listener gets added or we may proliferate annotations on updateAnnotation
+        tf.on('change', this.onTextChange, this);
+        tf.on('keypress', this.onTextKeypress, this);
+        tf.on('blur', this.onTextBlur, this);
+        tf.enableKeyEvents = true;
+        return tf;
+    },
     // Creates a text field
     createTextField: function(attribute)
     {
-         var tf = Ext.create('Ext.form.field.Text', {
+        var tf = Ext.create('Ext.form.field.Text', {
             id: 'textField-' + attribute.attributeDef.id,
             name: 'textField-' + attribute.attributeDef.id,
             fieldLabel: attribute.attributeDef.name,//this.clipFieldName(attribute.attributeDef.name),

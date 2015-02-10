@@ -21,12 +21,15 @@
         var name = "Text";
         switch(attributeType)
         {
+            case 0:
+            default:
+                name = "Text";
+                break;
             case 1:
                 name = "Numeric";
                 break;
             case 2:
-            default:
-                name = "Text";
+                name = "TextArea";
                 break;
             case 3:
                 name = "Options";
@@ -181,13 +184,13 @@
                               multiple="true"
                     />
                 </div>
-                <g:actionSubmit class="create btn btn-primary" action="addClassDefAttributeDef" value="Add Attributes" />
+                <g:actionSubmit class="create btn btn-primary"  style="width:200px; float:right;" action="addClassDefAttributeDef" value="Add Attributes" />
                 <br/><br/>
                 <fieldset class="buttons">
                     <g:hiddenField name="schemaId" value="${schemaInstance?.id}"/>
                     <g:hiddenField name="classDefId" value="${classDef.id}" />
                     <g:hiddenField name="currentTab" value="${currentTab}" />
-                    <g:actionSubmit class="create btn btn-primary" action="createAttributeDefFromClassDefEdit" value="Create Class Attribute" title="Create a class attribute and start editing it"/>
+                    <g:actionSubmit class="create btn btn-primary"  style="width:200px; float:right;" action="createAttributeDefFromClassDefEdit" value="Create Class Attribute" title="Create a class attribute and start editing it"/>
                 </fieldset>
             </div>
         </div>

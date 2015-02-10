@@ -1182,7 +1182,7 @@ function escapeHtml(originalText)
 
         p=""+escapeCharOther(p);
         p=""+escapeTags(p);
-        //p=""+escapeBR(p);
+//        p=""+escapeBR(p);
 
         escaped=escaped+p;
     }
@@ -1243,6 +1243,7 @@ function escapeCharOther(original)
     var found=true;
     var thechar=original.charCodeAt(0);
     switch(thechar) {
+        case 10:return "&#10;"; break; // CR carriage return
         case 38:return "&amp;"; break; //&
         case 198:return "&AElig;"; break; //Æ
         case 193:return "&Aacute;"; break; //Á
@@ -1340,6 +1341,7 @@ function unescapeHtml(originalText)
         return "";
     }
     return originalText
+        .replace(/&#10;/g,String.fromCharCode(10))
         .replace(/<br\/>/g,String.fromCharCode(10))
         .replace(/&nbsp;/g,String.fromCharCode(32))
         .replace(/&lt;/g,String.fromCharCode(60))

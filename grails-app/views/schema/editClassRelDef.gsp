@@ -21,12 +21,15 @@
         var name = "Text";
         switch(attributeType)
         {
+            case 0:
+            default:
+                name = "Text";
+                break;
             case 1:
                 name = "Numeric";
                 break;
             case 2:
-            default:
-                name = "Text";
+                name = "TextArea";
                 break;
             case 3:
                 name = "Options";

@@ -70,7 +70,7 @@
                     </label>
                     <div class="controls">
                         <g:select class="form-control" id="attributeType" name="type"
-                                  from="${[[k:'0', v:'Text'], [k:'1', v:'Numeric'], [k:'4', v:'Date'], [k:'3', v:'Option']] }"
+                                  from="${[[k:'0', v:'Text'], [k:'2', v:'TextArea'], [k:'1', v:'Numeric'], [k:'4', v:'Date'], [k:'3', v:'Option']] }"
                                   value="${attributeDef?.type}"
                                   optionKey="k" optionValue="v"
                                   onchange="doUpdateAttributeTypeEnablement(this)"
