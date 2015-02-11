@@ -25,22 +25,31 @@
         </style>
         <div id="create-dataSetConfiguration" class="content scaffold-create" role="main">
             <fieldset class="form">
-            <g:if test="${!readOnly}">
+            <g:if test="${!readOnly && !editMode}">
                 <legend>Step 2 - Process Parameters</legend>
             </g:if>
+            <g:elseif test="${editMode}">
+                <legend>Edit Process Parameters</legend>
+            </g:elseif>
             <g:else>
                 <legend>Review Process Parameters</legend>
             </g:else>
             <g:render template="/templates/showErrors" model="[model: "${dataSetConfigurationInstance}"]" />
-            <g:form class="form-horizontal">
+            <g:if test="${editMode}">
+                <g:set var="action" value="editProcess"/>
+            </g:if>
+            <g:else>
+                <g:set var="action" value="addToProject"/>
+            </g:else>
+            <g:form action="${action}" class="form-horizontal">
                 <fieldset id="formFields">
                     <div class="control-group">
-                        <label class="control-label" for="displayName">
+                        <label class="control-label editableClass" for="displayName" >
                             Process Name
                             <i class="icon-question-sign" rel="tooltip" title="The name that is shown throughout the application." id="contentTemplateToolTip"></i>
                         </label>
                         <div class="controls">
-                            <g:textField name="displayName" class="input-xxlarge" id="displayName" value="${model.displayName}"/>
+                            <g:textField name="displayName" class="input-xxlarge editableClass" id="displayName" value="${model.displayName}"/>
                         </div>
                     </div>
 
@@ -102,7 +111,22 @@
             });
         </script>
 
-        <g:if test="${readOnly}">
+        <g:if test="${mode == "edit"}">
+            <script src="${request.contextPath}/js/jquery-disabler.min.js"></script>
+            <script>
+                $(function() {
+
+                    $("#formFields").disabler({
+                        disable : true,
+                        expression : "*:not(.editableClass,#task-usertask1-detailedDescription,#task-usertask2-detailedDescription,#task-usertask3-detailedDescription)"
+                    });
+
+                    $("#formFields").disabler("readOnly", "formFields", true);
+
+                });
+            </script>
+        </g:if>
+        <g:elseif test="${mode == "readOnly"}">
             <script src="${request.contextPath}/js/jquery-disabler.min.js"></script>
             <script>
                 $(function() {
@@ -115,6 +139,6 @@
 
                 });
             </script>
-        </g:if>
+        </g:elseif>
     </body>
 </html>

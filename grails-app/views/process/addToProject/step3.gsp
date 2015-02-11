@@ -77,7 +77,7 @@
                     <legend>Users</legend>
                     <div style="margin: 20px; margin-bottom: 60px;">
                         <g:each in="${authorities}" var="user">
-                            <div class="form-horizontal" style="margin: 5px"><g:checkBox name="processUsers" value="${user.user.username}" checked="${model.processUsers.contains(user.user.username)}"/> ${user.user.username}</div>
+                            <div class="form-horizontal" style="margin: 5px"><g:checkBox name="processUsers" value="${user.user.username}" checked="${model.processUsers.contains(user.user.username)}" class="editableClass"/> ${user.user.username}</div>
                         </g:each>
                     </div>
 
@@ -107,11 +107,14 @@
                     <br/><br/><br/>
                 </fieldset>
                 <g:submitButton name="previous" value="Previous" class="btn btn-primary" style="float:left"/>
-                <g:if test="${!readOnly}">
-                    <g:submitButton name="finish" value="Create Tasks and Finish" class="btn btn-primary" style="float:right"/>
-                </g:if>
-                <g:else>
+                <g:if test="${mode == "readOnly"}">
                     <g:link controller="project" action="show" id="${project.id}" style="float: right;" class="btn btn-primary">Back To Project</g:link>
+                </g:if>
+                <g:elseif test="${mode == "edit"}">
+                    <g:submitButton name="finish" value="Save Edits" class="btn btn-primary" style="float:right"/>
+                </g:elseif>
+                <g:else>
+                    <g:submitButton name="finish" value="Create Tasks and Finish" class="btn btn-primary" style="float:right"/>
                 </g:else>
             </g:form>
 		</div>
@@ -120,7 +123,22 @@
                 $("[rel=tooltip]").tooltip({ placement: 'right'});
             });
         </script>
-        <g:if test="${readOnly}">
+    <g:if test="${mode == "edit"}">
+        <script src="${request.contextPath}/js/jquery-disabler.min.js"></script>
+        <script>
+            $(function() {
+
+                $("#formFields").disabler({
+                    disable : true,
+                    expression : "*:not(.editableClass)"
+                });
+
+                $("#formFields").disabler("readOnly", "formFields", true);
+
+            });
+        </script>
+    </g:if>
+        <g:if test="${mode == 'readOnly'}">
             <script src="${request.contextPath}/js/jquery-disabler.min.js"></script>
             <script>
                 $(function() {

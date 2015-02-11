@@ -79,14 +79,10 @@ class ProcessService {
      */
     public int startProcess(AddProcessWorkflowModel model, Map<String,String> processFormData, List patientIds) {
         Connection conn;
-        ResultSet rs;
         int instantiatedCount= 0;
         log.debug("Starting process.");
         try {
             conn = projectService.getDatabaseConnection(model.project);
-
-
-            log.debug("Got list of patient id's to instantiate the process for..");
 
             createProcessLevelVariables(model, processFormData)
             String processId = model.processId + "::" + UUID.randomUUID().toString();
@@ -103,13 +99,16 @@ class ProcessService {
                 processInstanceVariables.put(ProcessVariablesEnum.PROCESS_ID.getName(), processId);
                 processInstanceVariables.put(ProcessVariablesEnum.DISPLAY_NAME.getName(), model.displayName);
                 processInstanceVariables.put(ProcessVariablesEnum.PROCESS_OR_TASK.getName(), model.processOrTask);
+
+                /**
+                 * Note: The process_users is used in the bpm for setting who is a candidate user for this task.
+                 */
                 processInstanceVariables.put(ProcessVariablesEnum.PROCESS_USERS.getName(), model.processUsers);
                 ProcessInstance processInstance = runtimeService.startProcessInstanceById(model.processId, businessKey, processInstanceVariables);
 
                 instantiatedCount++;
                 List<Task> taskList = taskService.createTaskQuery().processInstanceId(processInstance.id).list();
                 for (Task task: taskList) {
-                    TaskVariables variables = model.taskVariablesList.find{it.taskDefinitionKey == task.taskDefinitionKey}
                     Map<String, String> a = new HashMap<String, Object>();
                     a.put(TaskVariablesEnum.STATUS.getName(), "");
                     a.put(TaskVariablesEnum.STATUS_COMMENT.getName(), "");
@@ -200,6 +199,81 @@ class ProcessService {
                 }
             }
         }
+    }
+
+    public void updateProcess(String projectGuid, String processDisplayName, Map<String, String> nameValueMap, List<String> users) {
+        Project p = Project.get(projectGuid);
+
+        // Set activiti process variables.
+        List<ProcessInstance> instances =  runtimeService.createProcessInstanceQuery().variableValueEquals(ProcessVariablesEnum.PROJECT_ID.getName(),projectGuid).variableValueEquals(ProcessVariablesEnum.DISPLAY_NAME.getName(),processDisplayName).list();
+        instances.each { process ->
+            String currentUsers = runtimeService.getVariable(process.getId(), ProcessVariablesEnum.PROCESS_USERS.getName());
+            List<String> usersToDelete = new ArrayList<String>();
+
+            if (currentUsers && currentUsers.split(",").length > 0) {
+                currentUsers.substring(1, currentUsers.length() -1 ).split(",").each {
+                    String u = it.trim();
+                    if (!users.contains(u)) {
+                        usersToDelete.add(u);
+                    }
+                }
+            }
+
+            runtimeService.setVariable(process.getId(), ProcessVariablesEnum.PROCESS_USERS.getName(),users);
+
+            // Remove candidate users that are no longer part of the process and add nnew ones.
+            usersToDelete.each { toDelete ->
+                List<Task> taskList = taskService.createTaskQuery().processInstanceId(process.id).list();
+                for (Task task: taskList) {
+                    taskService.deleteCandidateUser(task.getId(), toDelete);
+                    users.each { u ->
+                        if (!currentUsers.contains(u)) {
+                            taskService.addCandidateUser(task.getId(), toDelete);
+                        }
+
+                    }
+                }
+            }
+
+
+            nameValueMap.each{key, value ->
+                if ("displayName" == key) {
+                    runtimeService.setVariable(process.getId(),ProcessVariablesEnum.DISPLAY_NAME.getName(), value);
+                }
+            }
+        }
+
+
+        // Update process users in activiti_runtime_table.
+        ActivitiRuntimeProperty userEntryToUpdate = ActivitiRuntimeProperty.findByProjectAndProcessDisplayNameAndNameAndTaskDefinitionKeyIsNull(p, processDisplayName, "processUsers");
+        userEntryToUpdate.value =  users.join(",");
+        userEntryToUpdate.save();
+
+        // Now set our custom acitivi runtime properties table.
+        nameValueMap.each { key, value ->
+            if ("displayName" == key) {
+                List<ActivitiRuntimeProperty> toUpdate = ActivitiRuntimeProperty.findAllByProjectAndProcessDisplayName(p, processDisplayName);
+                toUpdate.each{
+                  it.setProcessDisplayName(value);
+                  it.save();
+                }
+
+                // Change history activiti instances as well.
+                List<HistoricProcessInstance> historyEntries =  historyService.createHistoricProcessInstanceQuery().variableValueEquals(ProcessVariablesEnum.PROJECT_ID.getName(),projectGuid).variableValueEquals(ProcessVariablesEnum.DISPLAY_NAME.getName(),processDisplayName).list();
+                Sql sql = new Sql(dataSource);
+                historyEntries.each {
+                    sql.execute("update act_hi_varinst set text_ = ? where execution_id_ = ? and name_ = ?", [ value, it.id, ProcessVariablesEnum.DISPLAY_NAME.getName()  ]);
+                }
+            }
+            if (key.contains(".")) {
+                String[] taskAndName = key.split("\\.");
+                ActivitiRuntimeProperty entryToUpdate = ActivitiRuntimeProperty.findByProjectAndProcessDisplayNameAndTaskDefinitionKeyAndName(p, processDisplayName, taskAndName[0], taskAndName[1]);
+                entryToUpdate.value = value;
+                entryToUpdate.save();
+            }
+        }
+
+
     }
 
     /**
@@ -1127,6 +1201,8 @@ class ProcessService {
         // log.debug("Historic query took: " + (new Date().getTime() - d.getTime()) / 1000 + " ms.");
         return names;
     }
+
+
 
     protected class IdNameValue {
         def taskId;
