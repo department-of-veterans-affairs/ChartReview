@@ -50,7 +50,7 @@ Ext.define('CR.app.view.ItemInfo', {
                 }
             }
         },
-        annotationSelectedByUserInList: function()
+        annotationSelectedByUserInList: function(drawEyeToSelectedAnnotationResult)
         {
             // Should probably be a method in the AnnotationAware mixin.
             if(!this.annotationAwareInitialized)

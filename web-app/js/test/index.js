@@ -40,7 +40,7 @@ Harness.start(
     },
     {
         group : 'CR Save',
-        hostPageUrl: 'http://localhost:8080/chart-review/chart-review?projectId=57746c68-ff35-410a-ae56-ccf9e1eb3c18&processId=singleStepChartReview:1:4::85165c0d-7f67-45b0-a88b-7f6bedf21bb6&taskId=2828&taskType=COMPLETED',
+        hostPageUrl: 'http://localhost:8080/chart-review/chart-review?projectId=de1eb12c-984d-4cd3-9941-0983567a5e81&processId=singleStepChartReview:1:4::a9fac36e-7eb0-460f-aad2-bdab60d7dd07&taskId=1018&taskType=ASSIGNED',
         items : [
             {
                 title : 'CR Save',

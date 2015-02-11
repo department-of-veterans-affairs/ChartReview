@@ -34,7 +34,7 @@ Ext.define('CR.app.view.AnnotationEditor', {
     	}
     	return clippedFieldName;
     },
-    addEditorWidgets: function(){
+    addEditorWidgets: function(drawEyeToSelectedAnnotationResult){
         this.removeAll(true);
       	var attributes = CR.app.controller.AnnotationNatureControllerAnnotations.getAttributesForSelectedAnnotation();
       	if(attributes.length > 0)
@@ -44,20 +44,38 @@ Ext.define('CR.app.view.AnnotationEditor', {
                 var attribute = attributes[key];
                 if(typeof attribute != 'undefined')
                 {
+                    var fld;
                     if(attribute.attributeDef.options != null)
                     {
-                        var of = this.createOptionField(attribute);
-					    this.add(of);
+                        fld = this.createOptionField(attribute);
                     }
                     else if (Number(attribute.attributeDef.type) == CR.app.controller.AnnotationNatureController.ATTRIBUTE_DEF_TYPE_DATE)
                     {
-                        var df = this.createDateField(attribute);
-                        this.add(df);
+                        fld = this.createDateField(attribute);
+                    }
+                    else if (Number(attribute.attributeDef.type) == CR.app.controller.AnnotationNatureController.ATTRIBUTE_DEF_TYPE_BLOB)
+                    {
+                        fld = this.createTextAreaField(attribute);
                     }
                     else
                     {
-                        var tf = this.createTextField(attribute);
-                        this.add(tf);
+                        fld = this.createTextField(attribute);
+                    }
+                    this.add(fld);
+                    if(drawEyeToSelectedAnnotationResult)
+                    {
+                        var runner = new Ext.util.TaskRunner(),
+                            task = runner.start({
+                                counter: 0,
+                                colors: ['#FF0000', '#FF2929', '#FF4E4E', '#FF6868', '#FF8E8E', '#FFB2B2', '#FFC8C8', '#FFEEEE', '#FFFFFF', '#FFFFFF'],
+                                run: function () {
+                                    fld.setStyle({
+                                        backgroundColor: this.colors[this.counter++]
+                                    });
+                                },
+                                interval: 50,
+                                repeat: 10
+                            });
                     }
                 }
 			}
@@ -204,10 +222,32 @@ Ext.define('CR.app.view.AnnotationEditor', {
         dateTimePanel.add(tf);
         return dateTimePanel;
     },
+    // Creates a text are field
+    createTextAreaField: function(attribute)
+    {
+        var tf = Ext.create('Ext.form.field.TextArea', {
+            id: 'textAreaField-' + attribute.attributeDef.id,
+            name: 'textAreaField-' + attribute.attributeDef.id,
+            fieldLabel: attribute.attributeDef.name,//this.clipFieldName(attribute.attributeDef.name),
+            myAttr: attribute,
+            fieldStyle: "font-size: 12px;", // The bottom padding of zero (top, left, bottom, right) is key to getting the text to not be cut-off on the bottom in these ext form field text widgets...
+//            labelStyle: {
+//                'fontSize'     : '11px'
+//            },
+            labelAlign: 'top',
+            disabled: CR.app.model.CRAppData.readOnly ? true : false
+        });
+        tf.setValue(attribute.value);  // Set this BEFORE the listener gets added or we may proliferate annotations on updateAnnotation
+        tf.on('change', this.onTextChange, this);
+        tf.on('keypress', this.onTextKeypress, this);
+        tf.on('blur', this.onTextBlur, this);
+        tf.enableKeyEvents = true;
+        return tf;
+    },
     // Creates a text field
     createTextField: function(attribute)
     {
-         var tf = Ext.create('Ext.form.field.Text', {
+        var tf = Ext.create('Ext.form.field.Text', {
             id: 'textField-' + attribute.attributeDef.id,
             name: 'textField-' + attribute.attributeDef.id,
             fieldLabel: attribute.attributeDef.name,//this.clipFieldName(attribute.attributeDef.name),
@@ -320,15 +360,15 @@ Ext.define('CR.app.view.AnnotationEditor', {
     	},
         beforeSync: function()
         {
-            this.addEditorWidgets();
+            this.addEditorWidgets(false);
         },
         principalClinicalElementLoaded: function()
         {
-            this.addEditorWidgets();
+            this.addEditorWidgets(false);
         },
-        annotationSelectedByUserInList: function()
+        annotationSelectedByUserInList: function(drawEyeToSelectedAnnotationResult)
     	{
-    		this.addEditorWidgets();
+    		this.addEditorWidgets(drawEyeToSelectedAnnotationResult);
     	}
     },
     getNewDate: function(attribute){

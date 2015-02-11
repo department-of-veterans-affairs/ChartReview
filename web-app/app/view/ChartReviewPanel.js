@@ -65,7 +65,7 @@ Ext.define('CR.app.view.ChartReviewPanel', {
             // clinical element views for it.
             this.createTaskClinicalElementPortlets();
         },
-        annotationSelectedByUserInList: function()
+        annotationSelectedByUserInList: function(drawEyeToSelectedAnnotationResult)
         {
             this.showSelectedAnnotation();
         },

@@ -11,7 +11,7 @@
     <g:title><g:fieldValue bean="${attributeDef}" field="name"/></g:title>
     <r:require module="jquery-ui"/>
     <r:require modules="bootstrap"/>
-    <link rel="stylesheet" href="../../static/css/pick-a-color-1.1.8.min.css">
+    <link rel="stylesheet" href="../../static/css/pick-a-color-1.1.8-CR-Enhanced.min.css">
 </head>
 <body>
 
@@ -70,7 +70,7 @@
                     </label>
                     <div class="controls">
                         <g:select class="form-control" id="attributeType" name="type"
-                                  from="${[[k:'0', v:'Text'], [k:'1', v:'Numeric'], [k:'4', v:'Date'], [k:'3', v:'Option']] }"
+                                  from="${[[k:'0', v:'Text'], [k:'2', v:'TextArea'], [k:'1', v:'Numeric'], [k:'4', v:'Date'], [k:'3', v:'Option']] }"
                                   value="${attributeDef?.type}"
                                   optionKey="k" optionValue="v"
                                   onchange="doUpdateAttributeTypeEnablement(this)"
@@ -196,18 +196,31 @@
                         showSpectrum: false,
                         showAdvanced: true,
                         basicColors : {
-                            IndianRed: 'CD5C5C',
-                            red : 'f00',
-                            orange : 'f60',
-                            yellow : 'ff0',
-                            green : '008000',
-                            LawnGreen: '7CFC00',
-                            blue : '00f',
-                            peru: 'CD853F',
-                            purple : '800080',
-                            MediumTurquoise: '48D1CC',
-                            aqua: '00FFFF'
-
+                            Color01    : '6DD7FF',
+                            Color02    : '5D8BD0',
+                            Color03    : '66A3FF',
+                            Color04    : '708BE6',
+                            Color05    : '86A25D',
+                            Color06    : '4A8C8A',
+                            Color07    : '60CDBB',
+                            Color08    : 'A7F99A',
+                            Color09    : 'FF7070',
+                            Color10    : 'FF3535',
+                            Color11    : 'FF8247',
+                            Color12    : 'CE5575',
+                            Color13    : 'FFA1C1',
+                            Color14    : 'DDB3FF',
+                            Color15    : '9E83DD',
+                            Color16    : 'F4EC57',
+                            Color17    : 'FFC60A',
+                            Color18    : 'F9BD9F',
+                            Color19    : 'FD8BF9',
+                            Color20    : 'A5ABB1',
+                            Color21    : '43FF62',
+                            Color22    : 'DF7762',
+                            Color23    : 'D4A746',
+                            Color24    : 'A19C92',
+                            Color25    : '8981EA'
                         }
                     }
             );
@@ -231,6 +244,6 @@
     </script>
 </g:form>
 <script src="${request.contextPath}/js/tinycolor-0.9.15.min.js"></script>
-<script src="${request.contextPath}/js/pick-a-color-1.1.8.min.js"></script>
+<script src="${request.contextPath}/js/pick-a-color-1.1.8-CR-Enhanced.js"></script>
 </body>
 </html>
