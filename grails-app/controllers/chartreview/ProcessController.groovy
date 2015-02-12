@@ -20,7 +20,6 @@ import gov.va.vinci.chartreview.util.StringFormTypeSerializable
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
 import gov.va.vinci.siman.model.QAnnotation
 import gov.va.vinci.siman.tools.ConnectionProvider
-import gov.va.vinci.siman.tools.SimanUtils
 import org.activiti.engine.form.StartFormData
 import org.activiti.engine.impl.form.FormPropertyImpl
 import org.activiti.engine.repository.Deployment
@@ -42,8 +41,8 @@ class ProcessController {
     def clinicalElementConfigurationService;
 
     def list() {
-       def processes = repositoryService.createProcessDefinitionQuery().orderByProcessDefinitionName().asc().list();
-       [processList: processes, total: processes.size()]
+        def processes = repositoryService.createProcessDefinitionQuery().orderByProcessDefinitionName().asc().list();
+        [processList: processes, total: processes.size()]
     }
 
     def diagram() {
@@ -66,24 +65,20 @@ class ProcessController {
         redirect(action: "list")
     }
 
-    def getSchemaOptions(){
-        def annotationSchemas = AnnotationSchema.findAll(sort:'name', order: 'asc');
+    def getSchemaOptions() {
+        def annotationSchemas = AnnotationSchema.findAll(sort: 'name', order: 'asc');
         List<Object> schemaOptions = new ArrayList<Object>();
-        for(AnnotationSchema schema in annotationSchemas)
-        {
+        for (AnnotationSchema schema in annotationSchemas) {
             def found = false;
-            for(Object obj in schemaOptions)
-            {
-                if(obj.value == schema.getId())
-                {
+            for (Object obj in schemaOptions) {
+                if (obj.value == schema.getId()) {
                     found = true;
                     continue;
                 }
             }
-            if(found == false)
-            {
+            if (found == false) {
                 // Put the first one with a given name in.
-                schemaOptions.add([name:schema.getName(), value:schema.getId()]);
+                schemaOptions.add([name: schema.getName(), value: schema.getId()]);
             }
         }
         return schemaOptions;
@@ -97,9 +92,13 @@ class ProcessController {
             action {
                 conversation.schemas = AnnotationSchema.list();
                 conversation.readOnly = false;
+                conversation.editValuesMap = new HashMap<String, Object>();
+
 
                 if (params.readOnly && Boolean.parseBoolean(params.readOnly)) {
-                    conversation.readOnly = Boolean.parseBoolean(params.readOnly);
+                    conversation.mode = "readOnly";
+                } else if ("true".equals(params.editMode)) {
+                    conversation.mode = "edit";
                 }
 
                 Project p = Project.get(params.id);
@@ -111,72 +110,26 @@ class ProcessController {
                 model.query = "select id from patient;";
                 model.project = p;
                 model.schemas = getSchemaOptions();
+                List<ProcessDefinition> processList = repositoryService.createProcessDefinitionQuery().orderByProcessDefinitionName().asc().list()
 
                 conversation.model = model;
-                Map<String, String> serviceParameters = new HashMap<String, String>();
                 conversation.project = p;
                 conversation.authorities = p.authorities.sort{it.user.username};
-                List<ProcessDefinition> processList = repositoryService.createProcessDefinitionQuery().orderByProcessDefinitionName().asc().list()
                 conversation.processes = processList;
                 conversation.serviceParameters = new HashMap<String, String>();
                 conversation.possibleAnnotationGroups = getPossibleAnnotationGroups(p);
 
                 // Copying from an existing process.
-                if (params.proc) {
-                    List<ActivitiRuntimeProperty> processVariables  = processService.getRuntimeProperties(Project.get(params.id), params.proc);
-
-                    model.processId = params.processDefinitionId;
-
-                    def (LinkedList<TaskDefinitionWithVariable> tasks, List<FormPropertyImpl> props, Map<String, ClinicalElementConfiguration> configurationMap) = prepForStep2(model, p)
+                if ( params.proc ) {
+                    String projectIdToCopy = params.id;
+                    String processName = params.proc;
+                    def (Map<String, ClinicalElementConfiguration> configurationMap, LinkedList<TaskDefinitionWithVariable> tasks, HashMap<String, String> serviceParameters) = setupProcessModel(Project.get(projectIdToCopy), processName, model);
                     conversation.clinicalElementConfigurationMap = configurationMap;
-                    model.displayName = processVariables.get(0).processDisplayName;
-                    model.processGroup = Utils.getActivitiRuntimePropertyFromList(ProcessVariablesEnum.CLINICAL_ELEMENT_GROUP.getName(), processVariables)?.value;
-                    model.processOrTask = Utils.getActivitiRuntimePropertyFromList(ProcessVariablesEnum.PROCESS_OR_TASK.getName(), processVariables)?.value;
-                    model.query =  Utils.getActivitiRuntimePropertyFromList(ProcessVariablesEnum.PROCESS_CREATION_QUERY.getName(), processVariables)?.value;
-                    model.processUsers = Utils.getActivitiRuntimePropertyFromList("processUsers", processVariables).value?.tokenize(",");
-                    if (!model.processUsers){
-                        model.processUsers = new ArrayList<String>();
-                    }
-
                     conversation.tasksWithVariables = tasks;
-
-                    // Copy existing task property values over.
-                    model.taskVariablesList.each{ taskVariable ->
-                        List<ActivitiRuntimeProperty> taskVariables  = processService.getRuntimeProperties(Project.get(params.id), params.proc, taskVariable.taskDefinitionKey);
-                        String clinicalElementDisplayParametersListJSON = Utils.getActivitiRuntimePropertyFromList("clinicalElements", taskVariables)?.value;
-
-                        List<ClinicalElementDisplayParameters> originalDisplayParameters = taskVariable.clinicalElements;
-
-                        if (clinicalElementDisplayParametersListJSON) {
-                            List<ClinicalElementDisplayParameters> displayParameters = new Gson().fromJson(clinicalElementDisplayParametersListJSON, new TypeToken<List<ClinicalElementDisplayParameters>>(){}.getType());
-
-                            originalDisplayParameters.each { orig ->
-                                if (!displayParameters.find{it.clinicalElementConfigurationId == orig.clinicalElementConfigurationId}) {
-                                    orig.position = displayParameters.size() + 1;
-                                    displayParameters.add(orig);
-                                }
-                            }
-
-                            taskVariable.clinicalElements = displayParameters;
-                        }
-
-                        def existingTaskVars = processVariables.findAll { it.taskDefinitionKey == taskVariable.taskDefinitionKey};
-                        existingTaskVars.each {
-                            taskVariable.parameters.put(it.name, it.value);
-                        }
-                    }
-
                     conversation.model = model;
                     conversation.formProperties = getStartFormData(model.processId);
-
-                    // Set conversation.serviceParamters correctly.
-                    processVariables.each { variable ->
-                        if (variable.name.startsWith("serviceTask:")) {
-                            serviceParameters.put(variable.name, variable.value);
-                        }
-                    }
-
                     conversation.serviceParameters = serviceParameters;
+                    conversation.originalProcessName = params.proc;
                     step2();
                 } else {
                     step1();
@@ -202,10 +155,7 @@ class ProcessController {
         }
         step2 {
             on("previous") {
-                if (conversation.readOnly) {
-                    step1();
-                    return;
-                }
+                // Only happens on create, not review or edit where step 1 is not available...
                 String validationErrors = null;
                 AddProcessWorkflowModel returnedModel = null;
                 Map serviceParameters;
@@ -218,50 +168,78 @@ class ProcessController {
                 }
             }.to "step1"
             on("next"){
-                if (conversation.readOnly) {
+                if (conversation.mode == "readOnly") {
                     step3();
                     return;
-                }
-                String validationErrors = null;
-                AddProcessWorkflowModel returnedModel = null;
-                Map serviceParameters;
-                (validationErrors, returnedModel, serviceParameters) = processStep2Params(conversation.model, params, conversation.serviceParameters, conversation.project);
-                conversation.model = returnedModel;
-                conversation.serviceParameters = serviceParameters;
-                if (validationErrors) {
-                    flash.message = validationErrors;
-                    return step2();
+                } else if (conversation.mode == "edit"){
+                    conversation.editValuesMap.put("displayName", params.displayName);
+                    conversation.model.displayName = params.displayName;
+                    Map<String, String> webParams = params;
+                    Set<String> taskDescriptionKeys = webParams.keySet().findAll {
+                        it.matches(/taskVariablesList\[[0-9]?\].detailedDescription/)
+                    };
+
+                    taskDescriptionKeys.each {
+                        String indexString =it.substring(it.indexOf("[") + 1, it.indexOf("]"));
+                        int index = new Integer(indexString);
+                        String taskName = conversation.model.taskVariablesList.get(index).taskDefinitionKey;
+                        String varName = it.substring(it.indexOf(".") + 1);
+                        conversation.model.taskVariablesList.get(index).parameters.put(varName, webParams.get(it));
+                        conversation.editValuesMap.put(taskName + "." + varName, webParams.get(it));
+                    }
+                } else {
+                    String validationErrors = null;
+                    AddProcessWorkflowModel returnedModel = null;
+                    Map serviceParameters;
+                    (validationErrors, returnedModel, serviceParameters) = processStep2Params(conversation.model, params, conversation.serviceParameters, conversation.project);
+                    conversation.model = returnedModel;
+                    conversation.serviceParameters = serviceParameters;
+
+                    if (validationErrors) {
+                        flash.message = validationErrors;
+                        return step2();
+                    }
                 }
             }.to "step3"
         }
         step3 {
             on("previous"){
-                if (conversation.readOnly) {
+                if (conversation.mode == "readOnly" || conversation.mode == "edit") {
                     step2();
                     return;
+                } else {
+                    boolean singleStep = (conversation.serviceParameters.size() == 1);
+                    conversation.model = processStep3Params(conversation.model, params, singleStep);
+                    conversation.model.schemas = getSchemaOptions();
                 }
-
-                boolean singleStep = (conversation.serviceParameters.size() == 1);
-                conversation.model = processStep3Params(conversation.model, params, singleStep);
-                conversation.model.schemas = getSchemaOptions();
             }.to "step2"
-            on("finish"){
-                if (conversation.readOnly) {
+            on("finish") {
+                if (conversation.mode == "readOnly") {
                     finish();
                     return;
+                } else if (conversation.mode == "edit") {
+                    def variableMap = conversation.editValuesMap;
+                    boolean singleStep = (conversation.serviceParameters.size() == 1);
+                    AddProcessWorkflowModel model = processStep3Params(conversation.model, params, singleStep);
+                    processService.updateProcess(conversation.project.id, conversation.originalProcessName, variableMap, model.processUsers);
+                    flash.message = "Edits saved.";
+                    redirect(controller: "project", action: 'show', id: conversation.project.id);
+                } else {
+                    boolean singleStep = (conversation.serviceParameters.size() == 1);
+                    AddProcessWorkflowModel model = processStep3Params(conversation.model, params, singleStep);
+                    List<Object[]> patientIdResultSet = null;
+                    try {
+                        patientIdResultSet = projectService.runQuery(model.project, model.query);
+                    } catch (Exception e) {
+                        flash.message = "Error: ${e.getMessage()}";
+                        return step3();
+                    }
+                    int instantiatedCount = processService.startProcess(model, conversation.serviceParameters, patientIdResultSet.collect {
+                        it[0]
+                    });
+                    flash.message = "(${instantiatedCount}) processes started.";
+                    redirect(controller: "project", action: 'show', id: conversation.project.id);
                 }
-                boolean singleStep = (conversation.serviceParameters.size() == 1);
-                AddProcessWorkflowModel model = processStep3Params(conversation.model, params, singleStep);
-                List<Object[]> patientIdResultSet = null;
-                try {
-                    patientIdResultSet = projectService.runQuery(model.project, model.query);
-                } catch (Exception e) {
-                    flash.message = "Error: ${e.getMessage()}";
-                    return step3();
-                }
-                int instantiatedCount = processService.startProcess(model, conversation.serviceParameters, patientIdResultSet.collect { it[0] });
-                flash.message = "(${instantiatedCount}) processes started.";
-                redirect(controller: "project", action: 'show', id: conversation.project.id);
             }.to "finish"
             on("cancel").to "cancel"
         }
@@ -272,6 +250,61 @@ class ProcessController {
             redirect(controller: "project", action:'list')
         }
 
+    }
+
+    protected List setupProcessModel(Project projectToCopy, String processName, AddProcessWorkflowModel model) {
+        Map<String, String> serviceParameters = new HashMap<String, String>();
+        List<ActivitiRuntimeProperty> processVariables = processService.getRuntimeProperties(projectToCopy, processName);
+
+        model.processId = params.processDefinitionId;
+
+        def (LinkedList<TaskDefinitionWithVariable> tasks, List<FormPropertyImpl> props, Map<String, ClinicalElementConfiguration> configurationMap) = prepForStep2(model, projectToCopy)
+
+        model.displayName = processVariables.get(0).processDisplayName;
+        model.processGroup = Utils.getActivitiRuntimePropertyFromList(ProcessVariablesEnum.CLINICAL_ELEMENT_GROUP.getName(), processVariables)?.value;
+        model.processOrTask = Utils.getActivitiRuntimePropertyFromList(ProcessVariablesEnum.PROCESS_OR_TASK.getName(), processVariables)?.value;
+        model.query = Utils.getActivitiRuntimePropertyFromList(ProcessVariablesEnum.PROCESS_CREATION_QUERY.getName(), processVariables)?.value;
+        model.processUsers = Utils.getActivitiRuntimePropertyFromList("processUsers", processVariables).value?.tokenize(",");
+        if (!model.processUsers) {
+            model.processUsers = new ArrayList<String>();
+        }
+
+        // Copy existing task property values over.
+        model.taskVariablesList.each { taskVariable ->
+            List<ActivitiRuntimeProperty> taskVariables = processService.getRuntimeProperties(projectToCopy, processName, taskVariable.taskDefinitionKey);
+            String clinicalElementDisplayParametersListJSON = Utils.getActivitiRuntimePropertyFromList("clinicalElements", taskVariables)?.value;
+
+            List<ClinicalElementDisplayParameters> originalDisplayParameters = taskVariable.clinicalElements;
+
+            if (clinicalElementDisplayParametersListJSON) {
+                List<ClinicalElementDisplayParameters> displayParameters = new Gson().fromJson(clinicalElementDisplayParametersListJSON, new TypeToken<List<ClinicalElementDisplayParameters>>() {
+                }.getType());
+
+                originalDisplayParameters.each { orig ->
+                    if (!displayParameters.find {
+                        it.clinicalElementConfigurationId == orig.clinicalElementConfigurationId
+                    }) {
+                        orig.position = displayParameters.size() + 1;
+                        displayParameters.add(orig);
+                    }
+                }
+
+                taskVariable.clinicalElements = displayParameters;
+            }
+
+            def existingTaskVars = processVariables.findAll { it.taskDefinitionKey == taskVariable.taskDefinitionKey };
+            existingTaskVars.each {
+                taskVariable.parameters.put(it.name, it.value);
+            }
+        }
+
+        // Set conversation.serviceParameters correctly.
+        processVariables.each { variable ->
+            if (variable.name.startsWith("serviceTask:")) {
+                serviceParameters.put(variable.name, variable.value);
+            }
+        }
+        return [configurationMap, tasks, serviceParameters]
     }
 
     def delete() {

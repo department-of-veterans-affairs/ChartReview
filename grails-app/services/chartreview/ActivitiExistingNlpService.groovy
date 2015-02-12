@@ -6,6 +6,9 @@ import gov.va.vinci.siman.cr.SimanPatientCollectionReader
 import org.activiti.engine.delegate.DelegateExecution
 import org.activiti.engine.delegate.JavaDelegate
 
+/**
+ * Class that activi calls to execute an NLP Service.
+ */
 class ActivitiExistingNlpService implements JavaDelegate{
 
     def projectService;

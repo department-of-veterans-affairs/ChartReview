@@ -98,7 +98,7 @@
           from="${projectDocumentList}"
           optionKey="id" optionValue="name"
           noSelection="${['null':'- None -']}"
-          class="input-xxlarge"/>
+          class="input-xxlarge editableClass"/>
 <br/><br/>
 </div>
 <script>
