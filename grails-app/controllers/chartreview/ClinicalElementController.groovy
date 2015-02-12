@@ -82,4 +82,31 @@ class ClinicalElementController {
         render data as GSON;
         return null;
     }
+
+    @RestApiMethod( description="Return the clinical element (minus content) data. The data is returned in JSON format.",
+            path="/clinicalElement/elementBlob",
+            produces= MediaType.APPLICATION_JSON_VALUE,
+            verb=RestApiVerb.POST
+    )
+    @RestApiParams(params=[
+            @RestApiParam(name="serializedKey", type="string", paramType = RestApiParamType.PATH, description = "The serialized key that contains all information needed to get the clinical element.")
+
+    ])
+    /**
+     * Return the element content for a specific element.
+     * @param serializedKey - The serialized key for the clinical element.
+     * @return html data in a json formatted object.
+     */
+    def elementBlob() {
+        log.debug("Element blob for serializedKey: ${params.serializedKey}")
+        def mimeType = clinicalElementService.getMimeType(params.projectId, params.clinicalElementConfigurationId, params.columnName);
+        def data = clinicalElementService.getElementBlob(params.projectId, params.clinicalElementConfigurationId, params.clinicalElementId, params.columnName);
+        response.setContentType("application/octet-stream")
+        response.setHeader("Content-disposition", "filename="+params.columnName)
+        response.setContentType(mimeType);
+        response.contentLength = data.size();
+        response.outputStream << data;
+        response.outputStream.flush()
+        return null;
+    }
 }

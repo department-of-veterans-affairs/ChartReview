@@ -130,14 +130,18 @@ class ClinicalElementService  {
         // TODO - Merge this with the one below?
         Map result = getClinicalElement(conn, templates, serializedKey, true);
         Map<String, String> keyParts = SimanUtils.deSerializeStringToMap(serializedKey, ";");
+        String projectId = keyParts.get("projectId");
+        String clinicalElementGroup = keyParts.get("clinicalElementGroup");
+        String clinicalElementConfigurationId = keyParts.get("clinicalElementConfigurationId");
         ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(keyParts.get("clinicalElementConfigurationId"), conn, templates);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
+        List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
 
         if (!details.contentTemplate) {
             return "";
         }
 
-        String content = resultSetToContentTemplate(result, details.contentTemplate, escapeHtml)
+        String content = resultSetToContentTemplate(result, details.contentTemplate, columns, projectId, clinicalElementGroup, clinicalElementConfigurationId, escapeHtml)
 
         // Comment this out for field-level annotations
         if (wrapInText) {
@@ -160,14 +164,19 @@ class ClinicalElementService  {
         // TODO - Merge this with the one above?
         Map result = getClinicalElement(serializedKey, true);
         Map<String, String> keyParts = SimanUtils.deSerializeStringToMap(serializedKey, ";");
+        String projectId = keyParts.get("projectId");
+        String clinicalElementGroup = keyParts.get("clinicalElementGroup");
+        String clinicalElementConfigurationId = keyParts.get("clinicalElementConfigurationId");
+        String clinicalElementId = keyParts.get("id");
         ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(keyParts.get("clinicalElementConfigurationId"), keyParts.get("projectId"));
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
+        List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
 
         if (!details.contentTemplate) {
             return "";
         }
 
-        String content = resultSetToContentTemplate(result, details.contentTemplate, escapeHtml)
+        String content = resultSetToContentTemplate(result, details.contentTemplate, columns, projectId, clinicalElementGroup, clinicalElementConfigurationId, clinicalElementId, escapeHtml)
 
         //println("Content---->:'" + content + "'")
         String returnText = "";
@@ -183,7 +192,7 @@ class ClinicalElementService  {
 
     }
 
-    public String resultSetToContentTemplate(Map<String, Object> result, String contentTemplate, boolean escapeHtml = true) {
+    public String resultSetToContentTemplate(Map<String, Object> result, String contentTemplate, List<ClinicalElementColumnDef> columns, String projectId, String clinicalElementGroup, String clinicalElementConfigurationId, String clinicalElementId, boolean escapeHtml = true) {
         def engine = new SimpleTemplateEngine()
         def simpleTemplate = engine.createTemplate(contentTemplate);
 
@@ -201,11 +210,15 @@ class ClinicalElementService  {
                 Object o = result.get(key);
 
                 if (o != null && o instanceof java.sql.Clob) {
-                    Clob clob = (Clob)o;
+                    Clob clob = (Clob) o;
                     InputStream inputStream = clob.getAsciiStream();
                     StringWriter w = new StringWriter();
                     IOUtils.copy(inputStream, w);
                     value = w.toString();
+                } else if (o != null && o instanceof byte[]) {
+                    String url = "<img src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+key+"'/>";
+//                    String url = "<video src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+key+"' type='video/mp4'/>";
+                    result.put(key, url);
                 } else {
                     value = result.get(key);
                 }
@@ -266,6 +279,39 @@ class ClinicalElementService  {
         }
 
         return processResult(projectId, clinicalElementGroup, clinicalElementConfigurationId, dto, rs, !includeAllFields);
+    }
+    /**
+     * Returns the data for a single clinical element a given serialized key.
+     *
+     * @param serializedKey the unique serialized key for this clinical element.
+     * @param includeAllFields if true, all fields are included, if false, only rows that have not been checked "exclude"
+     *                          in the clinical element configuration are returned.
+     * @return  the clinical element field map with key being the field name and value being the field value.
+     */
+    public LinkedHashMap<String, Object> getClinicalElement(Connection conn, SQLTemplates templates, String projectId, String clinicalElementConfigurationId, String clinicalElementId, boolean includeAllFields = false) {
+        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, conn, templates);
+        if (!clinicalElementConfiguration) {
+            throw new ValidationException("Clinical element configuration with id ${clinicalElementConfigurationId} not found.");
+        }
+
+        ClinicalElementConfigurationDetails dto = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(clinicalElementConfiguration);
+
+        List<String> parameters = new ArrayList<String>();
+
+        parameters.add(clinicalElementId);
+
+        PreparedStatement ps = conn.prepareStatement(dto.singleElementQuery);
+
+        parameters.eachWithIndex { def entry, int i ->
+            ps.setObject(i+1, entry);
+        }
+
+        ResultSet rs = ps.executeQuery();
+        if (!rs.next()) {
+            return null;
+        }
+
+        return processResult(projectId, null, clinicalElementConfigurationId, dto, rs, !includeAllFields);
     }
 
 
@@ -529,4 +575,67 @@ class ClinicalElementService  {
         return columns;
     }
 
+    /**
+     * Returns the mime type of the given column a given column name as found overloaded in the column's type like this: "blob:mime_type=image/jpeg"
+     */
+    public String getMimeType(String projectId, String clinicalElementConfigurationId, String columnName) {
+//        String mimeType = "image/jpeg";
+        String mimeType = "video/quicktime";
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, projectId);
+        ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
+        List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
+        ClinicalElementColumnDef colDef = findDef(columns, columnName);
+        if(colDef)
+        {
+            String type = colDef.getType();
+            String[] parts = type.split(":");
+            if(parts.length > 1)
+            {
+                String subParts = parts[1].split("=");
+                if(subParts.length > 0 && subParts[0].trim().equals("mime_type"))
+                {
+                    mimeType = subParts[1].trim();
+                }
+            }
+        }
+        return mimeType;
+
+    }
+
+    /**
+     * Finds a column def by name in a list of column defs.
+     * @param sourceList
+     * @param columnName
+     * @return
+     */
+    public ClinicalElementColumnDef findDef(List<ClinicalElementColumnDef> sourceList, String columnName) {
+        for (ClinicalElementColumnDef colDef:  sourceList) {
+            if (colDef.columnName.equals(columnName)) {
+                return colDef;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the blob in the given column for a specific clinical element.
+     * @param serializedKey  the serialized key that represents this clinical elements.
+     * @return  the blob.
+     */
+    public byte[] getElementBlob(String projectId, String clinicalElementConfigurationId, String clinicalElementId, String columnName) {
+        def blob = null;
+        Connection c = null;
+        try {
+            Project p = projectService.getProject(projectId);
+            c = projectService.getDatabaseConnection(p);
+            Map result = getClinicalElement(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId);
+            Object o = result.get(columnName);
+            if (o != null && o instanceof byte[]) {
+                blob = o;
+            }
+        } finally {
+            closeConnection(c);
+        }
+        return blob;
+    }
 }

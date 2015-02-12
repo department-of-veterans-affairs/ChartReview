@@ -498,8 +498,11 @@ class SchemaService {
                             type = "uima.cas.Long";
                             break;
                     case AttributeDef.ATTRIBUTE_DEF_TYPE_TEXT:
-                            type = "uima.cas.String";
-                            break;
+                        type = "uima.cas.String";
+                        break;
+                    case AttributeDef.ATTRIBUTE_DEF_TYPE_BLOB:
+                        type = "uima.cas.String";
+                        break;
                     case AttributeDef.ATTRIBUTE_DEF_TYPE_OPTION:
                             type = "uima.cas.StringList";
                             break;
