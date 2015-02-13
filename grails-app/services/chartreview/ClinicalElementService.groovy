@@ -162,7 +162,6 @@ class ClinicalElementService  {
      */
     public String getElementContent(String serializedKey, boolean wrapInText = true, boolean escapeHtml = true) {
         // TODO - Merge this with the one above?
-        Map result = getClinicalElement(serializedKey, true);
         Map<String, String> keyParts = SimanUtils.deSerializeStringToMap(serializedKey, ";");
         String projectId = keyParts.get("projectId");
         String clinicalElementGroup = keyParts.get("clinicalElementGroup");
@@ -176,6 +175,7 @@ class ClinicalElementService  {
             return "";
         }
 
+        Map result = getClinicalElement(serializedKey, true);
         String content = resultSetToContentTemplate(result, details.contentTemplate, columns, projectId, clinicalElementGroup, clinicalElementConfigurationId, clinicalElementId, escapeHtml)
 
         //println("Content---->:'" + content + "'")
@@ -204,10 +204,10 @@ class ClinicalElementService  {
          result.put(key, temp);}**/
         // Escape the > and < symbols and change the new lines to html breaks
         if (escapeHtml) {
-            result.keySet().each { key ->
+            result.keySet().each { columnName ->
                 String value = null;
 
-                Object o = result.get(key);
+                Object o = result.get(columnName);
 
                 if (o != null && o instanceof java.sql.Clob) {
                     Clob clob = (Clob) o;
@@ -216,16 +216,24 @@ class ClinicalElementService  {
                     IOUtils.copy(inputStream, w);
                     value = w.toString();
                 } else if (o != null && o instanceof byte[]) {
-                    String url = "<img src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+key+"'/>";
-//                    String url = "<video src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+key+"' type='video/mp4'/>";
-                    result.put(key, url);
+                    String tag = null;
+                    String mimeType = getElementMimeType(projectId, clinicalElementConfigurationId, clinicalElementId, columnName);
+                    if(mimeType.startsWith("image"))
+                    {
+                        tag = "<img src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+columnName+"'/>";
+                    }
+                    else if(mimeType.startsWith("video"))
+                    {
+                        tag = "<video src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+columnName+"' type='"+mimeType+"'/>";
+                    }
+                    result.put(columnName, tag);
                 } else {
-                    value = result.get(key);
+                    value = result.get(columnName);
                 }
                 if (value && value.length() > 0) {
-                    result.put(key, StringEscapeUtils.escapeHtml(value).replaceAll("\r\n", "  <br/>")
-                                                                       .replaceAll("\r", " <br/>")
-                                                                       .replaceAll("\n", " <br/>"));
+                    result.put(columnName, StringEscapeUtils.escapeHtml(value).replaceAll("\r\n", "  <br/>")
+                                                                              .replaceAll("\r", " <br/>")
+                                                                              .replaceAll("\n", " <br/>"));
                 }
             }
         }
@@ -576,30 +584,91 @@ class ClinicalElementService  {
     }
 
     /**
-     * Returns the mime type of the given column a given column name as found overloaded in the column's type like this: "blob:mime_type=image/jpeg"
+     * Get the blob in the given column for a specific clinical element.
+     * @param serializedKey  the serialized key that represents this clinical elements.
+     * @return  the blob.
      */
-    public String getMimeType(String projectId, String clinicalElementConfigurationId, String columnName) {
-//        String mimeType = "image/jpeg";
-        String mimeType = "video/quicktime";
+    public String getElementMimeType(String projectId, String clinicalElementConfigurationId, String clinicalElementId, String columnName) {
+        String mimeType = "image/jpeg"
         ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, projectId);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
         List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
         ClinicalElementColumnDef colDef = findDef(columns, columnName);
         if(colDef)
         {
+            // The type will be of the form LONGBLOB:mimeTypeReferenceColumn=video/mp4
             String type = colDef.getType();
             String[] parts = type.split(":");
             if(parts.length > 1)
             {
-                String subParts = parts[1].split("=");
-                if(subParts.length > 0 && subParts[0].trim().equals("mime_type"))
+                String[] subParts = parts[1].split("=");
+                if(subParts.length > 0 && subParts[0].trim().equals("mimeTypeReferenceColumn"))
                 {
-                    mimeType = subParts[1].trim();
+                    String mimeTypeReferenceColumn = subParts[1].trim();
+                    Connection c = null;
+                    try {
+                        Project p = projectService.getProject(projectId);
+                        c = projectService.getDatabaseConnection(p);
+                        Map result = getClinicalElement(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId);
+                        Object o1 = result.get(mimeTypeReferenceColumn);
+                        if (o1 != null && o1 instanceof String) {
+                            mimeType = o1;
+                        }
+                    } finally {
+                        closeConnection(c);
+                    }
                 }
             }
         }
         return mimeType;
+    }
 
+    /**
+     * Get the blob in the given column for a specific clinical element.
+     * @param serializedKey  the serialized key that represents this clinical elements.
+     * @return  the blob.
+     */
+    public Map<String, Object> getElementBlobAndMimeType(String projectId, String clinicalElementConfigurationId, String clinicalElementId, String columnName) {
+        Map<String, Object> ret = new HashMap();
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, projectId);
+        ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
+        List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
+        ClinicalElementColumnDef colDef = findDef(columns, columnName);
+        if(colDef)
+        {
+            // The type will be of the form LONGBLOB:mimeTypeReferenceColumn=video/mp4
+            String type = colDef.getType();
+            String[] parts = type.split(":");
+            if(parts.length > 1)
+            {
+                String[] subParts = parts[1].split("=");
+                if(subParts.length > 0 && subParts[0].trim().equals("mimeTypeReferenceColumn"))
+                {
+                    String mimeTypeReferenceColumn = subParts[1].trim();
+                    String mimeType = null;
+                    byte[] blob = null;
+                    Connection c = null;
+                    try {
+                        Project p = projectService.getProject(projectId);
+                        c = projectService.getDatabaseConnection(p);
+                        Map result = getClinicalElement(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId);
+                        Object o1 = result.get(mimeTypeReferenceColumn);
+                        if (o1 != null && o1 instanceof String) {
+                            mimeType = o1;
+                        }
+                        Object o2 = result.get(columnName);
+                        if (o2 != null && o2 instanceof byte[]) {
+                            blob = o2;
+                        }
+                    } finally {
+                        closeConnection(c);
+                    }
+                    ret.put("mimeType", mimeType);
+                    ret.put("blob", blob);
+                }
+            }
+        }
+        return ret;
     }
 
     /**
@@ -617,25 +686,4 @@ class ClinicalElementService  {
         return null;
     }
 
-    /**
-     * Get the blob in the given column for a specific clinical element.
-     * @param serializedKey  the serialized key that represents this clinical elements.
-     * @return  the blob.
-     */
-    public byte[] getElementBlob(String projectId, String clinicalElementConfigurationId, String clinicalElementId, String columnName) {
-        def blob = null;
-        Connection c = null;
-        try {
-            Project p = projectService.getProject(projectId);
-            c = projectService.getDatabaseConnection(p);
-            Map result = getClinicalElement(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId);
-            Object o = result.get(columnName);
-            if (o != null && o instanceof byte[]) {
-                blob = o;
-            }
-        } finally {
-            closeConnection(c);
-        }
-        return blob;
-    }
 }

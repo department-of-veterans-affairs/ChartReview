@@ -99,13 +99,14 @@ class ClinicalElementController {
      */
     def elementBlob() {
         log.debug("Element blob for serializedKey: ${params.serializedKey}")
-        def mimeType = clinicalElementService.getMimeType(params.projectId, params.clinicalElementConfigurationId, params.columnName);
-        def data = clinicalElementService.getElementBlob(params.projectId, params.clinicalElementConfigurationId, params.clinicalElementId, params.columnName);
+        def ret = clinicalElementService.getElementBlobAndMimeType(params.projectId, params.clinicalElementConfigurationId, params.clinicalElementId, params.columnName);
+        def mimeType = (String)ret.get("mimeType");
+        def blob = (byte[])ret.get("blob");
         response.setContentType("application/octet-stream")
         response.setHeader("Content-disposition", "filename="+params.columnName)
         response.setContentType(mimeType);
-        response.contentLength = data.size();
-        response.outputStream << data;
+        response.contentLength = blob.size();
+        response.outputStream << blob;
         response.outputStream.flush()
         return null;
     }
