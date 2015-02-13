@@ -218,13 +218,14 @@ class ClinicalElementService  {
                 } else if (o != null && o instanceof byte[]) {
                     String tag = null;
                     String mimeType = getElementMimeType(projectId, clinicalElementConfigurationId, clinicalElementId, columnName);
-                    if(mimeType.startsWith("image"))
-                    {
-                        tag = "<img src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+columnName+"'/>";
-                    }
-                    else if(mimeType.startsWith("video"))
+                    if(mimeType.startsWith("video"))
                     {
                         tag = "<video src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+columnName+"' type='"+mimeType+"'/>";
+                    }
+                    else
+//                    if(mimeType.startsWith("image"))
+                    {
+                        tag = "<img src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+columnName+"'/>";
                     }
                     result.put(columnName, tag);
                 } else {
