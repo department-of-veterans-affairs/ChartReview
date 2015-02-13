@@ -19,7 +19,7 @@ environments {
             password = "passw0rd"
             driverClassName="com.mysql.jdbc.Driver";
             dialect = "org.hibernate.dialect.MySQL5InnoDBDialect"
-
+            dbCreate = "update"
             properties {
                 maxActive = 200
                 maxIdle = 5
