@@ -119,7 +119,7 @@ Ext.define('CR.app.view.ItemList', {
                     tooltip: 'Show the clinical element brief description',
                     margin:'2 1 1 2',
                     enableToggle: true,
-                    pressed: true,
+                    pressed: false,
                     scope: this,
                     toggleHandler: this.onDescriptionToggle
                 }, {
