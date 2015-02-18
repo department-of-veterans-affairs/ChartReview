@@ -78,7 +78,7 @@ class ClinicalElementController {
      */
     def element() {
         log.debug("Element for serializedKey: ${params.serializedKey}")
-        Map<String, Object> data = clinicalElementService.getClinicalElement(params.serializedKey);
+        Map<String, Object> data = clinicalElementService.getClinicalElementBySerializedKey(params.serializedKey);
         render data as GSON;
         return null;
     }

@@ -128,7 +128,7 @@ class ClinicalElementService  {
      */
     public String getElementContent(Connection conn, SQLTemplates templates, String serializedKey, boolean wrapInText = true, boolean escapeHtml = true) {
         // TODO - Merge this with the one below?
-        Map result = getClinicalElement(conn, templates, serializedKey, true);
+        Map result = getClinicalElementBySerializedKeyFromConnection(conn, templates, serializedKey, true);
         Map<String, String> keyParts = SimanUtils.deSerializeStringToMap(serializedKey, ";");
         String projectId = keyParts.get("projectId");
         String clinicalElementGroup = keyParts.get("clinicalElementGroup");
@@ -175,7 +175,7 @@ class ClinicalElementService  {
             return "";
         }
 
-        Map result = getClinicalElement(serializedKey, true);
+        Map result = getClinicalElementBySerializedKey(serializedKey, true);
         String content = resultSetToContentTemplate(result, details.contentTemplate, columns, projectId, clinicalElementGroup, clinicalElementConfigurationId, clinicalElementId, escapeHtml)
 
         //println("Content---->:'" + content + "'")
@@ -251,7 +251,7 @@ class ClinicalElementService  {
      *                          in the clinical element configuration are returned.
      * @return  the clinical element field map with key being the field name and value being the field value.
      */
-    public LinkedHashMap<String, Object> getClinicalElement(Connection conn, SQLTemplates templates, String serializedKey, boolean includeAllFields = false) {
+    public LinkedHashMap<String, Object> getClinicalElementBySerializedKeyFromConnection(Connection conn, SQLTemplates templates, String serializedKey, boolean includeAllFields = false) {
         LinkedHashMap<String, String> keyParts = SimanUtils.deSerializeStringToMap(serializedKey, ";");
 
         String projectId = keyParts.get("projectId");
@@ -297,7 +297,7 @@ class ClinicalElementService  {
      *                          in the clinical element configuration are returned.
      * @return  the clinical element field map with key being the field name and value being the field value.
      */
-    public LinkedHashMap<String, Object> getClinicalElement(Connection conn, SQLTemplates templates, String projectId, String clinicalElementConfigurationId, String clinicalElementId, boolean includeAllFields = false) {
+    public LinkedHashMap<String, Object> getClinicalElementByClinicalElementIdFromConnection(Connection conn, SQLTemplates templates, String projectId, String clinicalElementConfigurationId, String clinicalElementId, boolean includeAllFields = false) {
         ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, conn, templates);
         if (!clinicalElementConfiguration) {
             throw new ValidationException("Clinical element configuration with id ${clinicalElementConfigurationId} not found.");
@@ -333,7 +333,7 @@ class ClinicalElementService  {
      *                          in the clinical element configuration are returned.
      * @return  the clinical element field map with key being the field name and value being the field value.
      */
-    public LinkedHashMap<String, Object> getClinicalElement(String serializedKey, boolean includeAllFields = false) {
+    public LinkedHashMap<String, Object> getClinicalElementBySerializedKey(String serializedKey, boolean includeAllFields = false) {
         LinkedHashMap<String, String> keyParts = SimanUtils.deSerializeStringToMap(serializedKey, ";");
         String projectId = keyParts.get("projectId");
         Connection c = null;
@@ -341,7 +341,7 @@ class ClinicalElementService  {
         try {
             Project p = projectService.getProject(projectId);
             c = projectService.getDatabaseConnection(p);
-            getClinicalElement(c, Utils.getSQLTemplate(p.getJdbcDriver()), serializedKey, includeAllFields);
+            getClinicalElementBySerializedKeyFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), serializedKey, includeAllFields);
         } finally {
             closeConnection(c);
         }
@@ -610,7 +610,7 @@ class ClinicalElementService  {
                     try {
                         Project p = projectService.getProject(projectId);
                         c = projectService.getDatabaseConnection(p);
-                        Map result = getClinicalElement(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId);
+                        Map result = getClinicalElementByClinicalElementIdFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId, true);
                         Object o1 = result.get(mimeTypeReferenceColumn);
                         if (o1 != null && o1 instanceof String) {
                             mimeType = o1;
@@ -652,7 +652,7 @@ class ClinicalElementService  {
                     try {
                         Project p = projectService.getProject(projectId);
                         c = projectService.getDatabaseConnection(p);
-                        Map result = getClinicalElement(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId);
+                        Map result = getClinicalElementByClinicalElementIdFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId, true);
                         Object o1 = result.get(mimeTypeReferenceColumn);
                         if (o1 != null && o1 instanceof String) {
                             mimeType = o1;

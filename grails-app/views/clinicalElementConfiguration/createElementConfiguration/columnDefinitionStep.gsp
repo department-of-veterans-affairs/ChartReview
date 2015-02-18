@@ -44,7 +44,7 @@
                             <g:if test="${column.type.startsWith("LONGBLOB")}">
                                 <br>Mime type:
                                 <g:select name="${column.columnName}-mimeTypeReferenceColumn"
-                                          from="${dto.dataQueryColumns.findAll{!it.exclude&&it.type.equals("VARCHAR")}}"
+                                          from="${dto.dataQueryColumns.findAll{it.type.equals("VARCHAR")}}"
                                           value="${column.columnName}"
                                           optionKey="columnName" optionValue="columnName" />
                             </g:if>
