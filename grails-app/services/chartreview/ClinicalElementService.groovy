@@ -17,6 +17,7 @@ import org.apache.commons.validator.GenericValidator
 import javax.validation.ValidationException
 import java.sql.*
 import java.util.regex.Pattern
+import java.util.regex.Matcher
 
 import static gov.va.vinci.chartreview.Utils.closeConnection
 
@@ -232,9 +233,24 @@ class ClinicalElementService  {
                     value = result.get(columnName);
                 }
                 if (value && value.length() > 0) {
-                    result.put(columnName, StringEscapeUtils.escapeHtml(value).replaceAll("\r\n", "  <br/>")
-                                                                              .replaceAll("\r", " <br/>")
-                                                                              .replaceAll("\n", " <br/>"));
+                    boolean isUrl = false;
+                    try {
+                        URL url = new URL(value);
+                        isUrl = true;
+                    } catch(MalformedURLException e)
+                    {
+                        // Not a url.
+                    }
+                    if(isUrl)
+                    {
+                        String tag = "<a href='"+value+"' target='_blank'>"+value+"</a>";
+                        result.put(columnName, tag);
+                    }
+                    else {
+                        result.put(columnName, StringEscapeUtils.escapeHtml(value).replaceAll("\r\n", "  <br/>")
+                                .replaceAll("\r", " <br/>")
+                                .replaceAll("\n", " <br/>"));
+                    }
                 }
             }
         }
@@ -471,14 +487,16 @@ class ClinicalElementService  {
         for (int i = 1; i <= metaData.columnCount; i++) {
             // Don't return exclude columns.
             if ((removeExcludedFields && !excludeFields.containsKey(i)) || !removeExcludedFields) {
-                if (rs.getObject(i) != null && rs.getObject(i) instanceof Clob) {
-                    Clob clob = (Clob)rs.getObject(i);
+                Object o = rs.getObject(i);
+                String columnName = dto.dataQueryColumns.get(i-1).columnName;
+                if (o != null && o instanceof Clob) {
+                    Clob clob = (Clob)o;
                     InputStream inputStream = clob.getAsciiStream();
                     StringWriter w = new StringWriter();
                     IOUtils.copy(inputStream, w);
-                    results.put(dto.dataQueryColumns.get(i-1).columnName, w.toString());
+                    results.put(columnName, w.toString());
                 } else {
-                    results.put(dto.dataQueryColumns.get(i-1).columnName, rs.getObject(i));
+                    results.put(columnName, o);
                 }
             }
         }
@@ -718,4 +736,31 @@ class ClinicalElementService  {
         return null;
     }
 
+    //Pull all links from the body for easy retrieval
+    private ArrayList pullUrls(String text) {
+        ArrayList links = new ArrayList();
+
+        String regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(text);
+        while (m.find()) {
+            String urlStr = m.group();
+            if (urlStr.startsWith("(") && urlStr.endsWith(")") )
+            {
+                urlStr = urlStr.substring(1, urlStr.length() - 1);
+            }
+            links.add(urlStr);
+        }
+        return links;
+    }
+
+    private String makeUrlLinks(String text) {
+        String newText = new String(text);
+        ArrayList<String> urls = pullUrls(text);
+        for(String url : urls)
+        {
+            newText = newText.replaceAll(url, "<a href='"+url+"'>"+url+"</a>");
+        }
+        return newText;
+    }
 }
