@@ -15,9 +15,10 @@
     <script src="${request.contextPath}/js/ui-bootstrap-0.12.0.min.js"></script>
     <script src="${request.contextPath}/js/ui-bootstrap-tpls-0.12.0.min.js"></script>
     <script src="${request.contextPath}/js/annotationSchemaRecord/schema.js"></script>
+
 </head>
-<body >
-<div  ng-app="schemaApp" ng-controller="SchemaController" style="margin: 40px" data-ng-init="init('1bb867a9-14ee-441f-bc49-0ab780085b05')">
+<body>
+<div  ng-app="schemaApp" ng-controller="SchemaController" ng-init="init('1bb867a9-14ee-441f-bc49-0ab780085b05');" style="margin: 40px" >
     <g:if test="${model}">
         <legend>Edit Schema</legend>
     </g:if>
@@ -69,7 +70,7 @@
                     </td>
                     <td>
                         <div ng-show="row.type == '1'">
-                            <label>Range</label> <input type="number" ng-model="row.numericLow" ng-disabled="row.type != '1'"/> <label>to</label> <input type="number" ng-model="row.numericHigh" ng-disabled="row.type != '1'"/>
+                            <label>Range</label> <input ng-model="row.numericLow" ng-disabled="row.type != '1'"/> <label>to</label> <input  ng-model="row.numericHigh" ng-disabled="row.type != '1'"/>
                         </div>
                         <div ng-show="row.type == '4'">
                             <label>From</label>
@@ -117,7 +118,7 @@
                     <td style="width: 10px; text-align: center"><span class="btn btn-xs" ng-click="removeClassification(classification)"><i class="icon-trash"></i></span></td>
                     <td>
                         <ng-form name="classificationNameForm">
-                            <input ng-model="classification.name" ng-required="true" name="classificationName" ng-style="classificationColorStyle(classification)" style="width: 100%" classification-uniquename/>
+                            <input ng-model="classification.name" ng-required="true" name="classificationName" background-color="{{classification.color}}" style="width: 100%" classification-uniquename/>
                             <div ng-show="classificationNameForm.classificationName.$dirty" style="font-weight: bold; color: red;">
                                 <div ng-show="classificationNameForm.classificationName.$error.unique">Classification name must be unique. </div>
                             </div>

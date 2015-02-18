@@ -1,45 +1,38 @@
 var app = angular.module('schemaApp', ['ui.bootstrap', 'ui.sortable', 'pickAColor']);
 
+app.directive('backgroundColor', function(){
+    return function(scope, element, attrs){
+        attrs.$observe('backgroundColor', function(value) {
+            element.css({
+                'background-color':  "#" + value
+            });
+        });
+    };
+});
+
 app.controller('SchemaController', ['$scope', function($scope) {
-    var initInjector = angular.injector(["ng"]);
+    var initInjector = angular.injector(["ng", 'schemaApp']);
     var $http = initInjector.get("$http");
 
-    $scope.init =  function (myId) {
-        $http.get("/chart-review/schema/getSchema/" + myId ).then(function(response) {
-            alert(response.data);
+
+    /** Model Object **/
+    $scope.model = {
+        id: null,
+        name : "Loading....",
+        description : "Loading...",
+        attributeDefs : [  ],
+        classDefs : [ ]
+    }
+
+
+    $scope.init =  function (guid) {
+        $http.get("/chart-review/schema/getSchema/" + guid ).then(function(response) {
+            parseXml(response.data, $scope.model);
+            $scope.$apply();
         });
     }
 
-	/** Model Object **/
-	$scope.model = {
-        id: "testGuid",
-		name : "Example",
-		description : "Hard coded example",
-        attributeDefs : [
-			{
-                id: "attributeGuid1", name:'My First Attribute', type: "1", numericLow: 0, numericHigh: 0,
-                attributeOptions: [
-                    {id: "aoid1", value: "a"},
-                    {id: "aoid2", value: "b"},
-                    {id: "aoid3", value: "c"}
-                    ],
-                minDate: "", maxDate: "", isStartDateOpen: false, isEndDateOpen: false
-            },
-			{
-                id: "attributeGuid2", name:'My Second Attribute', type: "3", numericLow: 0, numericHigh: 0,
-                attributeOptions: [
-                    {id: "aoid4", value: "a"},
-                    {id: "aoid5", value: "b"},
-                    {id: "aoid6", value: "c"}
-                    ],
-                minDate: "", maxDate: "", isStartDateOpen: false, isEndDateOpen: false
-            }
-			],
-        classDefs : [
-			{id: "classfuid1", name: "My Classification", color: "#FFFFFF", attributeDefs: []}
-		 ]
-	}
-	
+
 	$scope.newOption = "";
 	
 	/** Controller Actions. **/	
@@ -58,11 +51,11 @@ app.controller('SchemaController', ['$scope', function($scope) {
 		}
 		
 	}
-	
-	$scope.classificationColorStyle = function(classification) {
-		return  { 'background-color' : classification.color };	
+
+	$scope.classificationColorStyle = function(classificationColor) {
+		return  { 'background-color' : classificationColor };
 	}
-	
+
 	$scope.addOption = function(row, newOption) {
 		row.attributeOptions.push({id: generateUUID(), value: newOption});
 	}
@@ -157,6 +150,133 @@ app.directive('classificationUniquename', function(){
         }
     };
 });
+
+function parseXml(xmlString, model) {
+    xmlDoc = $.parseXML( xmlString );
+    $xml = $(xmlDoc);
+
+    // Top Level Model Object
+    model.id= $xml.find("annotationSchema > id").text();
+    model.name= $xml.find("annotationSchema > name").text();
+    model.description= $xml.find("annotationSchema > description").text();
+    model.attributeDefs.length = 0;
+    model.classDefs.length = 0;
+
+    /**
+     * Get Sort order first, so we know what order to load items.
+     */
+    var annotationSchemaAttributeDefSortOrders = []
+    $xml.find("annotationSchemaAttributeDefSortOrder").each(function() {
+        annotationSchemaAttributeDefSortOrders.push( {
+                objId: $(this).find("objId").text(),
+                sortOrder: $(this).find("sortOrder").text() }
+        );
+    });
+    annotationSchemaAttributeDefSortOrders.sort(function(a,b) {
+        if ( a.sortOrder > b.sortOrder){
+            return 1;
+        }
+        if (a.sortOrder < b.sortOrder) {
+            return -1;
+        }
+        return 0;
+    });
+
+    var classDefSortOrders = []
+    $xml.find("annotationSchemaClassDefSortOrder").each(function() {
+        classDefSortOrders.push( {
+                objId: $(this).find("objId").text(),
+                sortOrder: $(this).find("sortOrder").text() }
+        );
+    });
+    classDefSortOrders.sort(function(a,b) {
+        if ( a.sortOrder > b.sortOrder){
+            return 1;
+        }
+        if (a.sortOrder < b.sortOrder) {
+            return -1;
+        }
+        return 0;
+    });
+    /**
+     * End Getting sort orders.
+     */
+
+
+    // Load Atributes
+    var attributeDefs = [];
+    var attributeLength = annotationSchemaAttributeDefSortOrders.length;
+    for (var i=0; i < attributeLength ; i++) {
+        var guid = annotationSchemaAttributeDefSortOrders[i].objId;
+        $xml.find("attributeDef[id='" +  guid + "']").each(function() {
+                var attributeDef = {
+                    id: $(this).attr("id"),
+                    name: $(this).find("name").text(),
+                    type: $(this).attr("type"),
+                    numericLow: $(this).find("numericLow").text(),
+                    numericHigh: $(this).find("numericHigh").text(),
+                    attributeOptions: null,
+                    minDate: $(this).find("minDate").text(),
+                    maxDate: $(this).find("maxDate").text(),
+                    isStartDateOpen: false,
+                    isEndDateOpen: false
+                }
+
+                var attributeOptions = [];
+                $(this).find("attributeDefOptionDef").each(function() {
+                    var attributeOption = { id: $(this).attr("id"), value: $(this).text()};
+                    attributeOptions.push(attributeOption);
+
+                })
+
+                attributeDef.attributeOptions = attributeOptions;
+
+                attributeDefs.push(attributeDef);
+            }
+        )
+    }
+    model.attributeDefs = attributeDefs;
+
+    // Classdefs
+    var classDefs = [];
+    attributeLength = classDefSortOrders.length;
+    for (var i=0; i < attributeLength ; i++) {
+        var guid = classDefSortOrders[i].objId;
+        $xml.find("classDef[id='" + guid + "']").each(function() {
+            var classDef = {
+                id:  $(this).attr("id"),
+                name: $(this).find("name").text(),
+                color: $(this).find("color").text(),
+                attributeDefs: null
+            };
+            classDef.name.$dirty = true;
+            var classAttributes = [];
+            $(this).find("attributeDefId").each(function() {
+                var attributeOption = { id: $(this).attr("id"), value: $(this).text()};
+                classAttributes.push(findById($(this).attr("id"), attributeDefs));
+            })
+
+            classDef.attributeDefs = classAttributes;
+            classDefs.push(classDef);
+        })
+    }
+    model.classDefs = classDefs;
+
+
+    return model;
+}
+
+function findById(id, arrayOfObjects) {
+    var arrayLength = arrayOfObjects.length;
+    for (var i = 0; i < arrayLength; i++) {
+        if (arrayOfObjects[i].id == id) {
+            return arrayOfObjects[i];
+        }
+    }
+    return null;
+}
+
+
 
 function createXml(model) {
     var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<annotationSchemas>\n<annotationSchema id=\"" + model.id + "\">\n";
