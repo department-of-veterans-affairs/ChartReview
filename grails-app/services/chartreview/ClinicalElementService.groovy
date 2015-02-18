@@ -297,7 +297,7 @@ class ClinicalElementService  {
      *                          in the clinical element configuration are returned.
      * @return  the clinical element field map with key being the field name and value being the field value.
      */
-    public LinkedHashMap<String, Object> getClinicalElementByClinicalElementIdFromConnection(Connection conn, SQLTemplates templates, String projectId, String clinicalElementConfigurationId, String clinicalElementId, boolean includeAllFields = false) {
+    public LinkedHashMap<String, Object> getClinicalElementByClinicalElementIdFromConnection(Connection conn, SQLTemplates templates, String projectId, String clinicalElementConfigurationId, String clinicalElementId, List<ClinicalElementColumnDef> columns, boolean eliminateBlobColumnsFromQuery, boolean includeAllFields = false) {
         ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, conn, templates);
         if (!clinicalElementConfiguration) {
             throw new ValidationException("Clinical element configuration with id ${clinicalElementConfigurationId} not found.");
@@ -309,7 +309,7 @@ class ClinicalElementService  {
 
         parameters.add(clinicalElementId);
 
-        PreparedStatement ps = conn.prepareStatement(dto.singleElementQuery);
+        PreparedStatement ps = conn.prepareStatement(eliminateBlobColumnsFromQuery ? eliminateBlobsFromQuery(dto.singleElementQuery, columns) : dto.singleElementQuery);
 
         parameters.eachWithIndex { def entry, int i ->
             ps.setObject(i+1, entry);
@@ -323,6 +323,37 @@ class ClinicalElementService  {
         return processResult(projectId, null, clinicalElementConfigurationId, dto, rs, !includeAllFields);
     }
 
+    /**
+     * Save query time by eliminating blob columns from the query.  Replace them with a non-blob column name.
+     * @param query
+     * @param columns
+     * @return
+     */
+    public String eliminateBlobsFromQuery(String query, List<ClinicalElementColumnDef> columns)
+    {
+        String newQuery = new String(query);
+        ClinicalElementColumnDef nonBlobColumn = null;
+        for(int i = 0; i < columns.size(); i++)
+        {
+            ClinicalElementColumnDef col = columns.get(i);
+            if(!col.type.startsWith("LONGBLOB"))
+            {
+                nonBlobColumn = col;
+
+            }
+        }
+        // Replace any blob column name in the query with a non-blob column name, if there is one, otherwise leave it alone.
+        // We are trying to eliminate blobs from the query without having the user specify a new blob-free query.
+        for(int i = 0; i < columns.size(); i++)
+        {
+            ClinicalElementColumnDef col = columns.get(i);
+            if(col.type.startsWith("LONGBLOB") && nonBlobColumn)
+            {
+                newQuery = newQuery.replaceAll(col.columnName, nonBlobColumn.columnName);
+            }
+        }
+        return newQuery;
+    }
 
 
     /**
@@ -610,7 +641,7 @@ class ClinicalElementService  {
                     try {
                         Project p = projectService.getProject(projectId);
                         c = projectService.getDatabaseConnection(p);
-                        Map result = getClinicalElementByClinicalElementIdFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId, true);
+                        Map result = getClinicalElementByClinicalElementIdFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId, columns, false, true);
                         Object o1 = result.get(mimeTypeReferenceColumn);
                         if (o1 != null && o1 instanceof String) {
                             mimeType = o1;
@@ -652,7 +683,7 @@ class ClinicalElementService  {
                     try {
                         Project p = projectService.getProject(projectId);
                         c = projectService.getDatabaseConnection(p);
-                        Map result = getClinicalElementByClinicalElementIdFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId, true);
+                        Map result = getClinicalElementByClinicalElementIdFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId, columns, false, true);
                         Object o1 = result.get(mimeTypeReferenceColumn);
                         if (o1 != null && o1 instanceof String) {
                             mimeType = o1;
