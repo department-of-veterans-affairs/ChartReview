@@ -15,7 +15,6 @@
         <!--
             Annotation Schema Related Classes
           -->
-        <mapping class="gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord" />
         <mapping class="gov.va.vinci.chartreview.model.schema.AnnotationSchema" />
         <mapping class="gov.va.vinci.chartreview.model.schema.AnnotationSchemaRef" />
         <mapping class="gov.va.vinci.chartreview.model.schema.AttributeDef" />

@@ -1,3 +1,4 @@
+<%@ page import="chartreview.AnnotationSchemaController" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,6 +9,8 @@
     <g:title><g:message code="default.list.label" args="[entityName]" /></g:title>
 </head>
 <body>
+    <div style="float:right">Project: <strong>${session.getAttribute("projectName")}</strong>&nbsp;&nbsp;&nbsp;<g:link action="chooseProject">Change</g:link></div>
+<br/><br/>
     <div id="list-schema" class="content scaffold-list" role="main">
         <fieldset>
             <legend><g:message code="default.list.label" args="[entityName]" /></legend>
@@ -31,8 +34,8 @@
             <tbody>
             <g:each in="${model}" status="i" var="schema">
                 <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-                    <td><g:link action="startEdit" id="${schema.id}">${fieldValue(bean: schema, field: "name")}</g:link></td>
-                    <td style="text-align: center"><g:link action="startEdit" id="${schema.id}"><i class="icon-pencil" title="Edit this schema"></i></g:link></td>
+                    <td><g:link action="view" id="${schema.id}">${fieldValue(bean: schema, field: "name")}</g:link></td>
+                    <td style="text-align: center"><g:link action="edit" params="[id: schema.id, projectId: session.getAttribute(chartreview.AnnotationSchemaController.SELECTED_PROJECT)]"><i class="icon-pencil" title="Edit this schema"></i></g:link></td>
                     <td style="text-align: center"><g:link action="delete" id="${schema.id}" onclick="return confirm('Delete this schema?');"><i class="icon-trash" title="Delete this schema"></i></g:link></td>
                     <td style="text-align: center"><span  onclick='doModal("${schema.id}")'><i class="icon-share"></i></span></td>
                     <td style="text-align: center"><g:link action="export" id="${schema.id}" target="_blank"><i class="icon-arrow-down"></g:link></i></td>

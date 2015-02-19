@@ -5,13 +5,14 @@ import gov.va.vinci.chartreview.model.schema.*
 import gov.va.vinci.leo.descriptors.LeoTypeSystemDescription
 import gov.va.vinci.leo.descriptors.TypeDescriptionBuilder
 import groovy.util.slurpersupport.GPathResult
+import groovy.util.slurpersupport.Node
 
 import java.text.SimpleDateFormat
 
 class SchemaService {
 
     def projectService;
-    def idMap = null;
+
 
     /**
      * Get the schema record for a schema id
@@ -23,6 +24,41 @@ class SchemaService {
         AnnotationSchema schema = AnnotationSchema.get(id);
         return schema;
     }
+
+    public AnnotationSchema parseSchemaXml(String xml, boolean changeUUIDs = true) {
+        Map idMap = null;
+        def annotationSchemas = new XmlSlurper().parseText(xml).annotationSchema;
+        AnnotationSchema annotationSchema = null;
+        def it = annotationSchemas.iterator().next();
+
+        if (changeUUIDs) {
+            idMap = Utils.getReplacementsForTempIds(it)
+        } else {
+            // Get ID Map that is a straight map, no replacements.
+            def ids = it.'**'.grep{ it.@id != '' }.'@id'*.text().collect{(String)it} as Set
+            idMap= new HashMap<String, String>();
+            ids.each { guid -> idMap.put(guid, guid) }
+        }
+        String id = Utils.safeGet(idMap, it?.@id?.text())
+        String schemaName = it?.name?.text();
+        int type = 0;
+        String description = it?.description?.text();
+        def tAnnotationSchema = new AnnotationSchema(id, schemaName, type, description);
+        def Set<AttributeDef> attributeDefs = this.prepareAttributeDefs(it?.attributeDefs?.attributeDef, idMap);
+        def Set<ClassDef> classDefs = this.prepareClassDefs(it?.classDefs?.classDef, tAnnotationSchema, attributeDefs, idMap);
+        def Set<ClassRelDef> classRelDefs = this.prepareClassRelDefs(it?.classRelDefs?.classRelDef, classDefs, attributeDefs, idMap);
+        attributeDefs.each { it2 ->
+            tAnnotationSchema.addAttributeDef(it2);
+        }
+        classDefs.each { it2 ->
+            tAnnotationSchema.addClassDef(it2);
+        }
+        classRelDefs.each { it2 ->
+            tAnnotationSchema.addClassRelDef(it2);
+        }
+        return tAnnotationSchema;
+    }
+
 
     /**
      * Example xml:
@@ -217,20 +253,29 @@ class SchemaService {
      * @param xmlToSave
      * @return
      */
-    AnnotationSchema saveSchema(String xmlToSave) {
+    AnnotationSchema saveSchema(String xmlToSave, boolean changeUUIDs = true) {
+        Map idMap = null;
+
         log.info('saveSchema')
         def annotationSchemas = new XmlSlurper().parseText(xmlToSave).annotationSchema;
         AnnotationSchema annotationSchema = null;
         annotationSchemas.each { it ->
-            idMap = Utils.getReplacementsForTempIds(it)
+            if (changeUUIDs) {
+                idMap = Utils.getReplacementsForTempIds(it)
+            } else {
+                // Get ID Map that is a straight map, no replacements.
+                def ids = it.'**'.grep{ it.@id != '' }.'@id'*.text().collect{(String)it} as Set
+                idMap= new HashMap<String, String>();
+                ids.each { guid -> idMap.put(guid, guid) }
+            }
             String id = Utils.safeGet(idMap, it?.@id?.text())
             String schemaName = it?.name?.text();
             int type = 0;
             String description = it?.description?.text();
             def tAnnotationSchema = new AnnotationSchema(id, schemaName, type, description);
-            def Set<AttributeDef> attributeDefs = this.prepareAttributeDefs(it?.attributeDefs?.attributeDef);
-            def Set<ClassDef> classDefs = this.prepareClassDefs(it?.classDefs?.classDef, tAnnotationSchema, attributeDefs);
-            def Set<ClassRelDef> classRelDefs = this.prepareClassRelDefs(it?.classRelDefs?.classRelDef, classDefs, attributeDefs);
+            def Set<AttributeDef> attributeDefs = this.prepareAttributeDefs(it?.attributeDefs?.attributeDef, idMap);
+            def Set<ClassDef> classDefs = this.prepareClassDefs(it?.classDefs?.classDef, tAnnotationSchema, attributeDefs, idMap);
+            def Set<ClassRelDef> classRelDefs = this.prepareClassRelDefs(it?.classRelDefs?.classRelDef, classDefs, attributeDefs, idMap);
             attributeDefs.each { it2 ->
                 tAnnotationSchema.addAttributeDef(it2);
             }
@@ -258,7 +303,7 @@ class SchemaService {
      * @param nodes
      * @return set
      */
-    def Set<AttributeDef> prepareAttributeDefs(GPathResult nodes){
+    def Set<AttributeDef> prepareAttributeDefs(GPathResult nodes, Map idMap){
         log.info('prepareAttributeDefs')
         def attributeDefSet = new HashSet<AttributeDef>(0)
 
@@ -314,7 +359,7 @@ class SchemaService {
      * @param nodes
      * @return set
      */
-    def Set<ClassDef> prepareClassDefs(GPathResult nodes, AnnotationSchema annotationSchema, Set<AttributeDef> attributeDefs){
+    def Set<ClassDef> prepareClassDefs(GPathResult nodes, AnnotationSchema annotationSchema, Set<AttributeDef> attributeDefs, Map idMap){
         log.info('prepareClassDefs')
         def classDefSet = new HashSet<ClassDef>(0)
         nodes?.each { clsDf ->
@@ -382,7 +427,7 @@ class SchemaService {
      * @param nodes
      * @return set
      */
-    def Set<ClassRelDef> prepareClassRelDefs(GPathResult nodes, Set<ClassDef> classDefs, Set<AttributeDef> attributeDefs){
+    def Set<ClassRelDef> prepareClassRelDefs(GPathResult nodes, Set<ClassDef> classDefs, Set<AttributeDef> attributeDefs, Map idMap){
         log.info('prepareClassRelDefs')
         def classRelDefSet = new HashSet<ClassRelDef>(0)
         nodes?.each { clsRlDf ->

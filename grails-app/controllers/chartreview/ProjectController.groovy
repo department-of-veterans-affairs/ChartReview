@@ -4,6 +4,7 @@ import com.mysema.query.sql.SQLQuery
 import com.mysema.query.sql.SQLQueryFactoryImpl
 import com.mysema.query.sql.SQLTemplates
 import gov.va.vinci.chartreview.Utils
+import gov.va.vinci.chartreview.db.CreateAndDropAnnotationSchemaRecord
 import gov.va.vinci.chartreview.model.ActivitiRuntimeProperty
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.ProjectDocument
@@ -24,6 +25,7 @@ import gov.va.vinci.siman.schema.SimanDrop
 import gov.va.vinci.siman.schema.SimanValidate
 import gov.va.vinci.siman.tools.ConnectionProvider
 import gov.va.vinci.siman.tools.SimanUtils
+import org.apache.commons.dbutils.DbUtils
 import org.apache.commons.dbutils.QueryRunner
 import org.apache.commons.dbutils.ResultSetHandler
 import org.apache.commons.dbutils.handlers.ArrayListHandler
@@ -131,6 +133,15 @@ class ProjectController {
         AnnotationTaskCreate annotationTaskCreate = new AnnotationTaskCreate(projectInstance.getDbConnectionInfo(), null);
         annotationTaskCreate.execute();
         annotationTaskCreate.close();
+
+        Connection c = null;
+        try {
+            c = projectService.getDatabaseConnection(projectInstance);
+            CreateAndDropAnnotationSchemaRecord schema = new CreateAndDropAnnotationSchemaRecord(c, null, projectInstance.jdbcDriver);
+            schema.executeCreate();
+        } finally {
+            DbUtils.close(c);
+        }
 
         redirect(action: "show", id: projectInstance.id);
         return

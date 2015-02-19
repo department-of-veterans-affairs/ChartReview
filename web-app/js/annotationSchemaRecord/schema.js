@@ -14,19 +14,21 @@ app.controller('SchemaController', ['$scope', function($scope) {
     var initInjector = angular.injector(["ng", 'schemaApp']);
     var $http = initInjector.get("$http");
 
-
     /** Model Object **/
     $scope.model = {
-        id: null,
-        name : "Loading....",
-        description : "Loading...",
+        id: generateUUID(),
+        name : "",
+        description : "",
         attributeDefs : [  ],
-        classDefs : [ ]
+        classDefs : [ ],
+        xml: null
     }
 
 
-    $scope.init =  function (guid) {
-        $http.get("/chart-review/schema/getSchema/" + guid ).then(function(response) {
+    $scope.init =  function (guid, projectId) {
+        $scope.model.name = "Loading...";
+        $scope.model.description = "Loading...";
+        $http.get("/chart-review/annotationSchema/getSchema/" + guid + "?projectId=" + projectId ).then(function(response) {
             parseXml(response.data, $scope.model);
             $scope.$apply();
         });
@@ -86,9 +88,7 @@ app.controller('SchemaController', ['$scope', function($scope) {
 	}
 	
 	$scope.save = function() {
-
-
-		alert("Data=" + createXml($scope.model));
+        $scope.model.xml =createXml($scope.model);
 	}
 	
 	$scope.openStartDate = function($event, row) {
@@ -301,9 +301,9 @@ function createXml(model) {
 
         // Serialize options
         var optionsLength = attribute.attributeOptions.length;
-        for (var j = 0; i < optionsLength; i++) {
+        for (var j = 0; j < optionsLength; j++) {
             var option =attribute.attributeOptions[j];
-            xml += "<attributeDefOptionDef id=\"" + option.id + "\"><![CDATA[" + option.value + "]]</attributeDefOptionDef>";
+            xml += "<attributeDefOptionDef id=\"" + option.id + "\"><![CDATA[" + option.value + "]]></attributeDefOptionDef>";
         }
         xml += "</attributeDefOptionDefs>";
         xml += "</attributeDef>";
@@ -322,7 +322,7 @@ function createXml(model) {
     arrayLength = model.classDefs.length;
     for (var i = 0; i < arrayLength; i++) {
         var classDef = model.classDefs[i];
-        xml +="<classDef id=\"" + classDef.id + "\"><name><![CDATA[" + classDef.name + "]]</name><color>" + classDef.color + "</color>";
+        xml +="<classDef id=\"" + classDef.id + "\"><name><![CDATA[" + classDef.name + "]]></name><color>" + classDef.color + "</color>";
         xml += "<attributeDefIds>";
         var attributeCount = classDef.attributeDefs.length;
         for (var j =0; j < attributeCount; j++) {
