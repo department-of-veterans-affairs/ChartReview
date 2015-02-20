@@ -1,19 +1,16 @@
 package chartreview
 
-import gov.va.vinci.chartreview.Utils
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
-import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecordDAO
-import org.apache.commons.dbutils.DbUtils
-
-import java.sql.Connection
 import java.sql.Timestamp
 
 class AnnotationSchemaController {
     def schemaService;
     def projectService;
     def springSecurityService;
+    def annotationSchemaService;
+
     public static String SELECTED_PROJECT = "selectedProject";
 
     /** Forward to list page. **/
@@ -23,7 +20,6 @@ class AnnotationSchemaController {
         } else {
             redirect(action: "chooseProject", params: params)
         }
-
     }
 
     def chooseProject() {
@@ -52,19 +48,19 @@ class AnnotationSchemaController {
             params.sort= "name";
         }
 
+        List<AnnotationSchemaRecord> records =  annotationSchemaService.getAll(p);
+        render (view: "list", model: [model: records, total: records.size()]);
+    }
 
-        Connection c = null;
+    def delete() {
+        annotationSchemaService.delete(Project.get(params.projectId), params.id);
+        redirect(action: "list", params: params)
+    }
 
-        try {
-            c = projectService.getDatabaseConnection(p);
-            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
-            List<AnnotationSchemaRecord> records = dao.getAll();
-            render (view: "list", model: [model: records, total: records.size()]);
-        } finally {
-            if (c!= null) {
-                DbUtils.close(c);
-            }
-        }
+    def copy() {
+        Project p = Project.get(params.projectId);
+        annotationSchemaService.copy(p, annotationSchemaService.get(p, params.id), params.newName);
+        redirect(action: "list");
     }
 
     def view() {
@@ -81,7 +77,6 @@ class AnnotationSchemaController {
             redirect(action: "chooseProject", params: params)
             return;
         }
-
         [mode: "Create"]
     }
 
@@ -90,7 +85,6 @@ class AnnotationSchemaController {
             redirect(action: "chooseProject", params: params)
             return;
         }
-
         render (view: "create", model: [mode: "Edit", id: params.id]);
     }
 
@@ -99,54 +93,39 @@ class AnnotationSchemaController {
             redirect(action: "chooseProject", params: params)
             return;
         }
+        AnnotationSchema schema = schemaService.parseSchemaXml(params.xml, false);
 
-        def xml = params.xml;
-        println(params);
-
-        AnnotationSchema schema = schemaService.parseSchemaXml(xml, false);
-
-        Connection c = null;
-
-        try {
-            Project  p = Project.get(session.getAttribute(SELECTED_PROJECT));
-            c = projectService.getDatabaseConnection(p);
-            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
-
-            if ("Create" == params.mode) {
-                AnnotationSchemaRecord record = new AnnotationSchemaRecord();
-                record.id = schema.id;
-                record.name = schema.name;
-                record.description = schema.description;
-                record.createdDate = new Date();
-                record.createdBy = springSecurityService.principal.username;
-                record.lastModifiedDate = record.createdDate;
-                record.lastModifiedBy = springSecurityService.principal.username;
-                record.serializationVersion = "1.0";
-                record.serializationData = xml;
-                record.version = new Timestamp(new Date().getTime());
-                dao.insert(record);
-            } else if ("Edit" == params.mode) {
-                AnnotationSchemaRecord record = dao.get(schema.id);
-                if (!record) {
-                    throw new RuntimeException("Could not find annotation schema record for id: " + schema.id);
-                }
-                record.name = schema.name;
-                record.description = schema.description;
-                record.lastModifiedDate = record.createdDate;
-                record.lastModifiedBy = springSecurityService.principal.username;
-                record.serializationVersion = "1.0";
-                record.serializationData = xml;
-                record.version = new Timestamp(new Date().getTime());
-                dao.update(record);
-            } else {
-                throw new RuntimeException("Un-known mode: ${params.mode}.");
+        Project  p = Project.get(session.getAttribute(SELECTED_PROJECT));
+        if ("Create" == params.mode) {
+            AnnotationSchemaRecord record = new AnnotationSchemaRecord();
+            record.id = schema.id;
+            record.name = schema.name;
+            record.description = schema.description;
+            record.createdDate = new Date();
+            record.createdBy = springSecurityService.principal.username;
+            record.lastModifiedDate = record.createdDate;
+            record.lastModifiedBy = springSecurityService.principal.username;
+            record.serializationVersion = "1.0";
+            record.serializationData = params.xml;
+            record.version = new Timestamp(new Date().getTime());
+            annotationSchemaService.insert(p, record);
+        } else if ("Edit" == params.mode) {
+            AnnotationSchemaRecord record = annotationSchemaService.get(p, schema.id);
+            if (!record) {
+                throw new RuntimeException("Could not find annotation schema record for id: " + schema.id);
             }
-        } catch(Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        } finally {
-            DbUtils.close(c);
+            record.name = schema.name;
+            record.description = schema.description;
+            record.lastModifiedDate = record.createdDate;
+            record.lastModifiedBy = springSecurityService.principal.username;
+            record.serializationVersion = "1.0";
+            record.serializationData = params.xml;
+            record.version = new Timestamp(new Date().getTime());
+            annotationSchemaService.update(p, record);
+        } else {
+            throw new RuntimeException("Unknown mode: ${params.mode}.");
         }
+
         redirect(action: "list");
     }
 
@@ -156,20 +135,9 @@ class AnnotationSchemaController {
      * @return  the annotation schema.
      */
     def getSchema(String id, String projectId) {
-        Connection c = null;
-
-        try {
-            Project p = Project.get(params.projectId);
-            c = projectService.getDatabaseConnection(p);
-            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
-            AnnotationSchemaRecord record = dao.get(id);
-            render record.serializationData;
-            return null;
-        } finally {
-            DbUtils.close(c);
-        }
-
+        AnnotationSchemaRecord record = annotationSchemaService.get(Project.get(params.projectId), id);
+        render record.serializationData;
+        return null;
     }
-
 
 }

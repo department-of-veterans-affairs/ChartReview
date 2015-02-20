@@ -3,6 +3,7 @@ package gov.va.vinci.chartreview.model.schema;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLQueryFactoryImpl;
 import com.mysema.query.sql.SQLTemplates;
+import com.mysema.query.sql.dml.SQLDeleteClause;
 import com.mysema.query.sql.dml.SQLInsertClause;
 import com.mysema.query.sql.dml.SQLUpdateClause;
 import com.mysema.query.types.Projections;
@@ -169,6 +170,18 @@ public class AnnotationSchemaRecordDAO {
     }
 
 
+    /**
+     * Delete a schema.
+     * @param id the id of the schema to delete.
+     *
+     */
+    public void delete(String id) {
+        QAnnotationSchemaRecord QRECORD = QAnnotationSchemaRecord.annotationSchemaRecord;
+
+        new SQLDeleteClause(connection, dialect, QRECORD)
+                .where(QRECORD.id.eq(id))
+                .execute();
+    }
 
     private List<AnnotationSchemaRecord> getAnnotationSchemaRecords(QAnnotationSchemaRecord QRECORD, SQLQuery query) {
         return query.list(
