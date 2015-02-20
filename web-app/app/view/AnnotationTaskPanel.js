@@ -186,45 +186,47 @@ Ext.define('CR.app.view.AnnotationTaskPanel',
     showTaskInfoWindow: function() {
         if(CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement != null)
         {
-            var projectDocumentContents = 'no project document';
             var taskProjectDocument = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskProjectDocument;
             if(taskProjectDocument != null)
             {
-                projectDocumentContents = taskProjectDocument;
+                window.open('http://localhost:8080'+taskProjectDocument);
             }
-            var pnl = this;
-            if(!pnl.win)
+            else
             {
-                var html = '';
-                html += '<div>'
-                html += '<table border="0" cellspacing="0" cellpadding="0" class="taskInfoTable">';
-                if(CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement != null)
+                var pnl = this;
+                if(!pnl.win)
                 {
-                    var name = 'unknown';
-                    var taskName = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskName;
-                    var taskId = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskId;
-                    if(taskName != null)
+                    var html = '';
+                    html += '<div>'
+                    html += '<table border="0" cellspacing="0" cellpadding="0" class="taskInfoTable">';
+                    if(CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement != null)
                     {
-                        name = taskName;
-                    }
-                    else if(taskId != null)
-                    {
-                        name = taskId;
-                    }
-                    html += '<tr><td class="taskInfoTableTD">Task Name:  </td><td class="taskInfoTableTD"><b>'+name+' ('+taskId+')</b></td></tr>';
+                        var name = 'unknown';
+                        var taskName = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskName;
+                        var taskId = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskId;
+                        if(taskName != null)
+                        {
+                            name = taskName;
+                        }
+                        else if(taskId != null)
+                        {
+                            name = taskId;
+                        }
+                        html += '<tr><td class="taskInfoTableTD">Task Name:  </td><td class="taskInfoTableTD"><b>'+name+' ('+taskId+')</b></td></tr>';
 //                            html += '<tr><td class="taskInfoTableTD">Task Id:  </td><td class="taskInfoTableTD"><b>'+taskId+'</b></td></tr>';
-                    html += '<tr><td class="taskInfoTableTD">Principal:  </td><td class="taskInfoTableTD"><b>'+CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.clinicalElementConfigurationName+'</b></td></tr>';
-                    var detailedDescription = 'no detailed description';
-                    var tDetailedDescription = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskDetailedDescription;
-                    if(tDetailedDescription != null)
-                    {
-                        detailedDescription = tDetailedDescription;
+                        html += '<tr><td class="taskInfoTableTD">Principal:  </td><td class="taskInfoTableTD"><b>'+CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.clinicalElementConfigurationName+'</b></td></tr>';
+//                        html += '<tr><td class="taskInfoTableTD">Documentation:  </td><td class="taskInfoTableTD"><a href='+CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskProjectDocument+' target="_blank">'+CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskProjectDocument+'</a></td></tr>';
+                        var detailedDescription = 'no detailed description';
+                        var tDetailedDescription = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskDetailedDescription;
+                        if(tDetailedDescription != null)
+                        {
+                            detailedDescription = tDetailedDescription;
+                        }
+                        html += '<tr><td class="taskInfoTableTD">Description:  </td><td class="taskInfoTableTD"><b>'+detailedDescription+'</b></td></tr>';
                     }
-                    html += '<tr><td class="taskInfoTableTD">Documentation:  </td><td class="taskInfoTableTD"><b>'+detailedDescription+'</b></td></tr>';
-                }
 //                        html += '<tr><td>Project:  </td><td><b>'+CR.app.model.CRAppData.projectId+'</b></td></tr>';
 //                        html += '<tr><td>Process:  </td><td><b>'+CR.app.model.CRAppData.processId+'</b></td></tr>';
-                html += '</table>';
+                    html += '</table>';
 //                if(success)
 //                {
 //                    if(CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement != null)
@@ -234,26 +236,26 @@ Ext.define('CR.app.view.AnnotationTaskPanel',
 ////                                html += projectDocumentContents;
 //                    }
 //                }
-                html += '</div>';
-                pnl.win = Ext.widget('window', {
-                    title: 'Task Info',
-                    iconCls: 'taskInfo',
-                    closeAction: 'hide',
-                    width: 800,
-                    height: 700,
-                    layout: 'border',
-                    resizable: true,
-                    modal: false,
-                    items: [
-                        {
-                            id: 'taskInfoWindowPanel',
-                            xtype: 'panel',
-                            region: 'center',
-                            scrollable: true,
-                            width: '100%',
-                            height: '100%',
-                            html: html
-                        },
+                    html += '</div>';
+                    pnl.win = Ext.widget('window', {
+                        title: 'Task Info',
+                        iconCls: 'taskInfo',
+                        closeAction: 'hide',
+                        width: 800,
+                        height: 700,
+                        layout: 'border',
+                        resizable: true,
+                        modal: false,
+                        items: [
+                            {
+                                id: 'taskInfoWindowPanel',
+                                xtype: 'panel',
+                                region: 'center',
+                                scrollable: true,
+                                width: '100%',
+                                height: '100%',
+                                html: html
+                            },
 //                    { THIS OPENS THE PDF IN THE EXTJS WINDOW - WHICH IS MODAL, BUT CANNOT BE DRAGGED OUT OF THE BROWSER...COOL BUT NOT WHAT IS WANTED, MAYBE...
 //                        xtype: 'component',
 //                        region: 'center',
@@ -263,35 +265,32 @@ Ext.define('CR.app.view.AnnotationTaskPanel',
 //                            src: 'http://localhost:8080'+taskProjectDocument
 //                        }
 //                    },
-                        {
-                            id: 'taskInfoButtonPanel',
-                            xtype: 'container',
-                            width: '100%',
-                            region: 'south',
-                            layout: {
-                                type: 'hbox',
-                                align: 'middle',
-                                pack: 'center'
-                            },
-                            items: [
-                                {
-                                    xtype: 'button',
-                                    text: 'Close',
-                                    margin:'5 5 5 5',
-                                    tooltip: 'Close the task information window.',
-                                    handler: function() {
-                                        this.up('.window').close();
+                            {
+                                id: 'taskInfoButtonPanel',
+                                xtype: 'container',
+                                width: '100%',
+                                region: 'south',
+                                layout: {
+                                    type: 'hbox',
+                                    align: 'middle',
+                                    pack: 'center'
+                                },
+                                items: [
+                                    {
+                                        xtype: 'button',
+                                        text: 'Close',
+                                        margin:'5 5 5 5',
+                                        tooltip: 'Close the task information window.',
+                                        handler: function() {
+                                            this.up('.window').close();
+                                        }
                                     }
-                                }
-                            ]
-                        }
-                    ]
-                });
-            }
-            pnl.win.show();
-            if(taskProjectDocument)
-            {
-                window.open('http://localhost:8080'+taskProjectDocument);
+                                ]
+                            }
+                        ]
+                    });
+                }
+                pnl.win.show();
             }
         }
     },
@@ -503,13 +502,14 @@ Ext.define('CR.app.view.AnnotationTaskPanel',
             html += '<tr><td class="taskInfoTableTD">Task Name:  </td><td class="taskInfoTableTD"><b>'+name+' ('+taskId+')</b></td></tr>';
 //            html += '<tr><td class="taskInfoTableTD">Task Id:  </td><td class="taskInfoTableTD"><b>'+taskId+'</b></td></tr>';
             html += '<tr><td class="taskInfoTableTD">Principal:  </td><td class="taskInfoTableTD"><b>'+CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.clinicalElementConfigurationName+'</b></td></tr>';
+//            html += '<tr><td class="taskInfoTableTD">Documentation:  </td><td class="taskInfoTableTD"><a href='+CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskProjectDocument+' target="_blank">'+CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskProjectDocument+'</a></td></tr>';
             var detailedDescription = 'no detailed description';
             var tDetailedDescription = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement.taskDetailedDescription;
             if(tDetailedDescription != null)
             {
                 detailedDescription = tDetailedDescription;
             }
-            html += '<tr><td class="taskInfoTableTD">Documentation:  </td><td class="taskInfoTableTD"><b>'+detailedDescription+'</b></td></tr>';
+            html += '<tr><td class="taskInfoTableTD">Description:  </td><td class="taskInfoTableTD"><b>'+detailedDescription+'</b></td></tr>';
         }
 //        html += '<tr><td>Project:  </td><td><b>'+CR.app.model.CRAppData.projectId+'</b></td></tr>';
 //        html += '<tr><td>Process:  </td><td><b>'+CR.app.model.CRAppData.processId+'</b></td></tr>';

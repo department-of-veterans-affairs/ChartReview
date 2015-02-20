@@ -101,7 +101,6 @@ class ProjectController {
             closeConnection(c);
         }
 
-
         [
             projectInstance: projectInstance,
             processes: processService.getProcessNamesForProject(id),
@@ -303,7 +302,7 @@ class ProjectController {
     }
 
     def uploadDocument() {
-        Project  p = Project.get(params['projectId']);
+        Project p = Project.get(params['projectId']);
         User u = springSecurityService.principal;
         ProjectDocument fileInstance = new ProjectDocument(id: UUID.randomUUID().toString());
         def uploadedFile = request.getFile('fileUpload')
