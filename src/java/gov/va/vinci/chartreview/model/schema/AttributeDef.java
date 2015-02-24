@@ -30,8 +30,8 @@ public class AttributeDef implements java.io.Serializable, Comparable<AttributeD
     private int type = ATTRIBUTE_DEF_TYPE_TEXT;
     private double numericLow = 0.0;
     private double numericHigh = 999999999999.999;
-    private Date minDate = new Date(0);
-    private Date maxDate = new Date(0);
+    private Date minDate = new Date();
+    private Date maxDate = new Date();
     private List<AttributeDefOptionDef> attributeDefOptionDefs = new ArrayList<AttributeDefOptionDef>( 0 );
     private AnnotationSchema annotationSchema;
     private List<AttributeDefAttributeDefOptionDefSortOrder> attributeDefAttributeDefOptionDefSortOrders = new ArrayList<AttributeDefAttributeDefOptionDefSortOrder>(0);
@@ -42,7 +42,7 @@ public class AttributeDef implements java.io.Serializable, Comparable<AttributeD
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         try
         {
-            minDate = sdf.parse("0000-01-01 00:00:00");
+            minDate = sdf.parse("0002-01-01 00:00:00");
             maxDate = sdf.parse("9999-01-01 00:00:00");
         }
         catch(Exception e)
@@ -338,6 +338,11 @@ public class AttributeDef implements java.io.Serializable, Comparable<AttributeD
             Integer order2 = new Integer(value2);
             return order1.compareTo(order2);
         }
+    }
+
+    public void clearSorts()
+    {
+        this.attributeDefAttributeDefOptionDefSortOrders.clear();
     }
 
 }

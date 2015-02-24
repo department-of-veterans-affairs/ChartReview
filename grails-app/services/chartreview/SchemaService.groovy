@@ -21,6 +21,7 @@ class SchemaService {
     public AnnotationSchema getSchema(String id) {
         log.info('getSchema')
         AnnotationSchema schema = AnnotationSchema.get(id);
+        schema.applySorts();
         return schema;
     }
 
@@ -228,9 +229,9 @@ class SchemaService {
             int type = 0;
             String description = it?.description?.text();
             def tAnnotationSchema = new AnnotationSchema(id, schemaName, type, description);
-            def Set<AttributeDef> attributeDefs = this.prepareAttributeDefs(it?.attributeDefs?.attributeDef);
-            def Set<ClassDef> classDefs = this.prepareClassDefs(it?.classDefs?.classDef, tAnnotationSchema, attributeDefs);
-            def Set<ClassRelDef> classRelDefs = this.prepareClassRelDefs(it?.classRelDefs?.classRelDef, classDefs, attributeDefs);
+            def List<AttributeDef> attributeDefs = this.prepareAttributeDefs(it?.attributeDefs?.attributeDef);
+            def List<ClassDef> classDefs = this.prepareClassDefs(it?.classDefs?.classDef, tAnnotationSchema, attributeDefs);
+            def List<ClassRelDef> classRelDefs = this.prepareClassRelDefs(it?.classRelDefs?.classRelDef, classDefs, attributeDefs);
             attributeDefs.each { it2 ->
                 tAnnotationSchema.addAttributeDef(it2);
             }
@@ -243,6 +244,7 @@ class SchemaService {
             def existingSchemas = AnnotationSchema.findAllByName(schemaName);
             if(existingSchemas.size() == 0)
             {
+                updateAnnotationSchemaSortOrders(tAnnotationSchema, true);
                 tAnnotationSchema.save();
                 if(!annotationSchema)
                 {
@@ -258,9 +260,9 @@ class SchemaService {
      * @param nodes
      * @return set
      */
-    def Set<AttributeDef> prepareAttributeDefs(GPathResult nodes){
+    def List<AttributeDef> prepareAttributeDefs(GPathResult nodes){
         log.info('prepareAttributeDefs')
-        def attributeDefSet = new HashSet<AttributeDef>(0)
+        def attributeDefSet = new ArrayList<AttributeDef>(0)
 
         nodes?.each { attrDf ->
             def attributeDef = new AttributeDef()
@@ -300,7 +302,7 @@ class SchemaService {
                 attributeDefOptionDef.name = attrDfOpDf?.name?.text()
 
                 // constructor initializes collection, no need to create new
-                attributeDef.attributeDefOptionDefs.add (attributeDefOptionDef)
+                attributeDef.addAttributeDefOptionDef(attributeDefOptionDef)
             }
 
             attributeDefSet.add(attributeDef)
@@ -314,9 +316,9 @@ class SchemaService {
      * @param nodes
      * @return set
      */
-    def Set<ClassDef> prepareClassDefs(GPathResult nodes, AnnotationSchema annotationSchema, Set<AttributeDef> attributeDefs){
+    def List<ClassDef> prepareClassDefs(GPathResult nodes, AnnotationSchema annotationSchema, List<AttributeDef> attributeDefs){
         log.info('prepareClassDefs')
-        def classDefSet = new HashSet<ClassDef>(0)
+        def classDefSet = new ArrayList<ClassDef>(0)
         nodes?.each { clsDf ->
             def cdf = new ClassDef()
             cdf.id = idMap.get(clsDf?.@id?.text())
@@ -347,7 +349,7 @@ class SchemaService {
         return classDefSet
     }
 
-    def AttributeDef getAttributeDef(Set<AttributeDef> attributeDefs, String id)
+    def AttributeDef getAttributeDef(List<AttributeDef> attributeDefs, String id)
     {
         AttributeDef attributeDef = null;
         for(int i = 0; i < attributeDefs.size(); i++)
@@ -362,7 +364,7 @@ class SchemaService {
         return attributeDef;
     }
 
-    def ClassDef getClassDef(Set<ClassDef> classDefs, String id)
+    def ClassDef getClassDef(List<ClassDef> classDefs, String id)
     {
         ClassDef classDef = null;
         for(int i = 0; i < classDefs.size(); i++)
@@ -382,9 +384,9 @@ class SchemaService {
      * @param nodes
      * @return set
      */
-    def Set<ClassRelDef> prepareClassRelDefs(GPathResult nodes, Set<ClassDef> classDefs, Set<AttributeDef> attributeDefs){
+    def List<ClassRelDef> prepareClassRelDefs(GPathResult nodes, List<ClassDef> classDefs, List<AttributeDef> attributeDefs){
         log.info('prepareClassRelDefs')
-        def classRelDefSet = new HashSet<ClassRelDef>(0)
+        def classRelDefSet = new ArrayList<ClassRelDef>(0)
         nodes?.each { clsRlDf ->
             def classRelDef = new ClassRelDef()
 
@@ -531,5 +533,190 @@ class SchemaService {
 
     private String getTypeSystemClassName(String s){
           return s.replaceAll("\\s","").replaceAll("[^a-zA-Z0-9]+","");
+    }
+
+    def updateAnnotationSchemaSortOrders(AnnotationSchema schemaInstance, boolean updateChildren){
+        List<AnnotationSchemaAttributeDefSortOrder> attributeDefSortOrdersToDelete = new ArrayList(schemaInstance.getAttributeDefSortOrders());
+        schemaInstance.clearAttributeDefSortOrders();
+        for(tSortOrder in attributeDefSortOrdersToDelete)
+        {
+            tSortOrder.setAnnotationSchema(null);
+            tSortOrder.delete(flush:false);
+        }
+        for(int i = 0; i < schemaInstance.attributeDefs.size(); i++)
+        {
+            AttributeDef attributeDef = schemaInstance.attributeDefs.get(i);
+            AnnotationSchemaAttributeDefSortOrder sortOrder = new AnnotationSchemaAttributeDefSortOrder();
+            sortOrder.setId(UUID.randomUUID().toString());
+            sortOrder.setObjId(attributeDef.getId());
+            sortOrder.setSortOrder(i + 1);
+            schemaInstance.addAttributeDefSortOrder(sortOrder);
+            if(updateChildren)
+            {
+                // Only update children here if this is an upload, otherwise, if we are editing, the child sort is updated when
+                // updateAttributeDef is called..
+                updateAttributeDefSortOrders(attributeDef);
+            }
+        }
+
+        List<AnnotationSchemaClassDefSortOrder> classDefSortOrdersToDelete = new ArrayList(schemaInstance.getClassDefSortOrders());
+        schemaInstance.clearClassDefSortOrders();
+        for(tSortOrder in classDefSortOrdersToDelete)
+        {
+            tSortOrder.setAnnotationSchema(null);
+            tSortOrder.delete(flush:false);
+        }
+        for(int i = 0; i < schemaInstance.classDefs.size(); i++)
+        {
+            ClassDef classDef = schemaInstance.classDefs.get(i);
+            AnnotationSchemaClassDefSortOrder sortOrder = new AnnotationSchemaClassDefSortOrder();
+            sortOrder.setId(UUID.randomUUID().toString());
+            sortOrder.setObjId(classDef.getId());
+            sortOrder.setSortOrder(i + 1);
+            schemaInstance.addClassDefSortOrder(sortOrder);
+
+            if(updateChildren)
+            {
+                // Only update children here if this is an upload, otherwise, if we are editing, the child sort is updated when
+                // updateClassDef is called..
+                updateClassDefSortOrders(classDef);
+            }
+        }
+
+        List<AnnotationSchemaClassRelDefSortOrder> classRelDefSortOrdersToDelete = new ArrayList(schemaInstance.getClassRelDefSortOrders());
+        schemaInstance.clearClassRelDefSortOrders();
+        for(tSortOrder in classRelDefSortOrdersToDelete)
+        {
+            tSortOrder.setAnnotationSchema(null);
+            tSortOrder.delete(flush:false);
+        }
+        for(int i = 0; i < schemaInstance.classRelDefs.size(); i++)
+        {
+            ClassRelDef classRelDef = schemaInstance.classRelDefs.get(i);
+            AnnotationSchemaClassRelDefSortOrder sortOrder = new AnnotationSchemaClassRelDefSortOrder();
+            sortOrder.setId(UUID.randomUUID().toString());
+            sortOrder.setObjId(classRelDef.getId());
+            sortOrder.setSortOrder(i + 1);
+            schemaInstance.addClassRelDefSortOrder(sortOrder);
+
+            if(updateChildren)
+            {
+                // Only update children here if this is an upload, otherwise, if we are editing, the child sort is updated when
+                // updateClassDef is called..
+                updateClassRelDefSortOrders(classRelDef);
+            }
+        }
+    }
+
+    def updateAttributeDefSortOrders(AttributeDef attributeDef)
+    {
+        List<AttributeDefAttributeDefOptionDefSortOrder> attributeDefOptionDefSortOrdersToDelete = new ArrayList(attributeDef.getAttributeDefAttributeDefOptionDefSortOrders());
+        attributeDef.clearAttributeDefAttributeDefOptionDefSortOrders();
+        for(tSortOrder in attributeDefOptionDefSortOrdersToDelete)
+        {
+            tSortOrder.setAttributeDef(null);
+            tSortOrder.delete(flush:false);
+        }
+        for(int j = 0; j < attributeDef.attributeDefOptionDefs.size(); j++)
+        {
+            AttributeDefOptionDef attributeDefOptionDef = attributeDef.attributeDefOptionDefs.get(j);
+            AttributeDefAttributeDefOptionDefSortOrder sortOrder2 = new AttributeDefAttributeDefOptionDefSortOrder();
+            sortOrder2.setId(UUID.randomUUID().toString());
+            sortOrder2.setObjId(attributeDefOptionDef.getId());
+            sortOrder2.setSortOrder(j + 1);
+            attributeDef.addAttributeDefAttributeDefOptionDefSortOrder(sortOrder2);
+        }
+    }
+
+    def updateClassDefSortOrders(ClassDef classDef)
+    {
+        List<ClassDefAttributeDefSortOrder> classDefAttributeDefSortOrdersToDelete = new ArrayList(classDef.getAttributeDefSortOrders());
+        classDef.clearAttributeDefSortOrders();
+        for(tSortOrder in classDefAttributeDefSortOrdersToDelete)
+        {
+            tSortOrder.setClassDef(null);
+            tSortOrder.delete(flush:false);
+        }
+        for(int j = 0; j < classDef.attributeDefs.size(); j++)
+        {
+            AttributeDef attributeDef = classDef.attributeDefs.get(j);
+            ClassDefAttributeDefSortOrder sortOrder2 = new ClassDefAttributeDefSortOrder();
+            sortOrder2.setId(UUID.randomUUID().toString());
+            sortOrder2.setObjId(attributeDef.getId());
+            sortOrder2.setSortOrder(j + 1);
+            classDef.addAttributeDefSortOrder(sortOrder2);
+        }
+
+        List<ClassDefClassDefSortOrder> classDefClassDefSortOrdersToDelete = new ArrayList(classDef.getClassDefSortOrders());
+        classDef.clearClassDefSortOrders();
+        for(tSortOrder in classDefClassDefSortOrdersToDelete)
+        {
+            tSortOrder.setClassDef(null);
+            tSortOrder.delete(flush:false);
+        }
+        for(int j = 0; j < classDef.classDefs.size(); j++)
+        {
+            ClassDef classDef2 = classDef.classDefs.get(j);
+            ClassDefClassDefSortOrder sortOrder2 = new ClassDefClassDefSortOrder();
+            sortOrder2.setId(UUID.randomUUID().toString());
+            sortOrder2.setObjId(classDef2.getId());
+            sortOrder2.setSortOrder(j + 1);
+            classDef.addClassDefSortOrder(sortOrder2);
+        }
+    }
+
+    def updateClassRelDefSortOrders(ClassRelDef classRelDef)
+    {
+
+        List<ClassRelDefAttributeDefSortOrder> classRelDefAttributeDefSortOrdersToDelete = new ArrayList(classRelDef.getAttributeDefSortOrders());
+        classRelDef.clearAttributeDefSortOrders();
+        for(tSortOrder in classRelDefAttributeDefSortOrdersToDelete)
+        {
+            tSortOrder.setClassRelDef(null);
+            tSortOrder.delete(flush:false);
+        }
+        for(int j = 0; j < classRelDef.attributeDefs.size(); j++)
+        {
+            AttributeDef attributeDef = classRelDef.attributeDefs.get(j);
+            ClassRelDefAttributeDefSortOrder sortOrder2 = new ClassRelDefAttributeDefSortOrder();
+            sortOrder2.setId(UUID.randomUUID().toString());
+            sortOrder2.setObjId(attributeDef.getId());
+            sortOrder2.setSortOrder(j + 1);
+            classRelDef.addAttributeDefSortOrder(sortOrder2);
+        }
+
+        List<ClassRelDefLeftClassDefSortOrder> classRelDefLeftClassDefSortOrdersToDelete = new ArrayList(classRelDef.getLeftClassDefSortOrders());
+        classRelDef.clearLeftClassDefSortOrders();
+        for(tSortOrder in classRelDefLeftClassDefSortOrdersToDelete)
+        {
+            tSortOrder.setClassRelDef(null);
+            tSortOrder.delete(flush:false);
+        }
+        for(int j = 0; j < classRelDef.leftClassDefs.size(); j++)
+        {
+            ClassDef classDef2 = classRelDef.leftClassDefs.get(j);
+            ClassRelDefLeftClassDefSortOrder sortOrder2 = new ClassRelDefLeftClassDefSortOrder();
+            sortOrder2.setId(UUID.randomUUID().toString());
+            sortOrder2.setObjId(classDef2.getId());
+            sortOrder2.setSortOrder(j + 1);
+            classRelDef.addLeftClassDefSortOrder(sortOrder2);
+        }
+
+        List<ClassRelDefRightClassDefSortOrder> classRelDefRightClassDefSortOrdersToDelete = new ArrayList(classRelDef.getRightClassDefSortOrders());
+        classRelDef.clearRightClassDefSortOrders();
+        for(tSortOrder in classRelDefRightClassDefSortOrdersToDelete)
+        {
+            tSortOrder.setClassRelDef(null);
+            tSortOrder.delete(flush:false);
+        }
+        for(int j = 0; j < classRelDef.rightClassDefs.size(); j++)
+        {
+            ClassDef classDef2 = classRelDef.rightClassDefs.get(j);
+            ClassRelDefRightClassDefSortOrder sortOrder2 = new ClassRelDefRightClassDefSortOrder();
+            sortOrder2.setId(UUID.randomUUID().toString());
+            sortOrder2.setObjId(classDef2.getId());
+            sortOrder2.setSortOrder(j + 1);
+            classRelDef.addRightClassDefSortOrder(sortOrder2);
+        }
     }
 }
