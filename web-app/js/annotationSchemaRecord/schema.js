@@ -39,7 +39,7 @@ app.controller('SchemaController', ['$scope', function($scope) {
 	
 	/** Controller Actions. **/	
 	$scope.addAttribute = function() {
-		$scope.model.attributeDefs.push({name:'', type: "0", numericLow: 0, numericHigh: 0, attributeOptions: [], minDate: "", maxDate: "", isStartDateOpen: false, isEndDateOpen: false});
+		$scope.model.attributeDefs.push({id: generateUUID(), name:'', type: "0", numericLow: 0, numericHigh: 0, attributeOptions: [], minDate: "", maxDate: "", isStartDateOpen: false, isEndDateOpen: false});
 	}
 	$scope.removeAttribute = function(row) {
 		var index = $scope.model.attributeDefs.indexOf(row)
@@ -203,63 +203,56 @@ function parseXml(xmlString, model) {
      */
 
 
-    // Load Atributes
+    // Load Attributes
     var attributeDefs = [];
-    var attributeLength = annotationSchemaAttributeDefSortOrders.length;
-    for (var i=0; i < attributeLength ; i++) {
-        var guid = annotationSchemaAttributeDefSortOrders[i].objId;
-        $xml.find("attributeDef[id='" +  guid + "']").each(function() {
-                var attributeDef = {
-                    id: $(this).attr("id"),
-                    name: $(this).find("name").text(),
-                    type: $(this).attr("type"),
-                    numericLow: $(this).find("numericLow").text(),
-                    numericHigh: $(this).find("numericHigh").text(),
-                    attributeOptions: null,
-                    minDate: $(this).find("minDate").text(),
-                    maxDate: $(this).find("maxDate").text(),
-                    isStartDateOpen: false,
-                    isEndDateOpen: false
-                }
-
-                var attributeOptions = [];
-                $(this).find("attributeDefOptionDef").each(function() {
-                    var attributeOption = { id: $(this).attr("id"), value: $(this).text()};
-                    attributeOptions.push(attributeOption);
-
-                })
-
-                attributeDef.attributeOptions = attributeOptions;
-
-                attributeDefs.push(attributeDef);
+    $xml.find("attributeDef").each(function() {
+            var attributeDef = {
+                id: $(this).attr("id"),
+                name: $(this).find("name").text(),
+                type: $(this).attr("type"),
+                numericLow: $(this).find("numericLow").text(),
+                numericHigh: $(this).find("numericHigh").text(),
+                attributeOptions: null,
+                minDate: $(this).find("minDate").text(),
+                maxDate: $(this).find("maxDate").text(),
+                isStartDateOpen: false,
+                isEndDateOpen: false
             }
-        )
-    }
+
+            var attributeOptions = [];
+            $(this).find("attributeDefOptionDef").each(function() {
+                var attributeOption = { id: $(this).attr("id"), value: $(this).text()};
+                attributeOptions.push(attributeOption);
+
+            })
+
+            attributeDef.attributeOptions = attributeOptions;
+
+            attributeDefs.push(attributeDef);
+    });
+
     model.attributeDefs = attributeDefs;
 
     // Classdefs
     var classDefs = [];
-    attributeLength = classDefSortOrders.length;
-    for (var i=0; i < attributeLength ; i++) {
-        var guid = classDefSortOrders[i].objId;
-        $xml.find("classDef[id='" + guid + "']").each(function() {
-            var classDef = {
-                id:  $(this).attr("id"),
-                name: $(this).find("name").text(),
-                color: $(this).find("color").text(),
-                attributeDefs: null
-            };
-            classDef.name.$dirty = true;
-            var classAttributes = [];
-            $(this).find("attributeDefId").each(function() {
-                var attributeOption = { id: $(this).attr("id"), value: $(this).text()};
-                classAttributes.push(findById($(this).attr("id"), attributeDefs));
-            })
-
-            classDef.attributeDefs = classAttributes;
-            classDefs.push(classDef);
+    $xml.find("classDefs").each(function() {
+        var classDef = {
+            id:  $(this).attr("id"),
+            name: $(this).find("name").text(),
+            color: $(this).find("color").text(),
+            attributeDefs: null
+        };
+        classDef.name.$dirty = true;
+        var classAttributes = [];
+        $(this).find("attributeDefId").each(function() {
+            var attributeOption = { id: $(this).attr("id"), value: $(this).text()};
+            classAttributes.push(findById($(this).attr("id"), attributeDefs));
         })
-    }
+
+        classDef.attributeDefs = classAttributes;
+        classDefs.push(classDef);
+    });
+
     model.classDefs = classDefs;
 
 
@@ -287,7 +280,6 @@ function createXml(model) {
 
     // Handle attributes.
     var arrayLength = model.attributeDefs.length;
-    var attributeDefSortOrdersXml = "<attributeDefSortOrders>";attributeDefSortOrdersXml = "<attributeDefSortOrders>";
     for (var i = 0; i < arrayLength; i++) {
         var attribute =model.attributeDefs[i];
         xml += "<attributeDef id=\""  + attribute.id + "\" type=\"" + attribute.type+ "\">";
@@ -310,15 +302,12 @@ function createXml(model) {
 
         // Add to attributeDefSortOrdersXml
         var orderGuid = generateUUID();
-        attributeDefSortOrdersXml += "<annotationSchemaAttributeDefSortOrder id=\"" + orderGuid + "\">";
-        attributeDefSortOrdersXml += "<id>" + orderGuid + "</id><annotationSchema ref=\"../..\"/><objId>" + attribute.id + "</objId><sortOrder>" + i + "</sortOrder></annotationSchemaAttributeDefSortOrder>";
+
     }
-    attributeDefSortOrdersXml += "</attributeDefSortOrders>";
     xml += "</attributeDefs>";
 
     // Handle Class defs.
     xml += "<classDefs>";
-    var classDefSortOrdersXml = "<classDefSortOrders>";
     arrayLength = model.classDefs.length;
     for (var i = 0; i < arrayLength; i++) {
         var classDef = model.classDefs[i];
@@ -334,15 +323,10 @@ function createXml(model) {
         xml+= "</classDef>";
 
         var orderGuid = generateUUID();
-        classDefSortOrdersXml += "<annotationSchemaClassDefSortOrder id=\"" + orderGuid + "\"><id>" + orderGuid + "</id><annotationSchema ref=\"../..\"/>";
-        classDefSortOrdersXml += "<objId>" + classDef.id + "</objId><sortOrder>" + i + "</sortOrder></annotationSchemaClassDefSortOrder>";
     }
-    classDefSortOrdersXml += "</classDefSortOrders>";
     xml += "</classDefs>";
     xml += "<classRelDefs/>"; // Currently no relationships are implemented.
 
-    xml += attributeDefSortOrdersXml;
-    xml += classDefSortOrdersXml;
     xml += "</annotationSchema>\n";
     xml += "</annotationSchemas>";
     return xml;

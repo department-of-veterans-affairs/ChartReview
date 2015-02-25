@@ -1,8 +1,12 @@
 package chartreview
 
+import gov.va.vinci.chartreview.Validator
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
+import grails.converters.XML
+import org.springframework.core.io.ClassPathResource
+
 import java.sql.Timestamp
 
 class AnnotationSchemaController {
@@ -59,7 +63,7 @@ class AnnotationSchemaController {
 
     def copy() {
         Project p = Project.get(params.projectId);
-        annotationSchemaService.copy(p, annotationSchemaService.get(p, params.id), params.newName);
+        annotationSchemaService.copy(p, annotationSchemaService.get(p, params.id), params.newName, springSecurityService.principal.username);
         redirect(action: "list");
     }
 
@@ -78,6 +82,57 @@ class AnnotationSchemaController {
             return;
         }
         [mode: "Create"]
+    }
+
+    def export() {
+        Project p = Project.get(params.projectId);
+        response.setContentType( 'text/xml');
+        response.writer.write(annotationSchemaService.get(p, params.id).serializationData);
+        response.flushBuffer();
+        return null;
+    }
+
+    def upload() {
+        def f = request.getFile('myFile')
+        if (f.empty) {
+            flash.message = 'File cannot be empty'
+            redirect(action: "list")
+            return
+        }
+        String xmlString = f.getInputStream().getText().replaceAll("\n","");
+
+        String annotationSchemaId = '';
+        if(xmlString != null && xmlString.size() > 0)
+        {
+            String xsdString = new ClassPathResource("submitSchema.xsd").getFile().newReader().getText()
+            AnnotationSchema schema = null;
+            try {
+                Validator.validate(xmlString, xsdString);
+                boolean changeUUIDS = false;
+                if (params.changeUUIDS) {
+                    changeUUIDS = Boolean.parseBoolean(params.changeUUIDS);
+                }
+                schema = annotationSchemaService.parseSchemaXml(xmlString, changeUUIDS);
+            } catch (Exception e) {
+                flash.message = 'Invalid schema file. (' + e.getMessage() + ')';
+                redirect(action: "list")
+                return
+            }
+
+            // See if name already exists. If so, error.
+
+
+            // If not changing guids, see if guid already exists. If so, error.
+
+            // Do save!
+
+        } else {
+            flash.message = 'Empty file submitted, please upload a valid xml file.';
+            redirect(action: "list")
+            return
+        }
+
+        redirect(action: "list")
     }
 
     def edit() {
