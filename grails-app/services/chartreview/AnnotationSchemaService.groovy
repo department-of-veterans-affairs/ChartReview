@@ -216,9 +216,6 @@ class AnnotationSchemaService {
         return tAnnotationSchema;
     }
 
-
-
-
     /**
      * Convert AttributeDefs elements in Xml into set of domain objects
      * @param nodes
