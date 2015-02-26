@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * Created by ryancornia on 2/19/15.
+ * Data access object for dealing with AnnotationSchemaRecordDAO.
  */
 public class AnnotationSchemaRecordDAO {
     /**
@@ -91,7 +91,7 @@ public class AnnotationSchemaRecordDAO {
     /**
      * Add the annotation object to the database.
      *
-     * @param record AnnotationSchemaRecord to add
+     * @param record AnnotationSchemaRecord to add. Note: The id should be filled in before calling insert.
      */
     public void insert(AnnotationSchemaRecord record) {
         if(record == null)
@@ -108,6 +108,7 @@ public class AnnotationSchemaRecordDAO {
                         record.getName(), record.getSerializationData(), record.getSerializationVersion(),
                         record.getVersion())
                 .execute();
+
     }
 
     /**
@@ -200,14 +201,20 @@ public class AnnotationSchemaRecordDAO {
      * @param id the id of the schema to delete.
      *
      */
-    public void delete(String id) {
+    public Long delete(String id) {
         QAnnotationSchemaRecord QRECORD = QAnnotationSchemaRecord.annotationSchemaRecord;
 
-        new SQLDeleteClause(connection, dialect, QRECORD)
+        return new SQLDeleteClause(connection, dialect, QRECORD)
                 .where(QRECORD.id.eq(id))
                 .execute();
     }
 
+    /**
+     * Populates a list based on the results from the query.
+     * @param QRECORD   the record to get columns for.
+     * @param query     the query results to create list from.
+     * @return          a list of AnnotationSchemaRecord objects from the query resultset.
+     */
     private List<AnnotationSchemaRecord> getAnnotationSchemaRecords(QAnnotationSchemaRecord QRECORD, SQLQuery query) {
         return query.list(
                     Projections.bean(AnnotationSchemaRecord.class,

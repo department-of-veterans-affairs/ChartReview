@@ -19,11 +19,21 @@ import java.sql.Connection
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
+/**
+ * Service for dealing with annotation schemas.
+ */
 class AnnotationSchemaService {
     def projectService;
 
-
-    def copy(Project p, AnnotationSchemaRecord record, String newName, String createdBy) {
+    /**
+     * Copy an annotation schema. This creates new UUIDs.
+     * @param p   the project that holds both the original schema and will hold the new copy.
+     * @param record   the schema record to copy.
+     * @param newName    the new name for the copied schema.
+     * @param createdBy  the user that is creating the copy.
+     * @return the new record.
+     */
+    public AnnotationSchemaRecord copy(Project p, AnnotationSchemaRecord record, String newName, String createdBy) {
         AnnotationSchemaRecord newRecord = new AnnotationSchemaRecord();
         AnnotationSchema schema = parseSchemaXml(record.serializationData, true);
         schema.name = newName;
@@ -43,9 +53,15 @@ class AnnotationSchemaService {
         newRecord.serializationVersion = record.version;
         newRecord.version = new Timestamp(System.currentTimeMillis());
         insert(p, newRecord);
+        return newRecord;
     }
 
-    def insert(Project p, AnnotationSchemaRecord record) {
+    /**
+     * Insert a new annotation schema record into the project database.
+     * @param p   the project to insert the schema record into.
+     * @param record  the schema record to insert.
+     */
+    public void insert(Project p, AnnotationSchemaRecord record) {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(p);
@@ -61,7 +77,12 @@ class AnnotationSchemaService {
         }
     }
 
-    def update(Project p, AnnotationSchemaRecord record) {
+    /**
+     * Update a schema record.
+     * @param p   the project the existing record resides in.
+     * @param record  the record to update.
+     */
+    public void update(Project p, AnnotationSchemaRecord record) {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(p);
@@ -77,7 +98,13 @@ class AnnotationSchemaService {
         }
     }
 
-    def findByName(Project p, String name) {
+    /**
+     * Find a schema by name
+     * @param p     The project to get the schema from.
+     * @param name  The name of the annotation schema.
+     * @return      The annotation schema, or null if not found.
+     */
+    public AnnotationSchemaRecord findByName(Project p, String name) {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(p);
@@ -90,8 +117,13 @@ class AnnotationSchemaService {
         }
     }
 
-
-    def get(Project p, String id) {
+    /**
+     * Get a schema by id
+     * @param p     The project to get the schema from.
+     * @param id    The id of the annotation schema.
+     * @return      The annotation schema, or null if not found.
+     */
+    public AnnotationSchemaRecord get(Project p, String id) {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(p);
@@ -104,7 +136,11 @@ class AnnotationSchemaService {
         }
     }
 
-
+    /**
+     * Get all schemas in a given project
+     * @param p     The project to get the schemas from.
+     * @return      The annotation schemas, or an empty list if there are none.
+     */
     public List<AnnotationSchemaRecord> getAll(Project p) {
         Connection c = null;
         try {
@@ -118,7 +154,13 @@ class AnnotationSchemaService {
         }
     }
 
-    def delete(Project p, String id) {
+    /**
+     * delete a schema in a given project
+     * @param p     The project to get the schemas from.
+     * @param id    The id of the schema to delete.
+     * @return      The number of rows affected.
+     */
+    public Long delete(Project p, String id) {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(p);
@@ -131,6 +173,14 @@ class AnnotationSchemaService {
         }
     }
 
+    /**
+     * Parse an xml representation of a schema into Java POJOS.
+     * @param xml the xml to parse.
+     * @param changeUUIDs  if true, all GUIDs in the xml schema are changed in the POJOS. This is useful
+     * if copying a schema. If false, GUIDs are left as is.
+     * @return the Object representation of the xml.
+     *
+     */
     public AnnotationSchema parseSchemaXml(String xml, boolean changeUUIDs = true) {
         Map idMap = null;
         def annotationSchemas = new XmlSlurper().parseText(xml).annotationSchema;
@@ -174,7 +224,7 @@ class AnnotationSchemaService {
      * @param nodes
      * @return set
      */
-    def SortedSet<AttributeDef> prepareAttributeDefs(GPathResult nodes, Map idMap){
+    protected SortedSet<AttributeDef> prepareAttributeDefs(GPathResult nodes, Map idMap){
         log.info('prepareAttributeDefs')
         def attributeDefSet = new TreeSet<AttributeDef>();
 
@@ -228,16 +278,12 @@ class AnnotationSchemaService {
         return attributeDefSet
     }
 
-
-
-
-
     /**
      * Convert ClassDefs elements in Xml into set of domain objects
      * @param nodes
      * @return set
      */
-    def SortedSet<ClassDef> prepareClassDefs(GPathResult nodes, AnnotationSchema annotationSchema, Set<AttributeDef> attributeDefs, Map idMap){
+    protected SortedSet<ClassDef> prepareClassDefs(GPathResult nodes, AnnotationSchema annotationSchema, Set<AttributeDef> attributeDefs, Map idMap){
         log.info('prepareClassDefs')
         def classDefSet = new TreeSet<ClassDef>()
         nodes?.each { clsDf ->
@@ -270,7 +316,7 @@ class AnnotationSchemaService {
         return classDefSet
     }
 
-    def AttributeDef getAttributeDef(Set<AttributeDef> attributeDefs, String id)
+    protected AttributeDef getAttributeDef(Set<AttributeDef> attributeDefs, String id)
     {
         AttributeDef attributeDef = null;
         for(int i = 0; i < attributeDefs.size(); i++)
@@ -285,7 +331,7 @@ class AnnotationSchemaService {
         return attributeDef;
     }
 
-    def ClassDef getClassDef(Set<ClassDef> classDefs, String id)
+    protected ClassDef getClassDef(Set<ClassDef> classDefs, String id)
     {
         ClassDef classDef = null;
         for(int i = 0; i < classDefs.size(); i++)
@@ -305,7 +351,7 @@ class AnnotationSchemaService {
      * @param nodes
      * @return set
      */
-    def SortedSet<ClassRelDef> prepareClassRelDefs(GPathResult nodes, Set<ClassDef> classDefs, Set<AttributeDef> attributeDefs, Map idMap){
+    protected SortedSet<ClassRelDef> prepareClassRelDefs(GPathResult nodes, Set<ClassDef> classDefs, Set<AttributeDef> attributeDefs, Map idMap){
         log.info('prepareClassRelDefs')
         def classRelDefSet = new TreeSet<ClassRelDef>()
         nodes?.each { clsRlDf ->
