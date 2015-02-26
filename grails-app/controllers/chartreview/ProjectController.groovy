@@ -103,7 +103,6 @@ class ProjectController {
             closeConnection(c);
         }
 
-
         [
             projectInstance: projectInstance,
             processes: processService.getProcessNamesForProject(id),
@@ -314,7 +313,7 @@ class ProjectController {
     }
 
     def uploadDocument() {
-        Project  p = Project.get(params['projectId']);
+        Project p = Project.get(params['projectId']);
         User u = springSecurityService.principal;
         ProjectDocument fileInstance = new ProjectDocument(id: UUID.randomUUID().toString());
         def uploadedFile = request.getFile('fileUpload')
@@ -418,7 +417,7 @@ class ProjectController {
                 serializedKeyMap.put("clinicalElementConfigurationId", clinical_element_configuration_id);
                 String fullKey = SimanUtils.serializeMapToString(serializedKeyMap, ";") + serializedKey;
 
-                Map<String, Object> ce = clinicalElementService.getClinicalElement(c, sqlTemplate, fullKey, false);
+                Map<String, Object> ce = clinicalElementService.getClinicalElementBySerializedKeyFromConnection(c, sqlTemplate, fullKey, false);
 
                 String content =SimanUtils.removeHtmlTags(clinicalElementService.getElementContent(c, sqlTemplate, fullKey, false, false));
                 response.writer.write("Updating clinical element key: ${serializedKey} for clinical element configuration: ${clinical_element_configuration_id} and group ${clinical_element_group}<br/>\n");

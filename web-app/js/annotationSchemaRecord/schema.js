@@ -162,53 +162,12 @@ function parseXml(xmlString, model) {
     model.attributeDefs.length = 0;
     model.classDefs.length = 0;
 
-    /**
-     * Get Sort order first, so we know what order to load items.
-     */
-    var annotationSchemaAttributeDefSortOrders = []
-    $xml.find("annotationSchemaAttributeDefSortOrder").each(function() {
-        annotationSchemaAttributeDefSortOrders.push( {
-                objId: $(this).find("objId").text(),
-                sortOrder: $(this).find("sortOrder").text() }
-        );
-    });
-    annotationSchemaAttributeDefSortOrders.sort(function(a,b) {
-        if ( a.sortOrder > b.sortOrder){
-            return 1;
-        }
-        if (a.sortOrder < b.sortOrder) {
-            return -1;
-        }
-        return 0;
-    });
-
-    var classDefSortOrders = []
-    $xml.find("annotationSchemaClassDefSortOrder").each(function() {
-        classDefSortOrders.push( {
-                objId: $(this).find("objId").text(),
-                sortOrder: $(this).find("sortOrder").text() }
-        );
-    });
-    classDefSortOrders.sort(function(a,b) {
-        if ( a.sortOrder > b.sortOrder){
-            return 1;
-        }
-        if (a.sortOrder < b.sortOrder) {
-            return -1;
-        }
-        return 0;
-    });
-    /**
-     * End Getting sort orders.
-     */
-
-
     // Load Attributes
     var attributeDefs = [];
     $xml.find("attributeDef").each(function() {
             var attributeDef = {
                 id: $(this).attr("id"),
-                name: $(this).find("name").text(),
+                name: $(this).find("name:first").text(),
                 type: $(this).attr("type"),
                 numericLow: $(this).find("numericLow").text(),
                 numericHigh: $(this).find("numericHigh").text(),
@@ -221,7 +180,7 @@ function parseXml(xmlString, model) {
 
             var attributeOptions = [];
             $(this).find("attributeDefOptionDef").each(function() {
-                var attributeOption = { id: $(this).attr("id"), value: $(this).text()};
+                var attributeOption = { id: $(this).attr("id"), value: $(this).find("name").text()};
                 attributeOptions.push(attributeOption);
 
             })
@@ -254,8 +213,6 @@ function parseXml(xmlString, model) {
     });
 
     model.classDefs = classDefs;
-
-
     return model;
 }
 
@@ -285,17 +242,35 @@ function createXml(model) {
         xml += "<attributeDef id=\""  + attribute.id + "\" type=\"" + attribute.type+ "\">";
         xml += "<name><![CDATA[" + attribute.name + "]]></name>";
         xml += "<color>ffffff</color>";
-        xml += "<numericLow>" + attribute.numericLow + "</numericLow>";
-        xml += "<numericHigh>" + attribute.numericHigh + "</numericHigh>";
-        xml += "<minDate>" + attribute.minDate + "</minDate>";
-        xml += "<maxDate>" + attribute.maxDate + "</maxDate>";
+        if (!attribute.numericLow || 0 === attribute.numericLow) {
+            xml += "<numericLow>0.0</numericLow>";
+        } else {
+            xml += "<numericLow>" + attribute.numericLow + "</numericLow>";
+        }
+        if (!attribute.numericHigh || 0 === attribute.numericHigh) {
+            xml += "<numericHigh>9.99999999999999E11</numericHigh>";
+        } else {
+            xml += "<numericHigh>" + attribute.numericHigh + "</numericHigh>";
+        }
+
+        if (!attribute.minDate || 0 === attribute.minDate) {
+            xml += "<minDate>0000-12-30T07:00:00Z</minDate>";
+        } else {
+            xml += "<minDate>" +  attribute.minDate.getFullYear() + "-" + (attribute.minDate.getMonth() + 1) + "-" + attribute.minDate.getDate() + "T07:00:00Z</minDate>";
+        }
+
+        if (!attribute.maxDate || 0 === attribute.maxDate) {
+            xml += "<maxDate>9999-01-01T07:00:00</maxDate>";
+        } else {
+            xml += "<maxDate>" +  attribute.maxDate.getFullYear() + "-" + (attribute.maxDate.getMonth() + 1) + "-" + attribute.maxDate.getDate() + "T07:00:00Z</maxDate>";
+        }
         xml += "<attributeDefOptionDefs>";
 
         // Serialize options
         var optionsLength = attribute.attributeOptions.length;
         for (var j = 0; j < optionsLength; j++) {
             var option =attribute.attributeOptions[j];
-            xml += "<attributeDefOptionDef id=\"" + option.id + "\"><![CDATA[" + option.value + "]]></attributeDefOptionDef>";
+            xml += "<attributeDefOptionDef id=\"" + option.id + "\"><name><![CDATA[" + option.value + "]]></name></attributeDefOptionDef>";
         }
         xml += "</attributeDefOptionDefs>";
         xml += "</attributeDef>";
@@ -321,8 +296,6 @@ function createXml(model) {
         xml+= "</attributeDefIds>";
         xml+= "<classDefIds/>"; // Currently no classdef relationships
         xml+= "</classDef>";
-
-        var orderGuid = generateUUID();
     }
     xml += "</classDefs>";
     xml += "<classRelDefs/>"; // Currently no relationships are implemented.

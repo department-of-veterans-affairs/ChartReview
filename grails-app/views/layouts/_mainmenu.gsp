@@ -27,8 +27,8 @@
                                     <li><g:link controller="clinicalElementConfiguration" action="list">Clinical Element Configurations</g:link></li>
                                     <li><g:link controller="project">Projects</g:link></li>
                                     <li><g:link controller="report" action="index">Reports</g:link></li>
-                                    <li><g:link controller="annotationSchema">New Schema Module</g:link></li>
-                                    <li><g:link controller="schema">Schemas</g:link></li>
+                                    <li><g:link controller="annotationSchema">Schemas</g:link></li>
+                                    <li><g:link controller="schema">Legacy Schemas</g:link></li>
                                     <g:ifAnyRoleGrantedBeginsWith roles="ROLE_ADMIN_CHARTREVIEW">
                                         <li class="divider"></li>
                                         <li><g:link controller="jobs" action="index">Failed Jobs</g:link></li>

@@ -252,7 +252,6 @@ class SchemaController {
         // Sort the principal objects for UI consumption before converting to XML.
         // Overwriting (copy XML.java - all privates) our own converter is another option,
         // which would also prevent the sort meta data from streaming, but it wasn't working right away...
-        schema.applySorts();
         schemas.add(schema);
    //     println(schemas as XML);
         if ("json" == params.type) {
@@ -421,8 +420,7 @@ class SchemaController {
 
         try{
             boolean validated = validateAndSetProperties(schemaInstance, params);
-            updateAnnotationSchemaSortOrders(schemaInstance);
-
+            schemaService.updateAnnotationSchemaSortOrders(schemaInstance, false);
             if (!validated || !schemaInstance.save(flush: true, failOnError: true)) {
                 render(view: "edit", model: [
                         schemaInstance: schemaInstance,
@@ -515,10 +513,14 @@ class SchemaController {
             return
         }
 
-        def name = annotationSchema.name;
+//        def annotationSchemaCopy = new AnnotationSchema(annotationSchema, false);
+//        annotationSchemaCopy.clearSorts();
+        def annotationSchemaCopy = annotationSchema;
+
+        def name = annotationSchemaCopy.name;
         try {
             List<AnnotationSchema> schemas = new ArrayList<AnnotationSchema>();
-            schemas.add(annotationSchema);
+            schemas.add(annotationSchemaCopy);
             render schemas as XML;
         }
         catch (Exception e) {
@@ -683,7 +685,7 @@ class SchemaController {
 
         try{
             boolean validated = validateAndSetAttributeDefProperties(attributeDef, params);
-            updateAttributeDefSortOrders(attributeDef);
+            schemaService.updateAttributeDefSortOrders(attributeDef);
 
             if (!validated || !attributeDef.save(flush:true, failOnError: true)) {
                 render(view: "editAttributeDef", model:[
@@ -1119,7 +1121,7 @@ class SchemaController {
         }
         try {
             boolean validated = validateAndSetClassDefProperties(classDef, params);
-            updateClassDefSortOrders(classDef);
+            schemaService.updateClassDefSortOrders(classDef);
 
             if (!validated || !classDef.save(flush:true, failOnError: true)) {
                 render(view: "editClassDef", model: [
@@ -1485,7 +1487,7 @@ class SchemaController {
 
         try {
             boolean validated = validateAndSetClassRelDefProperties(classRelDef, params);
-            updateClassRelDefSortOrders(classRelDef);
+            schemaService.updateClassRelDefSortOrders(classRelDef);
 
             if (!validated || !classRelDef.save(flush:true, failOnError: true)) {
                 render(view: "editClassRelDef", model: [
@@ -1750,174 +1752,4 @@ class SchemaController {
         return result;
     }
 
-    def updateAnnotationSchemaSortOrders(AnnotationSchema schemaInstance){
-        List<AnnotationSchemaAttributeDefSortOrder> attributeDefSortOrdersToDelete = new ArrayList(schemaInstance.getAttributeDefSortOrders());
-        schemaInstance.clearAttributeDefSortOrders();
-        for(tSortOrder in attributeDefSortOrdersToDelete)
-        {
-            tSortOrder.setAnnotationSchema(null);
-            tSortOrder.delete(flush:false);
-        }
-        for(int i = 0; i < schemaInstance.attributeDefs.size(); i++)
-        {
-            AttributeDef attributeDef = schemaInstance.attributeDefs.get(i);
-            AnnotationSchemaAttributeDefSortOrder sortOrder = new AnnotationSchemaAttributeDefSortOrder();
-            sortOrder.setId(UUID.randomUUID().toString());
-            sortOrder.setObjId(attributeDef.getId());
-            sortOrder.setSortOrder(i + 1);
-            schemaInstance.addAttributeDefSortOrder(sortOrder);
-
-//            updateAttributeDefSortOrders(attributeDef);
-        }
-
-        List<AnnotationSchemaClassDefSortOrder> classDefSortOrdersToDelete = new ArrayList(schemaInstance.getClassDefSortOrders());
-        schemaInstance.clearClassDefSortOrders();
-        for(tSortOrder in classDefSortOrdersToDelete)
-        {
-            tSortOrder.setAnnotationSchema(null);
-            tSortOrder.delete(flush:false);
-        }
-        for(int i = 0; i < schemaInstance.classDefs.size(); i++)
-        {
-            ClassDef classDef = schemaInstance.classDefs.get(i);
-            AnnotationSchemaClassDefSortOrder sortOrder = new AnnotationSchemaClassDefSortOrder();
-            sortOrder.setId(UUID.randomUUID().toString());
-            sortOrder.setObjId(classDef.getId());
-            sortOrder.setSortOrder(i + 1);
-            schemaInstance.addClassDefSortOrder(sortOrder);
-
-//            updateClassDefSortOrders(classDef);
-        }
-
-        List<AnnotationSchemaClassRelDefSortOrder> classRelDefSortOrdersToDelete = new ArrayList(schemaInstance.getClassRelDefSortOrders());
-        schemaInstance.clearClassRelDefSortOrders();
-        for(tSortOrder in classRelDefSortOrdersToDelete)
-        {
-            tSortOrder.setAnnotationSchema(null);
-            tSortOrder.delete(flush:false);
-        }
-        for(int i = 0; i < schemaInstance.classRelDefs.size(); i++)
-        {
-            ClassRelDef classRelDef = schemaInstance.classRelDefs.get(i);
-            AnnotationSchemaClassRelDefSortOrder sortOrder = new AnnotationSchemaClassRelDefSortOrder();
-            sortOrder.setId(UUID.randomUUID().toString());
-            sortOrder.setObjId(classRelDef.getId());
-            sortOrder.setSortOrder(i + 1);
-            schemaInstance.addClassRelDefSortOrder(sortOrder);
-
-//            updateClassRelDefSortOrders(classRelDef);
-        }
-    }
-
-    def updateAttributeDefSortOrders(AttributeDef attributeDef)
-    {
-        List<AttributeDefAttributeDefOptionDefSortOrder> attributeDefOptionDefSortOrdersToDelete = new ArrayList(attributeDef.getAttributeDefAttributeDefOptionDefSortOrders());
-        attributeDef.clearAttributeDefAttributeDefOptionDefSortOrders();
-        for(tSortOrder in attributeDefOptionDefSortOrdersToDelete)
-        {
-            tSortOrder.setAttributeDef(null);
-            tSortOrder.delete(flush:false);
-        }
-        for(int j = 0; j < attributeDef.attributeDefOptionDefs.size(); j++)
-        {
-            AttributeDefOptionDef attributeDefOptionDef = attributeDef.attributeDefOptionDefs.get(j);
-            AttributeDefAttributeDefOptionDefSortOrder sortOrder2 = new AttributeDefAttributeDefOptionDefSortOrder();
-            sortOrder2.setId(UUID.randomUUID().toString());
-            sortOrder2.setObjId(attributeDefOptionDef.getId());
-            sortOrder2.setSortOrder(j + 1);
-            attributeDef.addAttributeDefAttributeDefOptionDefSortOrder(sortOrder2);
-        }
-    }
-
-    def updateClassDefSortOrders(ClassDef classDef)
-    {
-        List<ClassDefAttributeDefSortOrder> classDefAttributeDefSortOrdersToDelete = new ArrayList(classDef.getAttributeDefSortOrders());
-        classDef.clearAttributeDefSortOrders();
-        for(tSortOrder in classDefAttributeDefSortOrdersToDelete)
-        {
-            tSortOrder.setClassDef(null);
-            tSortOrder.delete(flush:false);
-        }
-        for(int j = 0; j < classDef.attributeDefs.size(); j++)
-        {
-            AttributeDef attributeDef = classDef.attributeDefs.get(j);
-            ClassDefAttributeDefSortOrder sortOrder2 = new ClassDefAttributeDefSortOrder();
-            sortOrder2.setId(UUID.randomUUID().toString());
-            sortOrder2.setObjId(attributeDef.getId());
-            sortOrder2.setSortOrder(j + 1);
-            classDef.addAttributeDefSortOrder(sortOrder2);
-        }
-
-        List<ClassDefClassDefSortOrder> classDefClassDefSortOrdersToDelete = new ArrayList(classDef.getClassDefSortOrders());
-        classDef.clearClassDefSortOrders();
-        for(tSortOrder in classDefClassDefSortOrdersToDelete)
-        {
-            tSortOrder.setClassDef(null);
-            tSortOrder.delete(flush:false);
-        }
-        for(int j = 0; j < classDef.classDefs.size(); j++)
-        {
-            ClassDef classDef2 = classDef.classDefs.get(j);
-            ClassDefClassDefSortOrder sortOrder2 = new ClassDefClassDefSortOrder();
-            sortOrder2.setId(UUID.randomUUID().toString());
-            sortOrder2.setObjId(classDef2.getId());
-            sortOrder2.setSortOrder(j + 1);
-            classDef.addClassDefSortOrder(sortOrder2);
-        }
-    }
-
-    def updateClassRelDefSortOrders(ClassRelDef classRelDef)
-    {
-
-        List<ClassRelDefAttributeDefSortOrder> classRelDefAttributeDefSortOrdersToDelete = new ArrayList(classRelDef.getAttributeDefSortOrders());
-        classRelDef.clearAttributeDefSortOrders();
-        for(tSortOrder in classRelDefAttributeDefSortOrdersToDelete)
-        {
-            tSortOrder.setClassRelDef(null);
-            tSortOrder.delete(flush:false);
-        }
-        for(int j = 0; j < classRelDef.attributeDefs.size(); j++)
-        {
-            AttributeDef attributeDef = classRelDef.attributeDefs.get(j);
-            ClassRelDefAttributeDefSortOrder sortOrder2 = new ClassRelDefAttributeDefSortOrder();
-            sortOrder2.setId(UUID.randomUUID().toString());
-            sortOrder2.setObjId(attributeDef.getId());
-            sortOrder2.setSortOrder(j + 1);
-            classRelDef.addAttributeDefSortOrder(sortOrder2);
-        }
-
-        List<ClassRelDefLeftClassDefSortOrder> classRelDefLeftClassDefSortOrdersToDelete = new ArrayList(classRelDef.getLeftClassDefSortOrders());
-        classRelDef.clearLeftClassDefSortOrders();
-        for(tSortOrder in classRelDefLeftClassDefSortOrdersToDelete)
-        {
-            tSortOrder.setClassRelDef(null);
-            tSortOrder.delete(flush:false);
-        }
-        for(int j = 0; j < classRelDef.leftClassDefs.size(); j++)
-        {
-            ClassDef classDef2 = classRelDef.leftClassDefs.get(j);
-            ClassRelDefLeftClassDefSortOrder sortOrder2 = new ClassRelDefLeftClassDefSortOrder();
-            sortOrder2.setId(UUID.randomUUID().toString());
-            sortOrder2.setObjId(classDef2.getId());
-            sortOrder2.setSortOrder(j + 1);
-            classRelDef.addLeftClassDefSortOrder(sortOrder2);
-        }
-
-        List<ClassRelDefRightClassDefSortOrder> classRelDefRightClassDefSortOrdersToDelete = new ArrayList(classRelDef.getRightClassDefSortOrders());
-        classRelDef.clearRightClassDefSortOrders();
-        for(tSortOrder in classRelDefRightClassDefSortOrdersToDelete)
-        {
-            tSortOrder.setClassRelDef(null);
-            tSortOrder.delete(flush:false);
-        }
-        for(int j = 0; j < classRelDef.rightClassDefs.size(); j++)
-        {
-            ClassDef classDef2 = classRelDef.rightClassDefs.get(j);
-            ClassRelDefRightClassDefSortOrder sortOrder2 = new ClassRelDefRightClassDefSortOrder();
-            sortOrder2.setId(UUID.randomUUID().toString());
-            sortOrder2.setObjId(classDef2.getId());
-            sortOrder2.setSortOrder(j + 1);
-            classRelDef.addRightClassDefSortOrder(sortOrder2);
-        }
-    }
 }

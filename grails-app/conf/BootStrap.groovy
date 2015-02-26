@@ -3,6 +3,7 @@ import com.mysema.query.sql.codegen.MetaDataExporter
 import gov.va.vinci.chartreview.db.ExampleDataUtils
 import gov.va.vinci.chartreview.marshallers.AnnotationSchemaMarshaller
 import gov.va.vinci.chartreview.marshallers.AttributeDefMarshaller
+import gov.va.vinci.chartreview.marshallers.AttributeDefOptionDefMarshaller
 import gov.va.vinci.chartreview.marshallers.ClassDefMarshaller
 import gov.va.vinci.chartreview.marshallers.ClassRelDefMarshaller
 import gov.va.vinci.chartreview.model.Project
@@ -44,10 +45,11 @@ class BootStrap {
                     'myPreAuthFilter', SecurityFilterPosition.PRE_AUTH_FILTER.order);
 
         /** Bug fix for patient element in db. **/
-//        XML.registerObjectMarshaller(new AnnotationSchemaMarshaller(), 1);
-        XML.registerObjectMarshaller(new AttributeDefMarshaller(), 1);
-        XML.registerObjectMarshaller(new ClassDefMarshaller(), 1);
-        XML.registerObjectMarshaller(new ClassRelDefMarshaller(), 1);
+        XML.registerObjectMarshaller(new AnnotationSchemaMarshaller());
+        XML.registerObjectMarshaller(new AttributeDefMarshaller());
+        XML.registerObjectMarshaller(new AttributeDefOptionDefMarshaller());
+        XML.registerObjectMarshaller(new ClassDefMarshaller());
+        XML.registerObjectMarshaller(new ClassRelDefMarshaller());
 
         XML.registerObjectMarshaller(new CollectionMarshaller() {
             @Override

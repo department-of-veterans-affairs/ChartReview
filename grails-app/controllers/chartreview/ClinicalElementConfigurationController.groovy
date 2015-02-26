@@ -492,6 +492,16 @@ class ClinicalElementConfigurationController {
                 d.keyField = true;
                 atLeastOneKeyField = true;
             }
+            if(param.key.endsWith("-mimeTypeReferenceColumn"))
+            {
+                String name =  param.key.substring(0, param.key.length() - 24);
+                ClinicalElementColumnDef d = columns.find{it.columnName == name}
+                if (!d) {
+                    throw new Exception("Column ${name} not found. There is a problem with the request.");
+                }
+                String type = d.type.split(":")[0].trim();
+                d.setType(type + ":mimeTypeReferenceColumn=" + param.value);
+            }
         }
 
         /**

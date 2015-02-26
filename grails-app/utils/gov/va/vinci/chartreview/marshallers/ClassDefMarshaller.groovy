@@ -21,21 +21,27 @@ class ClassDefMarshaller extends BaseMarshaller implements ObjectMarshaller<XML>
         addElement(converter, "name", classDef.name)
         addElement(converter, "color", classDef.color)
 
-        converter.startNode("attributeDefIds");
-        classDef.findAllAttributeDefs().each { // returns sorted
-            converter.startNode("attributeDefId")
-            converter.attribute("id", it.id);
+        def attributeDefs = classDef.doGetAttributeDefsSorted();
+        if(attributeDefs && attributeDefs.size() > 0)
+        {
+            converter.startNode("attributeDefIds");
+            attributeDefs.each { // returns sorted
+                converter.startNode("attributeDefId")
+                converter.attribute("id", it.id);
+                converter.end();
+            }
             converter.end();
         }
-        converter.end();
-
-        converter.startNode("classDefIds");
-        classDef.doGetClassDefsSorted().each {
-            converter.startNode("classDefId")
-            converter.attribute("id", it.id);
+        def classDefs = classDef.doGetAttributeDefsSorted();
+        if(classDefs && classDefs.size() > 0)
+        {
+            converter.startNode("classDefIds");
+            classDefs.each { // returns sorted
+                converter.startNode("classDefId")
+                converter.attribute("id", it.id);
+                converter.end();
+            }
             converter.end();
         }
-        converter.end();
-
     }
 }

@@ -1,6 +1,7 @@
 package gov.va.vinci.chartreview.marshallers
 
 import gov.va.vinci.chartreview.model.schema.AttributeDef
+import gov.va.vinci.chartreview.Utils
 import grails.converters.XML
 import org.codehaus.groovy.grails.web.converters.exceptions.ConverterException
 import org.codehaus.groovy.grails.web.converters.marshaller.ObjectMarshaller
@@ -24,20 +25,11 @@ class AttributeDefMarshaller extends BaseMarshaller implements ObjectMarshaller<
         addElement(converter, "color", attributeDef.color)
         addElement(converter, "numericLow", attributeDef.numericLow.toString())
         addElement(converter, "numericHigh", attributeDef.numericHigh.toString())
-        addElement(converter, "minDate", attributeDef.minDate.toString())
-        addElement(converter, "maxDate", attributeDef.maxDate.toString())
+        addElement(converter, "minDate", Utils.format(attributeDef.minDate))
+        addElement(converter, "maxDate", Utils.format(attributeDef.maxDate))
 
         converter.startNode("attributeDefOptionDefs");
-        attributeDef.doGetAttributeDefOptionDefsSorted().each {
-            converter.startNode("attributeDefOptionDef")
-            converter.attribute("id", it.id);
-            if (it.name) {
-                converter.chars it.name;
-            }
-            converter.end();
-        }
+        converter.convertAnother(attributeDef.doGetAttributeDefOptionDefsSorted());
         converter.end();
     }
-
-
 }

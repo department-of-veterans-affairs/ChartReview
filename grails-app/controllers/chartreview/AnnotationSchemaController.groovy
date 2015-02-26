@@ -4,13 +4,11 @@ import gov.va.vinci.chartreview.Validator
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
-import grails.converters.XML
 import org.springframework.core.io.ClassPathResource
 
 import java.sql.Timestamp
 
 class AnnotationSchemaController {
-    def schemaService;
     def projectService;
     def springSecurityService;
     def annotationSchemaService;
@@ -148,7 +146,7 @@ class AnnotationSchemaController {
             redirect(action: "chooseProject", params: params)
             return;
         }
-        AnnotationSchema schema = schemaService.parseSchemaXml(params.xml, false);
+        AnnotationSchema schema = annotationSchemaService.parseSchemaXml(params.xml, false);
 
         Project  p = Project.get(session.getAttribute(SELECTED_PROJECT));
         if ("Create" == params.mode) {

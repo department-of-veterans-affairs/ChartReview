@@ -12,8 +12,8 @@
     <script src="${request.contextPath}/js/angular-pick-a-color.js"></script>
 
     <script src="${request.contextPath}/js/sortable.js"></script>
-    <script src="${request.contextPath}/js/ui-bootstrap-0.12.0.min.js"></script>
-    <script src="${request.contextPath}/js/ui-bootstrap-tpls-0.12.0.min.js"></script>
+    <script src="${request.contextPath}/js/ui-bootstrap-0.8.0.min.js"></script>
+    <script src="${request.contextPath}/js/ui-bootstrap-tpls-0.8.0.min.js"></script>
     <script src="${request.contextPath}/js/annotationSchemaRecord/schema.js"></script>
 
 </head>
@@ -31,7 +31,7 @@
     </ul>
     <fieldset ng-disabled="${"View" == mode}">
     <div class="tab-content">
-        <div class="tab-pane active" id="generalTab">
+        <div class="tab-pane active" id="generalTab" style="margin: 5px;">
             <label>Name</label>
             <input ng-model="model.name" style="width: 400px" ng-required="true"/>
             <br/><br/>
@@ -78,16 +78,16 @@
                         <div ng-show="row.type == '4'">
                             <label>From</label>
                             <p class="input-group">
-                                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="row.minDate" is-open="row.isStartDateOpen" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="row.minDate" is-open="row.isStartDateOpen" min-date="minDate"  datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
                                 <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default" ng-click="openStartDate($event, row)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    <button type="button" class="btn btn-default" ng-click="openStartDate($event, row)"><i class="icon-calendar"></i></button>
                                 </span>
                             </p>
                             <label>- To -</label>
                             <p class="input-group">
-                                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="row.maxDate" is-open="row.isEndDateOpen" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="row.maxDate" is-open="row.isEndDateOpen" min-date="minDate"  datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
                                 <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default" ng-click="openEndDate($event, row)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    <button type="button" class="btn btn-default" ng-click="openEndDate($event, row)"><i class="icon-calendar"></i></button>
                                 </span>
                             </p>
                         </div>

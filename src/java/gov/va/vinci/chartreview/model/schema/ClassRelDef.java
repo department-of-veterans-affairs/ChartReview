@@ -508,4 +508,11 @@ public class ClassRelDef  implements java.io.Serializable, Comparable<ClassRelDe
             return order1.compareTo(order2);
         }
     }
+
+    public void clearSorts()
+    {
+        this.attributeDefSortOrders.clear();
+        this.leftClassDefSortOrders.clear();
+        this.rightClassDefSortOrders.clear();
+    }
 }

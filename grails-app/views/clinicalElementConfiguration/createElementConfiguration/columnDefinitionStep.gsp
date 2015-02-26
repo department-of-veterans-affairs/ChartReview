@@ -39,7 +39,16 @@
                     <tr>
                         <td>${column.columnName}</td>
                         <td><g:textField name="${column.columnName}-displayName" value="${column.displayName}" size="20"/></td>
-                        <td>${column.type}</td>
+                        <td>
+                            ${column.type}
+                            <g:if test="${column.type.startsWith("LONGBLOB")}">
+                                <br>Mime type:
+                                <g:select name="${column.columnName}-mimeTypeReferenceColumn"
+                                          from="${dto.dataQueryColumns.findAll{it.type.equals("VARCHAR")}}"
+                                          value="${column.columnName}"
+                                          optionKey="columnName" optionValue="columnName" />
+                            </g:if>
+                        </td>
                         <td style="text-align: center"><g:checkBox name="${column.columnName}-KeyField" checked="${column.keyField}" /></td>
                         <td style="text-align: center">
                             <g:checkBox name="${column.columnName}-Exclude"

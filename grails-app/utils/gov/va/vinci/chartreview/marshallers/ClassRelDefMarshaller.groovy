@@ -22,29 +22,38 @@ class ClassRelDefMarshaller extends BaseMarshaller implements ObjectMarshaller<X
         addElement(converter, "color", classRelDef.color)
         addElement(converter, "type", "" + classRelDef.type)
 
-        converter.startNode("attributeDefIds");
-        classRelDef.doGetAttributeDefsSorted().each {
-            converter.startNode("attributeDefId")
-            converter.attribute("id", it.id);
+        def attributeDefs = classDef.doGetAttributeDefsSorted();
+        if(attributeDefs && attributeDefs.size() > 0)
+        {
+            converter.startNode("attributeDefIds");
+            attributeDefs.each { // returns sorted
+                converter.startNode("attributeDefId")
+                converter.attribute("id", it.id);
+                converter.end();
+            }
             converter.end();
         }
-        converter.end();
-
-        converter.startNode("leftClassDefIds");
-        classRelDef.doGetLeftClassDefsSorted().each {
-            converter.startNode("classDefId")
-            converter.attribute("id", it.id);
+        def leftClassDefs = classDef.doGetAttributeDefsSorted();
+        if(leftClassDefs && leftClassDefs.size() > 0)
+        {
+            converter.startNode("leftClassDefIds");
+            leftClassDefs.each { // returns sorted
+                converter.startNode("classDefId")
+                converter.attribute("id", it.id);
+                converter.end();
+            }
             converter.end();
         }
-        converter.end();
-
-        converter.startNode("rightClassDefIds");
-        classRelDef.doGetRightClassDefsSorted().each {
-            converter.startNode("classDefId")
-            converter.attribute("id", it.id);
+        def rightClassDefs = classDef.doGetAttributeDefsSorted();
+        if(rightClassDefs && rightClassDefs.size() > 0)
+        {
+            converter.startNode("rightClassDefIds");
+            rightClassDefs.each { // returns sorted
+                converter.startNode("classDefId")
+                converter.attribute("id", it.id);
+                converter.end();
+            }
             converter.end();
         }
-        converter.end();
-
     }
 }

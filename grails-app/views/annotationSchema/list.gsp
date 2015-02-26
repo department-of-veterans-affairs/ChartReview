@@ -52,7 +52,11 @@
               <fieldset>
                 <legend>Upload New Schema</legend>
                 <input type="file" name="myFile" title="Choose a schema file to upload"/>
-                  <input type="checkbox" value="true" checked name="changeUUIDS" />
+                  <div class="checkbox" style="margin-top: 10px">
+                      <label>
+                          <input type="checkbox" value="true" checked name="changeUUIDS" > Change UUIDs
+                      </label>
+                  </div>
                 <input type="submit" class="btn" title="Upload the chosen schema and insert it in the list" value="Upload"/>
             </fieldset>
             </g:uploadForm>

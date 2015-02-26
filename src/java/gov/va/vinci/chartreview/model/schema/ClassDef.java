@@ -511,4 +511,10 @@ public class ClassDef implements java.io.Serializable, Comparable<ClassDef>
             return order1.compareTo(order2);
         }
     }
+
+    public void clearSorts()
+    {
+        this.attributeDefSortOrders.clear();
+        this.classDefSortOrders.clear();
+    }
 }

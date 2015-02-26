@@ -17,6 +17,7 @@ import org.apache.commons.validator.GenericValidator
 import javax.validation.ValidationException
 import java.sql.*
 import java.util.regex.Pattern
+import java.util.regex.Matcher
 
 import static gov.va.vinci.chartreview.Utils.closeConnection
 
@@ -128,16 +129,20 @@ class ClinicalElementService  {
      */
     public String getElementContent(Connection conn, SQLTemplates templates, String serializedKey, boolean wrapInText = true, boolean escapeHtml = true) {
         // TODO - Merge this with the one below?
-        Map result = getClinicalElement(conn, templates, serializedKey, true);
+        Map result = getClinicalElementBySerializedKeyFromConnection(conn, templates, serializedKey, true);
         Map<String, String> keyParts = SimanUtils.deSerializeStringToMap(serializedKey, ";");
+        String projectId = keyParts.get("projectId");
+        String clinicalElementGroup = keyParts.get("clinicalElementGroup");
+        String clinicalElementConfigurationId = keyParts.get("clinicalElementConfigurationId");
         ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(keyParts.get("clinicalElementConfigurationId"), conn, templates);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
+        List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
 
         if (!details.contentTemplate) {
             return "";
         }
 
-        String content = resultSetToContentTemplate(result, details.contentTemplate, escapeHtml)
+        String content = resultSetToContentTemplate(result, details.contentTemplate, columns, projectId, clinicalElementGroup, clinicalElementConfigurationId, escapeHtml)
 
         // Comment this out for field-level annotations
         if (wrapInText) {
@@ -158,16 +163,21 @@ class ClinicalElementService  {
      */
     public String getElementContent(String serializedKey, boolean wrapInText = true, boolean escapeHtml = true) {
         // TODO - Merge this with the one above?
-        Map result = getClinicalElement(serializedKey, true);
         Map<String, String> keyParts = SimanUtils.deSerializeStringToMap(serializedKey, ";");
+        String projectId = keyParts.get("projectId");
+        String clinicalElementGroup = keyParts.get("clinicalElementGroup");
+        String clinicalElementConfigurationId = keyParts.get("clinicalElementConfigurationId");
+        String clinicalElementId = keyParts.get("id");
         ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(keyParts.get("clinicalElementConfigurationId"), keyParts.get("projectId"));
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
+        List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
 
         if (!details.contentTemplate) {
             return "";
         }
 
-        String content = resultSetToContentTemplate(result, details.contentTemplate, escapeHtml)
+        Map result = getClinicalElementBySerializedKey(serializedKey, true);
+        String content = resultSetToContentTemplate(result, details.contentTemplate, columns, projectId, clinicalElementGroup, clinicalElementConfigurationId, clinicalElementId, escapeHtml)
 
         //println("Content---->:'" + content + "'")
         String returnText = "";
@@ -183,7 +193,7 @@ class ClinicalElementService  {
 
     }
 
-    public String resultSetToContentTemplate(Map<String, Object> result, String contentTemplate, boolean escapeHtml = true) {
+    public String resultSetToContentTemplate(Map<String, Object> result, String contentTemplate, List<ClinicalElementColumnDef> columns, String projectId, String clinicalElementGroup, String clinicalElementConfigurationId, String clinicalElementId, boolean escapeHtml = true) {
         def engine = new SimpleTemplateEngine()
         def simpleTemplate = engine.createTemplate(contentTemplate);
 
@@ -195,24 +205,52 @@ class ClinicalElementService  {
          result.put(key, temp);}**/
         // Escape the > and < symbols and change the new lines to html breaks
         if (escapeHtml) {
-            result.keySet().each { key ->
+            result.keySet().each { columnName ->
                 String value = null;
 
-                Object o = result.get(key);
+                Object o = result.get(columnName);
 
                 if (o != null && o instanceof java.sql.Clob) {
-                    Clob clob = (Clob)o;
+                    Clob clob = (Clob) o;
                     InputStream inputStream = clob.getAsciiStream();
                     StringWriter w = new StringWriter();
                     IOUtils.copy(inputStream, w);
                     value = w.toString();
+                } else if (o != null && o instanceof byte[]) {
+                    String tag = null;
+                    String mimeType = getElementMimeType(projectId, clinicalElementConfigurationId, clinicalElementId, columnName);
+                    if(mimeType.startsWith("video"))
+                    {
+                        tag = "<video src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+columnName+"' type='"+mimeType+"'/>";
+                    }
+                    else
+//                    if(mimeType.startsWith("image"))
+                    {
+                        tag = "<img src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+columnName+"'/>";
+                    }
+                    result.put(columnName, tag);
                 } else {
-                    value = result.get(key);
+                    value = result.get(columnName);
                 }
                 if (value && value.length() > 0) {
-                    result.put(key, StringEscapeUtils.escapeHtml(value).replaceAll("\r\n", "  <br/>")
-                                                                       .replaceAll("\r", " <br/>")
-                                                                       .replaceAll("\n", " <br/>"));
+                    boolean isUrl = false;
+                    try {
+                        URL url = new URL(value);
+                        isUrl = true;
+                    } catch(MalformedURLException e)
+                    {
+                        // Not a url.
+                    }
+                    if(isUrl)
+                    {
+                        String tag = "<a href='"+value+"' target='_blank'>"+value+"</a>";
+                        result.put(columnName, tag);
+                    }
+                    else {
+                        result.put(columnName, StringEscapeUtils.escapeHtml(value).replaceAll("\r\n", "  <br/>")
+                                .replaceAll("\r", " <br/>")
+                                .replaceAll("\n", " <br/>"));
+                    }
                 }
             }
         }
@@ -229,7 +267,7 @@ class ClinicalElementService  {
      *                          in the clinical element configuration are returned.
      * @return  the clinical element field map with key being the field name and value being the field value.
      */
-    public LinkedHashMap<String, Object> getClinicalElement(Connection conn, SQLTemplates templates, String serializedKey, boolean includeAllFields = false) {
+    public LinkedHashMap<String, Object> getClinicalElementBySerializedKeyFromConnection(Connection conn, SQLTemplates templates, String serializedKey, boolean includeAllFields = false) {
         LinkedHashMap<String, String> keyParts = SimanUtils.deSerializeStringToMap(serializedKey, ";");
 
         String projectId = keyParts.get("projectId");
@@ -267,7 +305,71 @@ class ClinicalElementService  {
 
         return processResult(projectId, clinicalElementGroup, clinicalElementConfigurationId, dto, rs, !includeAllFields);
     }
+    /**
+     * Returns the data for a single clinical element a given serialized key.
+     *
+     * @param serializedKey the unique serialized key for this clinical element.
+     * @param includeAllFields if true, all fields are included, if false, only rows that have not been checked "exclude"
+     *                          in the clinical element configuration are returned.
+     * @return  the clinical element field map with key being the field name and value being the field value.
+     */
+    public LinkedHashMap<String, Object> getClinicalElementByClinicalElementIdFromConnection(Connection conn, SQLTemplates templates, String projectId, String clinicalElementConfigurationId, String clinicalElementId, List<ClinicalElementColumnDef> columns, boolean eliminateBlobColumnsFromQuery, boolean includeAllFields = false) {
+        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, conn, templates);
+        if (!clinicalElementConfiguration) {
+            throw new ValidationException("Clinical element configuration with id ${clinicalElementConfigurationId} not found.");
+        }
 
+        ClinicalElementConfigurationDetails dto = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(clinicalElementConfiguration);
+
+        List<String> parameters = new ArrayList<String>();
+
+        parameters.add(clinicalElementId);
+
+        PreparedStatement ps = conn.prepareStatement(eliminateBlobColumnsFromQuery ? eliminateBlobsFromQuery(dto.singleElementQuery, columns) : dto.singleElementQuery);
+
+        parameters.eachWithIndex { def entry, int i ->
+            ps.setObject(i+1, entry);
+        }
+
+        ResultSet rs = ps.executeQuery();
+        if (!rs.next()) {
+            return null;
+        }
+
+        return processResult(projectId, null, clinicalElementConfigurationId, dto, rs, !includeAllFields);
+    }
+
+    /**
+     * Save query time by eliminating blob columns from the query.  Replace them with a non-blob column name.
+     * @param query
+     * @param columns
+     * @return
+     */
+    public String eliminateBlobsFromQuery(String query, List<ClinicalElementColumnDef> columns)
+    {
+        String newQuery = new String(query);
+        ClinicalElementColumnDef nonBlobColumn = null;
+        for(int i = 0; i < columns.size(); i++)
+        {
+            ClinicalElementColumnDef col = columns.get(i);
+            if(!col.type.startsWith("LONGBLOB"))
+            {
+                nonBlobColumn = col;
+
+            }
+        }
+        // Replace any blob column name in the query with a non-blob column name, if there is one, otherwise leave it alone.
+        // We are trying to eliminate blobs from the query without having the user specify a new blob-free query.
+        for(int i = 0; i < columns.size(); i++)
+        {
+            ClinicalElementColumnDef col = columns.get(i);
+            if(col.type.startsWith("LONGBLOB") && nonBlobColumn)
+            {
+                newQuery = newQuery.replaceAll(col.columnName, nonBlobColumn.columnName);
+            }
+        }
+        return newQuery;
+    }
 
 
     /**
@@ -278,7 +380,7 @@ class ClinicalElementService  {
      *                          in the clinical element configuration are returned.
      * @return  the clinical element field map with key being the field name and value being the field value.
      */
-    public LinkedHashMap<String, Object> getClinicalElement(String serializedKey, boolean includeAllFields = false) {
+    public LinkedHashMap<String, Object> getClinicalElementBySerializedKey(String serializedKey, boolean includeAllFields = false) {
         LinkedHashMap<String, String> keyParts = SimanUtils.deSerializeStringToMap(serializedKey, ";");
         String projectId = keyParts.get("projectId");
         Connection c = null;
@@ -286,7 +388,7 @@ class ClinicalElementService  {
         try {
             Project p = projectService.getProject(projectId);
             c = projectService.getDatabaseConnection(p);
-            getClinicalElement(c, Utils.getSQLTemplate(p.getJdbcDriver()), serializedKey, includeAllFields);
+            getClinicalElementBySerializedKeyFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), serializedKey, includeAllFields);
         } finally {
             closeConnection(c);
         }
@@ -385,14 +487,16 @@ class ClinicalElementService  {
         for (int i = 1; i <= metaData.columnCount; i++) {
             // Don't return exclude columns.
             if ((removeExcludedFields && !excludeFields.containsKey(i)) || !removeExcludedFields) {
-                if (rs.getObject(i) != null && rs.getObject(i) instanceof Clob) {
-                    Clob clob = (Clob)rs.getObject(i);
+                Object o = rs.getObject(i);
+                String columnName = dto.dataQueryColumns.get(i-1).columnName;
+                if (o != null && o instanceof Clob) {
+                    Clob clob = (Clob)o;
                     InputStream inputStream = clob.getAsciiStream();
                     StringWriter w = new StringWriter();
                     IOUtils.copy(inputStream, w);
-                    results.put(dto.dataQueryColumns.get(i-1).columnName, w.toString());
+                    results.put(columnName, w.toString());
                 } else {
-                    results.put(dto.dataQueryColumns.get(i-1).columnName, rs.getObject(i));
+                    results.put(columnName, o);
                 }
             }
         }
@@ -529,4 +633,134 @@ class ClinicalElementService  {
         return columns;
     }
 
+    /**
+     * Get the blob in the given column for a specific clinical element.
+     * @param serializedKey  the serialized key that represents this clinical elements.
+     * @return  the blob.
+     */
+    public String getElementMimeType(String projectId, String clinicalElementConfigurationId, String clinicalElementId, String columnName) {
+        String mimeType = "image/jpeg"
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, projectId);
+        ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
+        List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
+        ClinicalElementColumnDef colDef = findDef(columns, columnName);
+        if(colDef)
+        {
+            // The type will be of the form LONGBLOB:mimeTypeReferenceColumn=video/mp4
+            String type = colDef.getType();
+            String[] parts = type.split(":");
+            if(parts.length > 1)
+            {
+                String[] subParts = parts[1].split("=");
+                if(subParts.length > 0 && subParts[0].trim().equals("mimeTypeReferenceColumn"))
+                {
+                    String mimeTypeReferenceColumn = subParts[1].trim();
+                    Connection c = null;
+                    try {
+                        Project p = projectService.getProject(projectId);
+                        c = projectService.getDatabaseConnection(p);
+                        Map result = getClinicalElementByClinicalElementIdFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId, columns, false, true);
+                        Object o1 = result.get(mimeTypeReferenceColumn);
+                        if (o1 != null && o1 instanceof String) {
+                            mimeType = o1;
+                        }
+                    } finally {
+                        closeConnection(c);
+                    }
+                }
+            }
+        }
+        return mimeType;
+    }
+
+    /**
+     * Get the blob in the given column for a specific clinical element.
+     * @param serializedKey  the serialized key that represents this clinical elements.
+     * @return  the blob.
+     */
+    public Map<String, Object> getElementBlobAndMimeType(String projectId, String clinicalElementConfigurationId, String clinicalElementId, String columnName) {
+        Map<String, Object> ret = new HashMap();
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, projectId);
+        ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
+        List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
+        ClinicalElementColumnDef colDef = findDef(columns, columnName);
+        if(colDef)
+        {
+            // The type will be of the form LONGBLOB:mimeTypeReferenceColumn=video/mp4
+            String type = colDef.getType();
+            String[] parts = type.split(":");
+            if(parts.length > 1)
+            {
+                String[] subParts = parts[1].split("=");
+                if(subParts.length > 0 && subParts[0].trim().equals("mimeTypeReferenceColumn"))
+                {
+                    String mimeTypeReferenceColumn = subParts[1].trim();
+                    String mimeType = null;
+                    byte[] blob = null;
+                    Connection c = null;
+                    try {
+                        Project p = projectService.getProject(projectId);
+                        c = projectService.getDatabaseConnection(p);
+                        Map result = getClinicalElementByClinicalElementIdFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId, columns, false, true);
+                        Object o1 = result.get(mimeTypeReferenceColumn);
+                        if (o1 != null && o1 instanceof String) {
+                            mimeType = o1;
+                        }
+                        Object o2 = result.get(columnName);
+                        if (o2 != null && o2 instanceof byte[]) {
+                            blob = o2;
+                        }
+                    } finally {
+                        closeConnection(c);
+                    }
+                    ret.put("mimeType", mimeType);
+                    ret.put("blob", blob);
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Finds a column def by name in a list of column defs.
+     * @param sourceList
+     * @param columnName
+     * @return
+     */
+    public ClinicalElementColumnDef findDef(List<ClinicalElementColumnDef> sourceList, String columnName) {
+        for (ClinicalElementColumnDef colDef:  sourceList) {
+            if (colDef.columnName.equals(columnName)) {
+                return colDef;
+            }
+        }
+        return null;
+    }
+
+    //Pull all links from the body for easy retrieval
+    private ArrayList pullUrls(String text) {
+        ArrayList links = new ArrayList();
+
+        String regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(text);
+        while (m.find()) {
+            String urlStr = m.group();
+            if (urlStr.startsWith("(") && urlStr.endsWith(")") )
+            {
+                urlStr = urlStr.substring(1, urlStr.length() - 1);
+            }
+            links.add(urlStr);
+        }
+        return links;
+    }
+
+    private String makeUrlLinks(String text) {
+        String newText = new String(text);
+        ArrayList<String> urls = pullUrls(text);
+        for(String url : urls)
+        {
+            newText = newText.replaceAll(url, "<a href='"+url+"'>"+url+"</a>");
+        }
+        return newText;
+    }
 }

@@ -30,12 +30,13 @@ Ext.define('CR.app.view.ItemListGrid', {
             cls: 'itemlist-grid',
             viewConfig: {
                 itemId: 'view',
-                plugins: [{
-                    pluginId: 'preview',
-                    ptype: 'preview',
-                    bodyField: 'descriptionField',
-                    expanded: true
-                }],
+                // Crate the plugin after the clinical element configuration is known or we cannot set bodyField dynamically.
+//                plugins: [{
+//                    pluginId: 'preview',
+//                    ptype: 'preview',
+//                    bodyField: 'description',
+//                    previewExpanded: false
+//                }],
                 listeners: {
                     scope: this,
                     itemdblclick: this.onRowDblClick
@@ -292,6 +293,21 @@ Ext.define('CR.app.view.ItemListGrid', {
 
     setClinicalElementConfigurationId: function(clinicalElementConfigurationId){
         this.clinicalElementConfigurationId = clinicalElementConfigurationId;
+        var clinicalElementConfiguration = CR.app.model.CRAppData.getClinicalElementConfiguration(this.clinicalElementConfigurationId);
+        if(clinicalElementConfiguration)
+        {
+            // Create the preview plugin after clinical element configuration is set so that we can get the description field to use.
+            // If we create the plugin in the initComponent and then set the bodyField of the preview plugin here, it does not work...
+            var parentView = this.getComponent('view');
+            var previewPlugin = Ext.create('Ext.ux.PreviewPlugin', {
+                pluginId: 'preview',
+                ptype: 'preview',
+                bodyField: clinicalElementConfiguration.descriptionField,
+                previewExpanded: false
+            });
+            previewPlugin.setCmp(parentView);
+            parentView.plugins = [previewPlugin];
+        }
         this.doReconfigure();
     },
 

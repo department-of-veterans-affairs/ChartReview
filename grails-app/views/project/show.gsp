@@ -21,7 +21,7 @@
         }
     </style>
 
-    <g:form>
+    %{--<g:form>--}%
 
 
     <div class="btn-group" style="float: right; " >
@@ -132,7 +132,6 @@
                             <br/><br/>
                         </div>
                     </g:else>
-
                 </div>
             </div>
             <div class="tab-pane" id="projectDocuments" style="margin-left: 20px; margin-right: 20px">
@@ -204,9 +203,9 @@
 
             </div>
         </div>
-              <g:hiddenField name="id" value="${projectInstance?.id}" />
-        </g:form>
-        <script>
+        %{--<g:hiddenField name="id" value="${projectInstance?.id}" />--}%
+    %{--</g:form>--}%
+    <script>
             $('#myTab a').click(function (e) {
                 e.preventDefault();
                 $(this).tab('show');

@@ -549,6 +549,25 @@ public class AnnotationSchema implements java.io.Serializable, Comparable<Annota
         }
     }
 
+    public void clearSorts()
+    {
+        this.attributeDefSortOrders.clear();
+        this.classDefSortOrders.clear();
+        this.classRelDefSortOrders.clear();
+        for(AttributeDef attributeDef : this.attributeDefs)
+        {
+            attributeDef.clearSorts();
+        }
+        for(ClassDef classDef : this.classDefs)
+        {
+            classDef.clearSorts();
+        }
+        for(ClassRelDef classRelDef : this.classRelDefs)
+        {
+            classRelDef.clearSorts();
+        }
+    }
+
     public void applySorts()
     {
         List<AttributeDef> tAttributeDefsSorted = sortAttributeDefs(this.attributeDefs);
