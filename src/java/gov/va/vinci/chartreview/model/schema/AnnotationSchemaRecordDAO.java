@@ -155,6 +155,31 @@ public class AnnotationSchemaRecordDAO {
         }
     }
 
+
+    /**
+     * Get an AnnotationSchemaRecord by id.
+     * @param name the name of the record to get.
+     * @return the record, or null if the record was not found. Because name is enforced to be unique, there
+     * will always be 0 or 1 results.
+     *
+     */
+    public AnnotationSchemaRecord findByName(String name) {
+        QAnnotationSchemaRecord QRECORD = QAnnotationSchemaRecord.annotationSchemaRecord;
+        SQLQuery query = new SQLQueryFactoryImpl(dialect, new ConnectionProvider(connection)).query();
+
+        query = query.from(QRECORD)
+                .where(QRECORD.name.eq(name));
+
+        List<AnnotationSchemaRecord> queryResults = getAnnotationSchemaRecords(QRECORD, query);
+
+        if (queryResults.size() == 1) {
+            return queryResults.get(0);
+        } else {
+            return null;
+        }
+    }
+
+
     /**
      * Get all AnnotationSchemaRecords
      * @return a list of zero or more records.

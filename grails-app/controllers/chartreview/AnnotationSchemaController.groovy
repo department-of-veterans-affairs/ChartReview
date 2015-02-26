@@ -4,6 +4,7 @@ import gov.va.vinci.chartreview.Validator
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
+import grails.converters.XML
 import org.springframework.core.io.ClassPathResource
 
 import java.sql.Timestamp
@@ -97,33 +98,63 @@ class AnnotationSchemaController {
             redirect(action: "list")
             return
         }
+
         String xmlString = f.getInputStream().getText().replaceAll("\n","");
 
         String annotationSchemaId = '';
         if(xmlString != null && xmlString.size() > 0)
         {
+            Project p = Project.get(session.getAttribute(SELECTED_PROJECT));
+
             String xsdString = new ClassPathResource("submitSchema.xsd").getFile().newReader().getText()
             AnnotationSchema schema = null;
+            boolean changeUUIDS = false;
+            boolean changeName = false;
             try {
                 Validator.validate(xmlString, xsdString);
-                boolean changeUUIDS = false;
+
                 if (params.changeUUIDS) {
                     changeUUIDS = Boolean.parseBoolean(params.changeUUIDS);
                 }
+
                 schema = annotationSchemaService.parseSchemaXml(xmlString, changeUUIDS);
+                if (params.changeName) {
+                    changeName = Boolean.parseBoolean(params.changeName);
+                }
+                schema.name = params.newName;
             } catch (Exception e) {
                 flash.message = 'Invalid schema file. (' + e.getMessage() + ')';
                 redirect(action: "list")
                 return
             }
 
+
             // See if name already exists. If so, error.
+            if (annotationSchemaService.findByName(p, schema.name)) {
+                flash.message = "Schema with name '${schema.name}' already exists.";
+                redirect(action: "list")
+                return
+            }
 
+            try {
+                 // Save schema
+                AnnotationSchemaRecord record = new AnnotationSchemaRecord(id: schema.id,
+                                                        name: schema.name,
+                                                        description: schema.description,
+                                                        createdDate: new Date(),
+                                                        createdBy: springSecurityService.principal.username,
+                                                        lastModifiedDate: new Date(),
+                                                        lastModifiedBy: springSecurityService.principal.username,
+                                                        serializationVersion: "1.0",
+                                                        version: new Timestamp(System.currentTimeMillis()) )
 
-            // If not changing guids, see if guid already exists. If so, error.
-
-            // Do save!
-
+                record.serializationData = schema as XML;
+                annotationSchemaService.insert(p, record);
+            } catch (Exception e) {
+                flash.message = "Error uploading schema: ${e}";
+                redirect(action: "list")
+                return
+            }
         } else {
             flash.message = 'Empty file submitted, please upload a valid xml file.';
             redirect(action: "list")

@@ -3,7 +3,6 @@ package chartreview
 import gov.va.vinci.chartreview.Utils
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
-import gov.va.vinci.chartreview.model.schema.AnnotationSchemaAttributeDefSortOrder
 import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
 import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecordDAO
 import gov.va.vinci.chartreview.model.schema.AttributeDef
@@ -77,6 +76,20 @@ class AnnotationSchemaService {
             }
         }
     }
+
+    def findByName(Project p, String name) {
+        Connection c = null;
+        try {
+            c = projectService.getDatabaseConnection(p);
+            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
+            return dao.findByName(name);
+        } finally {
+            if (c!= null) {
+                DbUtils.close(c);
+            }
+        }
+    }
+
 
     def get(Project p, String id) {
         Connection c = null;
@@ -173,27 +186,30 @@ class AnnotationSchemaService {
             attributeDef.color = attrDf?.color?.text()
             attributeDef.numericLow = attrDf?.numericLow?.toDouble().doubleValue()
             attributeDef.numericHigh = attrDf?.numericHigh?.toDouble().doubleValue()
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
             if(attrDf?.minDate)
             {
                 try
                 {
-                    attributeDef.minDate = sdf.parse(attrDf?.minDate);
+                    String date = attrDf.minDate;
+                    attributeDef.minDate = sdf.parse(date);
                 }
                 catch(Exception e)
                 {
-                    // Do nothing
+                   println(e);
                 }
             }
             if(attrDf?.maxDate)
             {
                 try
                 {
-                    attributeDef.maxDate = sdf.parse(attrDf?.maxDate);
+                    String maxDate = attrDf.maxDate
+                    attributeDef.maxDate = sdf.parse(maxDate);
                 }
                 catch(Exception e)
                 {
-                    // Do nothing
+                    println(e);
                 }
             }
 

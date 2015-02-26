@@ -47,6 +47,10 @@
             <g:paginate total="${total}" />
         </div>
 
+        <div class="nav text-right" role="navigation">
+            <g:link class="create btn btn-primary" action="create" title="Create a schema and start editing it">Create Schema</g:link>
+        </div>
+
         <div id="uploadForm" style="border: 1px solid #DDDDDD; padding: 10px; margin-bottom: 10px">
             <g:uploadForm action="upload">
               <fieldset>
@@ -57,14 +61,18 @@
                           <input type="checkbox" value="true" checked name="changeUUIDS" > Change UUIDs
                       </label>
                   </div>
-                <input type="submit" class="btn" title="Upload the chosen schema and insert it in the list" value="Upload"/>
+                  <div class="checkbox" style="margin-top: 10px">
+                      <label>
+                          <input type="checkbox" value="false" name="changeName" id="changeNameCheckBox" >  Change Name
+                      </label>
+                       <input type="text" id="newNameInput" name="newName"  disabled/>
+                  </div>
+                  <input type="submit" class="btn" title="Upload the chosen schema and insert it in the list" value="Upload"/>
             </fieldset>
             </g:uploadForm>
         </div>
 
-        <div class="nav text-right" role="navigation">
-            <g:link class="create btn btn-primary" action="create" title="Create a schema and start editing it">Create Schema</g:link>
-        </div>
+
 
 
         <!-- Modal -->
@@ -85,6 +93,10 @@
     </div>
 
 <script>
+
+    $('#changeNameCheckBox').click(function(){
+        $('#newNameInput').attr('disabled',!this.checked)
+    });
 
     $('#myModal').on('shown', function (e) {
         e.preventDefault();
