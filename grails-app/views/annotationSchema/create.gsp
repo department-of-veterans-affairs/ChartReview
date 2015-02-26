@@ -79,26 +79,30 @@
                             <label>From</label>
                             <p class="input-group">
                                 <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="row.minDate" is-open="row.isStartDateOpen" min-date="minDate"  datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default" ng-click="openStartDate($event, row)"><i class="icon-calendar"></i></button>
-                                </span>
+                                <g:if test="${"View" != mode}">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="openStartDate($event, row)"><i class="icon-calendar"></i></button>
+                                    </span>
+                                </g:if>
                             </p>
                             <label>- To -</label>
                             <p class="input-group">
                                 <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="row.maxDate" is-open="row.isEndDateOpen" min-date="minDate"  datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default" ng-click="openEndDate($event, row)"><i class="icon-calendar"></i></button>
-                                </span>
+                                <g:if test="${"View" != mode}">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="openEndDate($event, row)"><i class="icon-calendar"></i></button>
+                                    </span>
+                                </g:if>
                             </p>
                         </div>
                         <div ng-show="row.type == '3'">
                             <label>Options:</label>
                             <ul style="list-style:none;" ui:sortable ng:model="row.attributeOptions">
                                 <li ng-repeat="option in row.attributeOptions">
-                                    <span class="btn btn-xs" ng-click="removeOption(row, option)"><i class="icon-trash "></i></span> <span>{{option.value}}</span>
+                                    <g:if test="${"View" != mode}"><span class="btn btn-xs" ng-click="removeOption(row, option)"><i class="icon-trash "></i></span></g:if> <span>{{option.value}}</span>
                                 </li>
                             </ul>
-                            <input type="text" ng-model="newOption" />   <input type="button" value="Add" class="btn btn-primary btn-sm" ng-click="addOption(row, newOption)">
+                            <g:if test="${"View" != mode}"><input type="text" ng-model="newOption" />   <input type="button" value="Add" class="btn btn-primary btn-sm" ng-click="addOption(row, newOption)"></g:if>
                         </div>
                     </td>
                 </tr>

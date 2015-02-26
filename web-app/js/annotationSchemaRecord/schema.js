@@ -197,14 +197,14 @@ function parseXml(xmlString, model) {
 
     // Classdefs
     var classDefs = [];
-    $xml.find("classDefs").each(function() {
+    $xml.find("classDef").each(function() {
         var classDef = {
             id:  $(this).attr("id"),
             name: $(this).find("name").text(),
             color: $(this).find("color").text(),
             attributeDefs: null
         };
-        classDef.name.$dirty = true;
+
         var classAttributes = [];
         $(this).find("attributeDefId").each(function() {
             var attributeOption = { id: $(this).attr("id"), value: $(this).text()};
@@ -214,11 +214,13 @@ function parseXml(xmlString, model) {
         })
 
         classDef.attributeDefs = classAttributes;
-        if ($(this).attr("id")) {
+
+        if (classDef.id) {
             classDefs.push(classDef);
         }
     });
 
+    console.log(classDefs);
     model.classDefs = classDefs;
     return model;
 }
