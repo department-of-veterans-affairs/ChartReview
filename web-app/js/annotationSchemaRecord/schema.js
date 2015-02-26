@@ -181,13 +181,16 @@ function parseXml(xmlString, model) {
             var attributeOptions = [];
             $(this).find("attributeDefOptionDef").each(function() {
                 var attributeOption = { id: $(this).attr("id"), value: $(this).find("name").text()};
-                attributeOptions.push(attributeOption);
-
+                if ($(this).attr("id")) {
+                    attributeOptions.push(attributeOption);
+                }
             })
 
             attributeDef.attributeOptions = attributeOptions;
 
-            attributeDefs.push(attributeDef);
+            if ($(this).attr("id")) {
+                attributeDefs.push(attributeDef);
+            }
     });
 
     model.attributeDefs = attributeDefs;
@@ -205,11 +208,15 @@ function parseXml(xmlString, model) {
         var classAttributes = [];
         $(this).find("attributeDefId").each(function() {
             var attributeOption = { id: $(this).attr("id"), value: $(this).text()};
-            classAttributes.push(findById($(this).attr("id"), attributeDefs));
+            if ($(this).attr("id")) {
+                classAttributes.push(findById($(this).attr("id"), attributeDefs));
+            }
         })
 
         classDef.attributeDefs = classAttributes;
-        classDefs.push(classDef);
+        if ($(this).attr("id")) {
+            classDefs.push(classDef);
+        }
     });
 
     model.classDefs = classDefs;
