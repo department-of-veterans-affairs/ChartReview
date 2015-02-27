@@ -8,6 +8,7 @@ import groovy.util.slurpersupport.GPathResult
 
 import java.text.SimpleDateFormat
 
+@Deprecated
 class SchemaService {
 
     def projectService;

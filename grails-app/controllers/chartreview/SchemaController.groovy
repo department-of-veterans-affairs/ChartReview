@@ -18,6 +18,7 @@ import org.springframework.http.MediaType
 
 import javax.validation.ValidationException
 
+@Deprecated
 @RestApi(name = "Schema services", description = "Methods for managing annotation schemas")
 class SchemaController {
 //    static scaffold = AnnotationSchema;
