@@ -263,13 +263,13 @@ function createXml(model) {
         }
 
         if (!attribute.minDate || 0 === attribute.minDate) {
-            xml += "<minDate>0000-12-30T07:00:00Z</minDate>";
+            xml += "<minDate>0002-12-30T07:00:00Z</minDate>";
         } else {
             xml += "<minDate>" +  attribute.minDate.getFullYear() + "-" + ("0" + (attribute.minDate.getMonth() + 1)).slice(-2) + "-" + ("0" + attribute.minDate.getDate()).slice(-2)  + "T07:00:00Z</minDate>";
         }
 
         if (!attribute.maxDate || 0 === attribute.maxDate) {
-            xml += "<maxDate>9999-01-01T07:00:00</maxDate>";
+            xml += "<maxDate>9999-01-01T07:00:00Z</maxDate>";
         } else {
             xml += "<maxDate>" +  attribute.maxDate.getFullYear() + "-" + ("0" + (attribute.maxDate.getMonth() + 1)).slice(-2) + "-" + ("0" + attribute.maxDate.getDate()).slice(-2) + "T07:00:00Z</maxDate>";
         }
