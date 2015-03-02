@@ -1,5 +1,16 @@
 var app = angular.module('schemaApp', ['ui.bootstrap', 'ui.sortable', 'pickAColor']);
 
+app.directive('datepickerPopup', function (){
+        return {
+            restrict: 'EAC',
+            require: 'ngModel',
+            link: function(scope, element, attr, controller) {
+                //remove the default formatter from the input directive to prevent conflict
+                controller.$formatters.shift();
+            }
+        }
+});
+
 app.directive('backgroundColor', function(){
     return function(scope, element, attrs){
         attrs.$observe('backgroundColor', function(value) {
@@ -151,12 +162,46 @@ app.directive('classificationUniquename', function(){
     };
 });
 
+app.config(function myAppConfig(pickAColorProvider) {
+    pickAColorProvider.setOptions({
+        showSpectrum: false,
+        showAdvanced: true,
+        basicColors : {
+            Color01    : '6DD7FF',
+            Color02    : '5D8BD0',
+            Color03    : '66A3FF',
+            Color04    : '708BE6',
+            Color05    : '86A25D',
+            Color06    : '4A8C8A',
+            Color07    : '60CDBB',
+            Color08    : 'A7F99A',
+            Color09    : 'FF7070',
+            Color10    : 'FF3535',
+            Color11    : 'FF8247',
+            Color12    : 'CE5575',
+            Color13    : 'FFA1C1',
+            Color14    : 'DDB3FF',
+            Color15    : '9E83DD',
+            Color16    : 'F4EC57',
+            Color17    : 'FFC60A',
+            Color18    : 'F9BD9F',
+            Color19    : 'FD8BF9',
+            Color20    : 'A5ABB1',
+            Color21    : '43FF62',
+            Color22    : 'DF7762',
+            Color23    : 'D4A746',
+            Color24    : 'A19C92',
+            Color25    : '8981EA'
+        }
+    });
+});
+
 function parseXml(xmlString, model) {
     xmlDoc = $.parseXML( xmlString );
     $xml = $(xmlDoc);
 
     // Top Level Model Object
-    model.id= $xml.find("annotationSchema > id").text();
+    model.id= $xml.find("annotationSchema").attr("id");
     model.name= $xml.find("annotationSchema > name").text();
     model.description= $xml.find("annotationSchema > description").text();
     model.attributeDefs.length = 0;
@@ -172,8 +217,8 @@ function parseXml(xmlString, model) {
                 numericLow: $(this).find("numericLow").text(),
                 numericHigh: $(this).find("numericHigh").text(),
                 attributeOptions: null,
-                minDate: $(this).find("minDate").text(),
-                maxDate: $(this).find("maxDate").text(),
+                minDate: moment($(this).find("minDate").text()).toDate(),
+                maxDate: moment($(this).find("maxDate").text()).toDate(),
                 isStartDateOpen: false,
                 isEndDateOpen: false
             }

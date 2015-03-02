@@ -5,17 +5,18 @@
     <g:title>Create Annotation Schema</g:title>
     <r:require module="jquery-ui"/>
     <r:require modules="bootstrap"/>
-    <link rel="stylesheet" href="${request.contextPath}/css/pick-a-color-1.1.8-CR-Enhanced.min.css">
-    <script src="${request.contextPath}/js/pick-a-color-1.1.8-CR-Enhanced.js"></script>
     <script src="${request.contextPath}/js/tinycolor-0.9.15.min.js"></script>
+    <script src="${request.contextPath}/js/pick-a-color-1.1.8-CR-Enhanced.js"></script>
+
     <script src="${request.contextPath}/js/angular.min.js"></script>
     <script src="${request.contextPath}/js/angular-pick-a-color.js"></script>
 
     <script src="${request.contextPath}/js/sortable.js"></script>
     <script src="${request.contextPath}/js/ui-bootstrap-0.8.0.min.js"></script>
     <script src="${request.contextPath}/js/ui-bootstrap-tpls-0.8.0.min.js"></script>
+    <script src="${request.contextPath}/js/moment.min.js"></script>
     <script src="${request.contextPath}/js/annotationSchemaRecord/schema.js"></script>
-
+    <link rel="stylesheet" href="${request.contextPath}/css/pick-a-color-1.1.8-CR-Enhanced.min.css">
 </head>
 <body>
 <div style="float:right">Project: <strong>${session.getAttribute("projectName")}</strong>&nbsp;&nbsp;&nbsp;<g:link action="chooseProject">Change</g:link></div>
@@ -117,8 +118,7 @@
                 <thead>
                 <tr>
                     <th style="width: 10px"></th>
-                    <th style="width: 250px">Name</th>
-                    <th style="text-align: center; width: 250px">Color</th>
+                    <th style="width: 500px">Name / Color</th>
                     <th style="text-align: center">Attributes</th>
                 </tr>
                 </thead>
@@ -130,15 +130,16 @@
                         </g:if>
                     <td>
                         <ng-form name="classificationNameForm">
-                            <input ng-model="classification.name" ng-required="true" name="classificationName" background-color="{{classification.color}}" style="width: 100%" classification-uniquename/>
+                            <strong>Name:</strong> <input ng-model="classification.name" ng-required="true" name="classificationName" background-color="{{classification.color}}" style="width: 400px" classification-uniquename/>
                             <div ng-show="classificationNameForm.classificationName.$dirty" style="font-weight: bold; color: red;">
                                 <div ng-show="classificationNameForm.classificationName.$error.unique">Classification name must be unique. </div>
                             </div>
                         </ng-form>
+                        <br/><br/>
+                        <strong>Color:</strong> <pick-a-color id="pick-a-color" ng-model="classification.color" inline-dropdown="true" ></pick-a-color>
                     </td>
-                    <td><pick-a-color id="inputColor" ng-model="classification.color" inline-dropdown="true"></pick-a-color>
-                    </td>
-                    <td><label>Selected:</label><br/>
+                    <td>
+                        <g:if test="${"View" != mode}"><label>Selected:</label><br/></g:if>
                         <table class="table table-striped table-bordered">
                             <tbody <g:if test="${"View" != mode}">ui:sortable</g:if> ng:model="classification.attributeDefs">
                             <tr ng-repeat="row in classification.attributeDefs">

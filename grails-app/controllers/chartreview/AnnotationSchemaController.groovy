@@ -5,6 +5,7 @@ import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
 import grails.converters.XML
+import org.apache.commons.lang3.StringUtils
 import org.springframework.core.io.ClassPathResource
 
 import java.sql.Timestamp
@@ -98,10 +99,17 @@ class AnnotationSchemaController {
             redirect(action: "list")
             return
         }
+        if (params.changeName
+                        &&  Boolean.parseBoolean(params.changeName)
+                        && StringUtils.isBlank(params.newName)) {
+            flash.message = "If changing the name, a new name is required.";
+            redirect(action: "list")
+            return
+
+        }
 
         String xmlString = f.getInputStream().getText().replaceAll("\n","");
 
-        String annotationSchemaId = '';
         if(xmlString != null && xmlString.size() > 0)
         {
             Project p = Project.get(session.getAttribute(SELECTED_PROJECT));
@@ -109,7 +117,6 @@ class AnnotationSchemaController {
             String xsdString = new ClassPathResource("submitSchema.xsd").getFile().newReader().getText()
             AnnotationSchema schema = null;
             boolean changeUUIDS = false;
-            boolean changeName = false;
             try {
                 Validator.validate(xmlString, xsdString);
 
@@ -118,10 +125,10 @@ class AnnotationSchemaController {
                 }
 
                 schema = annotationSchemaService.parseSchemaXml(xmlString, changeUUIDS);
-                if (params.changeName) {
-                    changeName = Boolean.parseBoolean(params.changeName);
+                if (params.changeName &&  Boolean.parseBoolean(params.changeName) ) {
+                    schema.name = params.newName;
                 }
-                schema.name = params.newName;
+
             } catch (Exception e) {
                 flash.message = 'Invalid schema file. (' + e.getMessage() + ')';
                 redirect(action: "list")
@@ -177,7 +184,9 @@ class AnnotationSchemaController {
             redirect(action: "chooseProject", params: params)
             return;
         }
-        AnnotationSchema schema = annotationSchemaService.parseSchemaXml(params.xml, false);
+        String xml = params.xml;
+
+        AnnotationSchema schema = annotationSchemaService.parseSchemaXml(xml, false);
 
         Project  p = Project.get(session.getAttribute(SELECTED_PROJECT));
         if ("Create" == params.mode) {
