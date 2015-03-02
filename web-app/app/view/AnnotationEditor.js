@@ -415,7 +415,7 @@ Ext.define('CR.app.view.AnnotationEditor', {
                     if(dateParts.length == 3)
                     {
                         var newYear = dateParts[0];
-                        var newMonth = dateParts[1];
+                        var newMonth = dateParts[1] - 1;
                         var newDate = dateParts[2];
                         curDate.setFullYear(newYear ? newYear : 0);
                         curDate.setMonth(newMonth ? newMonth : 0);
