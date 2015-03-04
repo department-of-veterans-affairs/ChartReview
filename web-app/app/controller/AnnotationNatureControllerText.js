@@ -148,7 +148,7 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
             {
                 var selectedAnnotation = CR.app.controller.AnnotationNatureController.selectedAnnotation;
                 var selectedClinicalElement = CR.app.controller.AnnotationNatureController.selectedClinicalElement;
-                if(selectedAnnotation && selectedAnnotation.clinicalElementId == selectedClinicalElement.id)
+                if(selectedAnnotation && selectedClinicalElement && selectedAnnotation.clinicalElementId == selectedClinicalElement.id)
                 {
                     var spanStart = 0;
                     if(selectedAnnotation.spans.length > 0)
