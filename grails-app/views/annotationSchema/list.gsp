@@ -58,7 +58,7 @@
                 <input type="file" name="myFile" title="Choose a schema file to upload"/>
                   <div class="checkbox" style="margin-top: 10px">
                       <label>
-                          <input type="checkbox" value="true" checked name="changeUUIDS" > Change UUIDs
+                          <input type="checkbox" value="true" name="changeUUIDS" > Change UUIDs
                       </label>
                   </div>
                   <div class="checkbox" style="margin-top: 10px">

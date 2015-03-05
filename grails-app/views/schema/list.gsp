@@ -18,6 +18,14 @@
                 ${flash.message}
             </div>
         </g:if>
+        <div class="alert">
+            <strong>Note:</strong> These are old schemas, and should NOT be edited or changed. Please use the new
+            <g:link controller="annotationSchema">schema module</g:link>.
+            <br/><br/>
+            <strong>TO MIGRATE TO THE NEW SCHEMA MODULE:</strong> Export the schema here, then import the schema in
+            the <g:link controller="annotationSchema" >new schema module</g:link> being sure to NOT change
+            the name or UUIDs.
+        </div>
         <table class="table table-striped table-bordered">
             <thead>
             <tr>

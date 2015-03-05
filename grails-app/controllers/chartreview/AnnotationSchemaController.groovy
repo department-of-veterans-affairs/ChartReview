@@ -39,6 +39,11 @@ class AnnotationSchemaController {
         if (params.projectId) {
             session.setAttribute(SELECTED_PROJECT, params.projectId);
         }
+        if (session.getAttribute(SELECTED_PROJECT) == null) {
+            redirect(action: "chooseProject", params: params)
+            return;
+        }
+
 
         Project p = Project.get(session.getAttribute(SELECTED_PROJECT));
         session.setAttribute("projectName", p.getName());
