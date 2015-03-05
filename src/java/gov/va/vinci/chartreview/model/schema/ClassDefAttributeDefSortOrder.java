@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 
+@Deprecated
 @Entity
 public class ClassDefAttributeDefSortOrder implements java.io.Serializable, Comparable<ClassDefAttributeDefSortOrder>
 {

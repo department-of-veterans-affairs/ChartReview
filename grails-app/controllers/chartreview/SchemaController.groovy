@@ -3,7 +3,9 @@ package chartreview
 import gov.va.vinci.chartreview.Validator
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.*
+import grails.converters.JSON
 import grails.converters.XML
+import grails.plugin.gson.converters.GSON
 import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
 import org.restapidoc.annotation.RestApiParam
@@ -16,6 +18,7 @@ import org.springframework.http.MediaType
 
 import javax.validation.ValidationException
 
+@Deprecated
 @RestApi(name = "Schema services", description = "Methods for managing annotation schemas")
 class SchemaController {
 //    static scaffold = AnnotationSchema;
@@ -252,7 +255,13 @@ class SchemaController {
         // which would also prevent the sort meta data from streaming, but it wasn't working right away...
         schemas.add(schema);
    //     println(schemas as XML);
-        render schemas as XML;
+        if ("json" == params.type) {
+            render schemas as JSON;
+            return;
+        } else {
+            render schemas as XML;
+            return;
+        }
     }
 
     @RestApiMethod( description="Get the UIMA Type Descriptor XML representation of an annotation schema",

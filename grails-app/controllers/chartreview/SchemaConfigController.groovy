@@ -4,6 +4,7 @@ import gov.va.vinci.chartreview.CreateAnnotationSchemaModel
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import org.springframework.dao.DataIntegrityViolationException
 
+@Deprecated
 class SchemaConfigController {
 //    static scaffold = AnnotationSchema;
 

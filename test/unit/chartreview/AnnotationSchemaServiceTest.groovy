@@ -1,23 +1,21 @@
 package chartreview
 
-import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.model.schema.AttributeDef
 import gov.va.vinci.chartreview.util.JdbcScriptRunner
-import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
-import org.junit.Before
+import org.junit.Assert
 import org.junit.BeforeClass
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import java.sql.Connection
 import java.sql.DriverManager
+import java.text.SimpleDateFormat
 
-@TestFor(SchemaService)
-@Mock([AnnotationSchema, Project, ProjectService, SchemaService])
-class SchemaServiceTest {
-    Logger log = LoggerFactory.getLogger(SchemaServiceTest)
+@TestFor(AnnotationSchemaService)
+class AnnotationSchemaServiceTest {
+    Logger log = LoggerFactory.getLogger(AnnotationSchemaServiceTest)
 
     def exampleXml = """
             <schemas>
@@ -30,7 +28,7 @@ class SchemaServiceTest {
                             <numericLow>0.0</numericLow>
                             <numericHigh>9.99999999999999E11</numericHigh>
                             <minDate>2015-01-01T00:00:00Z</minDate>
-                            <maxDate>2015-02-27T00:00:00Z</maxDate>
+                            <maxDate>2015-02-21T00:00:00Z</maxDate>
                             <attributeDefOptionDefs></attributeDefOptionDefs>
                         </attributeDef>
                         <attributeDef id='116' type='3'>
@@ -315,21 +313,34 @@ class SchemaServiceTest {
 
     public void testXmlParsing() {
 
-        AnnotationSchema annotationSchema = service.saveSchema(exampleXml);
-
-        AnnotationSchema tAnnotationSchema = AnnotationSchema.get(annotationSchema.id);
-        tAnnotationSchema.save();
-
-        AnnotationSchema s = service.getSchema(annotationSchema.id);
+        AnnotationSchema s = service.parseSchemaXml(exampleXml, false);
         assertNotNull(s);
-        assertEquals(s.id, annotationSchema.id);
         assertEquals(6, s.getClassDefs().size());
         assertEquals(8, s.getAttributeDefs().size());
         assertEquals(0, s.getClassRelDefs().size());
 
 
+        boolean found = false;
+        for (AttributeDef attribute: s.getAttributeDefs()) {
+            if ("cuis".equals(attribute.name)) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                assert("2015-01-01".equals(sdf.format(attribute.getMinDate())));
+                assert("2015-02-21".equals(sdf.format(attribute.getMaxDate())));
+                found =  true;
+            }
+        }
+
+        if (!found) {
+            Assert.fail("CUIS not found in schema to test date format.");
+        }
+
+
+
     }
 
+
+
+    /**
     public void testUimaTypeDescriptor() {
 
         AnnotationSchema annotationSchema = service.saveSchema(exampleXml);
@@ -338,5 +349,6 @@ class SchemaServiceTest {
         result = result.replaceAll("\\s","");
 
     }
+     **/
 
 }

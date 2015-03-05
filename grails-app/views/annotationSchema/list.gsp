@@ -1,3 +1,4 @@
+<%@ page import="chartreview.AnnotationSchemaController" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,6 +9,8 @@
     <g:title><g:message code="default.list.label" args="[entityName]" /></g:title>
 </head>
 <body>
+    <div style="float:right">Project: <strong>${session.getAttribute("projectName")}</strong>&nbsp;&nbsp;&nbsp;<g:link action="chooseProject">Change</g:link></div>
+<br/><br/>
     <div id="list-schema" class="content scaffold-list" role="main">
         <fieldset>
             <legend><g:message code="default.list.label" args="[entityName]" /></legend>
@@ -18,14 +21,6 @@
                 ${flash.message}
             </div>
         </g:if>
-        <div class="alert">
-            <strong>Note:</strong> These are old schemas, and should NOT be edited or changed. Please use the new
-            <g:link controller="annotationSchema">schema module</g:link>.
-            <br/><br/>
-            <strong>TO MIGRATE TO THE NEW SCHEMA MODULE:</strong> Export the schema here, then import the schema in
-            the <g:link controller="annotationSchema" >new schema module</g:link> being sure to NOT change
-            the name or UUIDs.
-        </div>
         <table class="table table-striped table-bordered">
             <thead>
             <tr>
@@ -39,11 +34,11 @@
             <tbody>
             <g:each in="${model}" status="i" var="schema">
                 <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-                    <td><g:link action="startEdit" id="${schema.id}">${fieldValue(bean: schema, field: "name")}</g:link></td>
-                    <td style="text-align: center"><g:link action="startEdit" id="${schema.id}"><i class="icon-pencil" title="Edit this schema"></i></g:link></td>
-                    <td style="text-align: center"><g:link action="delete" id="${schema.id}" onclick="return confirm('Delete this schema?');"><i class="icon-trash" title="Delete this schema"></i></g:link></td>
+                    <td><g:link action="view" id="${schema.id}">${fieldValue(bean: schema, field: "name")}</g:link></td>
+                    <td style="text-align: center"><g:link action="edit" params="[id: schema.id, projectId: session.getAttribute(chartreview.AnnotationSchemaController.SELECTED_PROJECT)]"><i class="icon-pencil" title="Edit this schema"></i></g:link></td>
+                    <td style="text-align: center"><g:link action="delete" params="[id: schema.id, projectId: session.getAttribute(chartreview.AnnotationSchemaController.SELECTED_PROJECT)]" onclick="return confirm('Delete this schema?');"><i class="icon-trash" title="Delete this schema"></i></g:link></td>
                     <td style="text-align: center"><span  onclick='doModal("${schema.id}")'><i class="icon-share"></i></span></td>
-                    <td style="text-align: center"><g:link action="export" id="${schema.id}" target="_blank"><i class="icon-arrow-down"></g:link></i></td>
+                    <td style="text-align: center"><g:link action="export" params="[id: schema.id, projectId: session.getAttribute(chartreview.AnnotationSchemaController.SELECTED_PROJECT)]"  target="_blank"><i class="icon-arrow-down"></g:link></i></td>
                 </tr>
             </g:each>
             </tbody>
@@ -52,19 +47,32 @@
             <g:paginate total="${total}" />
         </div>
 
+        <div class="nav text-right" role="navigation">
+            <g:link class="create btn btn-primary" action="create" title="Create a schema and start editing it">Create Schema</g:link>
+        </div>
+
         <div id="uploadForm" style="border: 1px solid #DDDDDD; padding: 10px; margin-bottom: 10px">
             <g:uploadForm action="upload">
               <fieldset>
                 <legend>Upload New Schema</legend>
                 <input type="file" name="myFile" title="Choose a schema file to upload"/>
-                <input type="submit" class="btn" title="Upload the chosen schema and insert it in the list"/>
+                  <div class="checkbox" style="margin-top: 10px">
+                      <label>
+                          <input type="checkbox" value="true" name="changeUUIDS" > Change UUIDs
+                      </label>
+                  </div>
+                  <div class="checkbox" style="margin-top: 10px">
+                      <label>
+                          <input type="checkbox" value="false" name="changeName" id="changeNameCheckBox" >  Change Name
+                      </label>
+                       <input type="text" id="newNameInput" name="newName"  disabled/>
+                  </div>
+                  <input type="submit" class="btn" title="Upload the chosen schema and insert it in the list" value="Upload"/>
             </fieldset>
             </g:uploadForm>
         </div>
 
-        <div class="nav text-right" role="navigation">
-            <g:link class="create btn btn-primary" action="create" title="Create a schema and start editing it">Create Schema</g:link>
-        </div>
+
 
 
         <!-- Modal -->
@@ -86,13 +94,17 @@
 
 <script>
 
+    $('#changeNameCheckBox').click(function(){
+        $('#newNameInput').attr('disabled',!this.checked)
+    });
+
     $('#myModal').on('shown', function (e) {
         e.preventDefault();
         $('#newName').focus();
     });
 
     function submitCopy() {
-         window.location ='<g:createLink action="copy"></g:createLink>?id=' + $('#copyId').val() + "&newName=" + encodeURIComponent($('#newName').val());
+         window.location ='<g:createLink action="copy"></g:createLink>?id=' + $('#copyId').val() + "&projectId=${session.getAttribute(chartreview.AnnotationSchemaController.SELECTED_PROJECT)}&newName=" + encodeURIComponent($('#newName').val());
     }
 
     function doModal(schemaId) {

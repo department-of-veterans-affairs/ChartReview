@@ -483,6 +483,7 @@ public class AnnotationSchema implements java.io.Serializable, Comparable<Annota
         return objName1.compareTo(objName2);
     }
 
+    @Deprecated
     public void sortAttributeDefsByIdToOrderMap(Map<String, String> idToOrderMap) {
         Collections.sort(this.attributeDefs, new AttributeDefComparator(idToOrderMap));
     }
@@ -505,6 +506,7 @@ public class AnnotationSchema implements java.io.Serializable, Comparable<Annota
         }
     }
 
+    @Deprecated
     public void sortClassDefsByIdToOrderMap(Map<String, String> idToOrderMap) {
         Collections.sort(this.classDefs, new ClassDefComparator(idToOrderMap));
     }
@@ -527,6 +529,7 @@ public class AnnotationSchema implements java.io.Serializable, Comparable<Annota
         }
     }
 
+    @Deprecated
     public void sortClassRelDefsByIdToOrderMap(Map<String, String> idToOrderMap) {
         Collections.sort(this.classRelDefs, new ClassRelDefComparator(idToOrderMap));
     }
@@ -549,6 +552,7 @@ public class AnnotationSchema implements java.io.Serializable, Comparable<Annota
         }
     }
 
+    @Deprecated
     public void clearSorts()
     {
         this.attributeDefSortOrders.clear();
@@ -568,6 +572,7 @@ public class AnnotationSchema implements java.io.Serializable, Comparable<Annota
         }
     }
 
+    @Deprecated
     public void applySorts()
     {
         List<AttributeDef> tAttributeDefsSorted = sortAttributeDefs(this.attributeDefs);

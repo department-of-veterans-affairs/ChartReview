@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
 
+@Deprecated
 @Entity
 public class AttributeDefAttributeDefOptionDefSortOrder implements java.io.Serializable, Comparable<AttributeDefAttributeDefOptionDefSortOrder>
 {
