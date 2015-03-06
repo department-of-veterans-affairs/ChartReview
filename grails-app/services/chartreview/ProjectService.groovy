@@ -145,9 +145,9 @@ class ProjectService {
                 }
             }
             dataSource.setDriverClassName(p.getJdbcDriver());
-        } else if (javaMelodyDriverExists) {
-            dataSource.setDriverClassName("net.bull.javamelody.JdbcDriver");
-            dataSource.setConnectionProperties("[driver=" + p.getJdbcDriver() + ";]");
+//        } else if (javaMelodyDriverExists) {
+//            dataSource.setDriverClassName("net.bull.javamelody.JdbcDriver");
+//            dataSource.setConnectionProperties("[driver=" + p.getJdbcDriver() + ";]");
         } else {
             dataSource.setDriverClassName(p.getJdbcDriver());
         }

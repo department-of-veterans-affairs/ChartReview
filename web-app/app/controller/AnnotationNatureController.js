@@ -1337,9 +1337,11 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
 					{
                         // Load a new schema, if necessary.
 						var mdl = Ext.data.schema.Schema.lookupEntity('CR.app.model.AnnotationSchemaModel');
-						mdl.schemaId = schemaId;
 						mdl.taskNode = taskNode;
                         CR.app.controller.AnnotationNatureController.blockWhileLoading("Loading AnnotationSchema...");
+                        mdl.getProxy().setExtraParams({
+                             projectId: CR.app.controller.AnnotationNatureController.projectId
+                        });
 						mdl.load(schemaId, {
 							scope: mdl,
 							success: function(schema) {
