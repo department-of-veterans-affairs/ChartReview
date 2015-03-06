@@ -53,6 +53,7 @@ class ProcessService {
     def formService;
     def clinicalElementConfigurationService;
     private final claimTaskLock = new Object();
+    def annotationSchemaService;
 
     /**
      * Given a task execution id, find the process instance business key. This looks in both current and historic tasks.
@@ -860,7 +861,7 @@ class ProcessService {
 
 
         def schemaId = variables.get(TaskVariablesEnum.SCHEMA.name);
-        AnnotationSchema annotationSchema = AnnotationSchema.get(schemaId);
+        AnnotationSchema annotationSchema = annotationSchemaService.get(Project.get(projectId), schemaId);
         if (!annotationSchema) {
             throw new IllegalArgumentException("Could not find schema with id ${schemaId}.");
         }
