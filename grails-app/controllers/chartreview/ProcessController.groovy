@@ -35,6 +35,7 @@ import static gov.va.vinci.chartreview.Utils.closeConnection
 
 class ProcessController {
 
+    def annotationSchemaService;
     def projectService
     def repositoryService;
     def processService;
@@ -90,7 +91,9 @@ class ProcessController {
     def addToProjectFlow = {
         init {
             action {
-                conversation.schemas = AnnotationSchema.list();
+
+                Project p = Project.get(params.id);
+                conversation.schemas = annotationSchemaService.getAll(p);
                 conversation.readOnly = false;
                 conversation.editValuesMap = new HashMap<String, Object>();
 
@@ -101,7 +104,6 @@ class ProcessController {
                     conversation.mode = "edit";
                 }
 
-                Project p = Project.get(params.id);
                 if (!p) {
                     throw new ValidationException("Could not load project for deployedProcessDefinitionId=${params.id}.");
                 }
