@@ -302,7 +302,7 @@ class ClinicalElementConfigurationController {
                 try {
                     List<ClinicalElementColumnDef> existingDataQueryColumns = dto.getDataQueryColumns()
 
-                    dto = clinicalElementService.populateColumnInfo(dto);
+                    dto = clinicalElementService.populateColumnInfo(conversation.project, dto);
                     List<ClinicalElementColumnDef> toRemove = new ArrayList<ClinicalElementColumnDef>();
                     List<ClinicalElementColumnDef> toAdd = new ArrayList<ClinicalElementColumnDef>();
 

@@ -544,12 +544,12 @@ class ClinicalElementService  {
      * @return              A ClinicalElementConfigurationDetails from the result metadata of the query.
      * @throws SQLException if any type of sql exception occurs connection to or querying the database.
      */
-    public ClinicalElementConfigurationDetails populateColumnInfo(ClinicalElementConfigurationDetails config) throws SQLException {
+    public ClinicalElementConfigurationDetails populateColumnInfo(Project p,  ClinicalElementConfigurationDetails config) throws SQLException {
         // Get a connection to the database
         Connection conn = null;
 
         try {
-            conn = getConnection(config)
+            conn = projectService.getDatabaseConnection(p);
 
             PreparedStatement dataQueryStatement = conn.prepareStatement(config.query);
 
@@ -599,19 +599,7 @@ class ClinicalElementService  {
         return results;
     }
 
-    protected Connection getConnection(ClinicalElementConfigurationDetails config) {
-        Connection conn = null;
-        Class.forName(config.jdbcDriver);
 
-        /** Use the supplied username/password if filled out, otherwise try just the url. **/
-        if (!GenericValidator.isBlankOrNull(config.jdbcUsername)
-                || !GenericValidator.isBlankOrNull(config.jdbcPassword)) {
-            conn = DriverManager.getConnection(config.connectionString, config.jdbcUsername, config.jdbcPassword)
-        } else {
-            conn = DriverManager.getConnection(config.connectionString);
-        }
-        conn
-    }
 
     /**
      * Transfer a resultset into a list of ClinicalElementColumnDefs
