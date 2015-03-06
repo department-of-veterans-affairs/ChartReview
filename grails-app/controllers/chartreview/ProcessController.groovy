@@ -16,6 +16,7 @@ import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.ProjectDocument
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.TaskDefinitionWithVariable
+import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
 import gov.va.vinci.chartreview.util.StringFormTypeSerializable
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
 import gov.va.vinci.siman.model.QAnnotation
@@ -66,10 +67,10 @@ class ProcessController {
         redirect(action: "list")
     }
 
-    def getSchemaOptions() {
-        def annotationSchemas = AnnotationSchema.findAll(sort: 'name', order: 'asc');
+    def getSchemaOptions(Project p) {
+        def annotationSchemas = annotationSchemaService.getAll(p).sort {it.name};
         List<Object> schemaOptions = new ArrayList<Object>();
-        for (AnnotationSchema schema in annotationSchemas) {
+        for (AnnotationSchemaRecord schema in annotationSchemas) {
             def found = false;
             for (Object obj in schemaOptions) {
                 if (obj.value == schema.getId()) {
@@ -111,7 +112,7 @@ class ProcessController {
                 AddProcessWorkflowModel model = new AddProcessWorkflowModel();
                 model.query = "select id from patient;";
                 model.project = p;
-                model.schemas = getSchemaOptions();
+                model.schemas = getSchemaOptions(p);
                 List<ProcessDefinition> processList = repositoryService.createProcessDefinitionQuery().orderByProcessDefinitionName().asc().list()
 
                 conversation.model = model;
@@ -212,7 +213,7 @@ class ProcessController {
                 } else {
                     boolean singleStep = (conversation.serviceParameters.size() == 1);
                     conversation.model = processStep3Params(conversation.model, params, singleStep);
-                    conversation.model.schemas = getSchemaOptions();
+                    conversation.model.schemas = getSchemaOptions(conversation.model.project);
                 }
             }.to "step2"
             on("finish") {
@@ -349,7 +350,7 @@ class ProcessController {
             taskVariablesList.add(variables);
         }
         model.taskVariablesList = taskVariablesList;
-        model.schemas = getSchemaOptions();
+        model.schemas = getSchemaOptions(p);
 
         List<FormPropertyImpl> props = getStartFormData(model.processId)
         return [tasks, props, configurationMap]
