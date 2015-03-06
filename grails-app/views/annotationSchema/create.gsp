@@ -67,6 +67,7 @@
                     <td>
                         <select class="form-control" id="attributeType" name="type" ng-model="row.type" ng-required="true">
                             <option value="0" selected="selected" >Text</option>
+                            <option value="2" >TextArea</option>
                             <option value="1" >Numeric</option>
                             <option value="4" >Date</option>
                             <option value="3" >Option</option>
