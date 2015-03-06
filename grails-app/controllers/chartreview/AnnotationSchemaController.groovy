@@ -4,9 +4,11 @@ import gov.va.vinci.chartreview.Validator
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
+import grails.converters.JSON
 import grails.converters.XML
 import org.apache.commons.lang3.StringUtils
 import org.springframework.core.io.ClassPathResource
+import javax.validation.ValidationException
 
 import java.sql.Timestamp
 
@@ -234,8 +236,25 @@ class AnnotationSchemaController {
      */
     def getSchema(String id, String projectId) {
         AnnotationSchemaRecord record = annotationSchemaService.get(Project.get(params.projectId), id);
-        render record.serializationData;
-        return null;
+//        render record.serializationData;
+//        return null;
+        AnnotationSchema schema = annotationSchemaService.parseSchemaXml(record.serializationData, true);
+        if (!schema) {
+            throw new ValidationException("Annotation schema ${params.id} not found.");
+        }
+        List<AnnotationSchema> schemas = new ArrayList<AnnotationSchema>();
+        // Sort the principal objects for UI consumption before converting to XML.
+        // Overwriting (copy XML.java - all privates) our own converter is another option,
+        // which would also prevent the sort meta data from streaming, but it wasn't working right away...
+        schemas.add(schema);
+        //     println(schemas as XML);
+        if ("json" == params.type) {
+            render schemas as JSON;
+            return;
+        } else {
+            render schemas as XML;
+            return;
+        }
     }
 
 }
