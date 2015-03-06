@@ -8,6 +8,7 @@ import gov.va.vinci.chartreview.model.ClinicalElementDisplayParameters
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.TaskDefinitionWithVariable
+import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
 import gov.va.vinci.chartreview.util.NotFoundException
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
 import gov.va.vinci.siman.model.ClinicalElementConfigurationDetails
@@ -861,7 +862,7 @@ class ProcessService {
 
 
         def schemaId = variables.get(TaskVariablesEnum.SCHEMA.name);
-        AnnotationSchema annotationSchema = annotationSchemaService.get(Project.get(projectId), schemaId);
+        AnnotationSchemaRecord annotationSchema = annotationSchemaService.get(Project.get(projectId), schemaId);
         if (!annotationSchema) {
             throw new IllegalArgumentException("Could not find schema with id ${schemaId}.");
         }
