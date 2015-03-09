@@ -101,6 +101,7 @@ log4j = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+//    debug 'org.grails.activiti'
 
     //debug 'org.springframework.security'
 
@@ -110,7 +111,7 @@ log4j = {
     //debug 'org.springframework',
 
     // Uncomment the following two lines to get SQL and bind parameters.
-  //  debug 'org.hibernate.SQL'
+//    debug 'org.hibernate.SQL'
 //    trace 'org.hibernate.type'
 }
 
