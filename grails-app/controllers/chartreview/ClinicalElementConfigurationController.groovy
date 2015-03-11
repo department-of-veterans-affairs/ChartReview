@@ -212,7 +212,11 @@ class ClinicalElementConfigurationController {
         userProjects.remove(project);
 
         userProjects.each { p ->
-            otherConfigurations.put(p, clinicalElementConfigurationService.getAllClinicalElementConfigurations(p.id, false));
+            try {
+                otherConfigurations.put(p, clinicalElementConfigurationService.getAllClinicalElementConfigurations(p.id, false));
+            } catch (Exception e) {
+                log.warn("Could not get clinical element configuration for ${p.id}. Ignoring this project for user.")
+            }
         }
         [
             otherProjectClinicalElementConfigurations: otherConfigurations,
