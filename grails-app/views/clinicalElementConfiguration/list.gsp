@@ -52,11 +52,11 @@
                     </tr>
 				</thead>
 				<tbody>
-				<g:each in="${otherProjectClinicalElementConfigurations.keySet()}" status="i" var="project">
+				<g:each in="${otherProjectClinicalElementConfigurations?.keySet()}" status="i" var="project">
                     <tr>
                         <td colspan="5" style="font-weight: bold">Project: ${project.name}</td>
                     </tr>
-                    <g:each in="${otherProjectClinicalElementConfigurations.get(project).sort{it.name}}" var="dataSetConfigurationInstance">
+                    <g:each in="${otherProjectClinicalElementConfigurations.get(project)?.sort{it.name}}" var="dataSetConfigurationInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
                         <td>&nbsp;&nbsp;</td>
                         <td>${fieldValue(bean: dataSetConfigurationInstance, field: "name")}</td>
