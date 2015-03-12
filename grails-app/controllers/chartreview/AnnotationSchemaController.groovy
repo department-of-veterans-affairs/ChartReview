@@ -238,7 +238,7 @@ class AnnotationSchemaController {
         AnnotationSchemaRecord record = annotationSchemaService.get(Project.get(params.projectId), id);
 //        render record.serializationData;
 //        return null;
-        AnnotationSchema schema = annotationSchemaService.parseSchemaXml(record.serializationData, true);
+        AnnotationSchema schema = annotationSchemaService.parseSchemaXml(record.serializationData, false);
         if (!schema) {
             throw new ValidationException("Annotation schema ${params.id} not found.");
         }
