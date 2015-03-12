@@ -133,7 +133,6 @@ class ProjectService {
         if (p.getJdbcDriver().equals("net.sourceforge.jtds.jdbc.Driver")) {
             HttpServletRequest request = WebUtils.retrieveGrailsWebRequest().getCurrentRequest();
             Principal principal = request.getSession().getAttribute("SPNEGO-PRINCIPAL");
-
             if (principal == null) {
                principal = request.getUserPrincipal();
             }
@@ -144,6 +143,7 @@ class ProjectService {
                     return jTDSDriverManager.getConnection(p.getDatabaseConnectionUrl(), credential);
                 }
             }
+
             dataSource.setDriverClassName(p.getJdbcDriver());
 //        } else if (javaMelodyDriverExists) {
 //            dataSource.setDriverClassName("net.bull.javamelody.JdbcDriver");

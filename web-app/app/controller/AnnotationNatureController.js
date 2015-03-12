@@ -1355,11 +1355,7 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
 							failure: function(schema) {
 				                CR.app.controller.AnnotationNatureController.unblockAfterLoading("Loading AnnotationSchema...");
                                 alert('Failed to load schema.');
-							},
-                            callback: function(schema, operation, success) {
-                                alert("success="+success);
-                                var brad = 'brad';
-                            }
+							}
 						});
 					}
 				}

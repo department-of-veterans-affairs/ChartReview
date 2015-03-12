@@ -209,7 +209,7 @@ class BootStrap {
             {
                 // Do nothing
             }
-            if(ad.getMinDate().getTime() < minDate.getTime())
+            if(ad != null && ad.getMinDate() != null && minDate != null && ad.getMinDate().getTime() < minDate.getTime())
             {
                 ad.setMinDate(minDate);
             }

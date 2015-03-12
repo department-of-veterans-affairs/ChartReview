@@ -208,8 +208,8 @@ Ext.define('CR.app.view.ItemListDetail', {
                                         clinicalElementConfiguration.textContent, // clinicalElementConfigurationName
                                         '', // dateAssigned
                                         '', // dateModified
-                                        selectedClinicalElement.schemaId, //schemaId
-                                        selectedClinicalElement.schemaName, // schemaName
+                                        selectedPrincipalClinicalElement.schemaId, //schemaId
+                                        selectedPrincipalClinicalElement.schemaName, // schemaName
                                         '', // status
                                         '', // contextElementTypes
                                         selectedPrincipalClinicalElement.id, //principalClinicalElementId
