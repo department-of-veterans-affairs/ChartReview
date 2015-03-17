@@ -157,11 +157,18 @@ class ProjectController {
             return
         }
 
-        SimanDrop create = new SimanDrop(projectInstance.getDbConnectionInfo(), null);
-        create.execute();
-        ClinicalElementConfigurationDrop clinicalElementConfigurationCreate = new ClinicalElementConfigurationDrop(projectInstance.getDbConnectionInfo(), null);
-        clinicalElementConfigurationCreate.execute();
-        create.close();
+        Connection c = null;
+        try {
+            c = projectService.getDatabaseConnection(projectInstance);
+
+            SimanDrop create = new SimanDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
+            create.execute();
+
+            ClinicalElementConfigurationDrop clinicalElementConfigurationCreate = new ClinicalElementConfigurationDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
+            clinicalElementConfigurationCreate.execute();
+        } finally {
+            DbUtils.close(c);
+        }
         redirect(action: "show", id: projectInstance.id);
         return
     }
