@@ -64,10 +64,10 @@ class CreateAndDropAnnotationSchemaRecord {
      * @param dbConnectionInfo connection information
      * @param schema optional, name of the sql schema to use
      */
-    public CreateAndDropAnnotationSchemaRecord(Connection dbConnection, String schema, String driver) {
+    public CreateAndDropAnnotationSchemaRecord(Connection dbConnection, SQLTemplates templates, String schema) {
         //Create the connection from the connection info
         this.connection = dbConnection;
-        this.templates = getSQLTemplate(driver);
+        this.templates = templates;
         this.schema = schema;
     }
 

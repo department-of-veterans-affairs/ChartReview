@@ -124,19 +124,22 @@ class ProjectController {
             return
         }
 
-        SimanCreate create = new SimanCreate(projectInstance.getDbConnectionInfo(), null);
-        create.execute();
-        ClinicalElementConfigurationCreate clinicalElementConfigurationCreate = new ClinicalElementConfigurationCreate(projectInstance.getDbConnectionInfo(), null);
-        clinicalElementConfigurationCreate.execute();
-        create.close();
-        AnnotationTaskCreate annotationTaskCreate = new AnnotationTaskCreate(projectInstance.getDbConnectionInfo(), null);
-        annotationTaskCreate.execute();
-        annotationTaskCreate.close();
 
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(projectInstance);
-            CreateAndDropAnnotationSchemaRecord schema = new CreateAndDropAnnotationSchemaRecord(c, null, projectInstance.jdbcDriver);
+            String driver = projectInstance.getDbConnectionInfo().driver;
+
+            SimanCreate create = new SimanCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
+            create.execute();
+
+            ClinicalElementConfigurationCreate clinicalElementConfigurationCreate = new ClinicalElementConfigurationCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
+            clinicalElementConfigurationCreate.execute();
+
+            AnnotationTaskCreate annotationTaskCreate = new AnnotationTaskCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
+            annotationTaskCreate.execute();
+
+            CreateAndDropAnnotationSchemaRecord schema = new CreateAndDropAnnotationSchemaRecord(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
             schema.executeCreate();
         } finally {
             DbUtils.close(c);
