@@ -32,7 +32,7 @@ Ext.define('CR.app.view.AnnotationTaskPanel',
                 {
                     xtype: 'toolbar',
                     id: 'taskinfosavebuttonpanel',
-                    scrollable: true,
+                    scrollable: false,
                     flex: 0,
                     height: 32,
                     layout: {

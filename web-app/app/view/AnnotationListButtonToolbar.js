@@ -5,7 +5,7 @@ Ext.define('CR.app.view.AnnotationListButtonToolbar',
     alias: 'widget.annotationlistbuttontoolbar',
 	extend: 'Ext.toolbar.Toolbar',
 	requires: ['Ext.button.Button','CR.app.controller.AnnotationNatureController'],
-    scrollable: true,
+    scrollable: false,
 	layout: 'hbox',
     defaults:{margins:'0 20 0 0'},
     items: [
