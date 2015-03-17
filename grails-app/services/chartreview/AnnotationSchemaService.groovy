@@ -266,7 +266,7 @@ class AnnotationSchemaService {
                 attributeDefOptionDef.name = attrDfOpDf?.text()
 
                 // constructor initializes collection, no need to create new
-                attributeDef.attributeDefOptionDefs.add (attributeDefOptionDef)
+                attributeDef.addAttributeDefOptionDef(attributeDefOptionDef);
             }
 
             attributeDefSet.add(attributeDef)

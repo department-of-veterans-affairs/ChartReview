@@ -148,14 +148,14 @@
   </xs:element>
 
   <!--attributeDefOptionDef -->
-  <xs:element name="attributeDefOptionDef">
-      <xs:complexType>
-          <xs:all>
-              <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          </xs:all>
-          <xs:attribute name="id" use="required" type="xs:string"/>
-      </xs:complexType>
-  </xs:element>
+    <xs:element name="attributeDefOptionDef">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+            <xs:attribute name="id" use="required" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
 
     <!--classDefIds -->
     <xs:element name="classDefIds">
