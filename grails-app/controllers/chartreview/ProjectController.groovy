@@ -128,7 +128,6 @@ class ProjectController {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(projectInstance);
-            String driver = projectInstance.getDbConnectionInfo().driver;
 
             SimanCreate create = new SimanCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
             create.execute();
