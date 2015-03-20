@@ -34,24 +34,19 @@ class AnnotationSchemaService {
      * @return the new record.
      */
     public AnnotationSchemaRecord copy(Project p, AnnotationSchemaRecord record, String newName, String createdBy) {
-        AnnotationSchemaRecord newRecord = new AnnotationSchemaRecord();
         AnnotationSchema schema = parseSchemaXml(record.serializationData, true);
         schema.name = newName;
-        newRecord.name = schema.name;
-        newRecord.description = schema.description;
-        newRecord.id = schema.id;
-
-        List<AnnotationSchema> schemas = new ArrayList<AnnotationSchema>();
-        schema.applySorts();
-        schemas.add(schema);
-        XML xmlData= schemas as XML;
-        newRecord.serializationData = xmlData.toString();
-        newRecord.createdDate = new Date();
-        newRecord.createdBy = createdBy;
-        newRecord.lastModifiedBy = createdBy;
-        newRecord.lastModifiedDate = newRecord.createdDate;
-        newRecord.serializationVersion = record.version;
-        newRecord.version = new Timestamp(System.currentTimeMillis());
+        AnnotationSchemaRecord newRecord = new AnnotationSchemaRecord(
+                id: schema.id,
+                name: schema.name,
+                description: schema.description,
+                createdDate: new Date(),
+                createdBy: createdBy,
+                lastModifiedDate: new Date(),
+                lastModifiedBy: createdBy,
+                serializationVersion: record.version,
+                version: new Timestamp(System.currentTimeMillis()));
+        newRecord.serializationData = schema as XML;
         insert(p, newRecord);
         return newRecord;
     }
@@ -183,9 +178,9 @@ class AnnotationSchemaService {
      */
     public AnnotationSchema parseSchemaXml(String xml, boolean changeUUIDs = true) {
         Map idMap = null;
-        def annotationSchemas = new XmlSlurper().parseText(xml).annotationSchema;
+        def root = new XmlSlurper().parseText(xml);
         AnnotationSchema annotationSchema = null;
-        def it = annotationSchemas.iterator().next();
+        def it = root.iterator().next();
 
         if (changeUUIDs) {
             idMap = Utils.getReplacementsForTempIds(it)

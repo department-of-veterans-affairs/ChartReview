@@ -3,7 +3,7 @@ Ext.define('CR.app.model.AnnotationSchemaModel', {
     fields: ['schema'],
     proxy: {
         type: 'rest',
-        url : 'annotationSchema/getSchema',
+        url : 'annotationSchema/getSchemaForClient',
         reader:
         {
             type: 'xml',

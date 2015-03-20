@@ -17,7 +17,6 @@ class AnnotationSchemaMarshaller extends BaseMarshaller implements ObjectMarshal
     @Override
     void marshalObject(Object object, XML converter) throws ConverterException {
 
-        converter
         AnnotationSchema annotationSchema = object as AnnotationSchema;
 
         converter.attribute("id", annotationSchema.id);

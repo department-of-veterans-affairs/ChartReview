@@ -1607,7 +1607,7 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
 		{
 			// Translate the response into something usable.
 			var crSchema = [];
-			
+
 			var schemaNodeList = xmldoc.getElementsByTagName('annotationSchema');
 			var schemaNode = schemaNodeList[0];
 			

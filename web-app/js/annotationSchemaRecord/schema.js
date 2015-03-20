@@ -283,7 +283,7 @@ function findById(id, arrayOfObjects) {
 
 
 function createXml(model) {
-    var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<annotationSchemas>\n<annotationSchema id=\"" + model.id + "\">\n";
+    var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<annotationSchema id=\"" + model.id + "\">\n";
     xml += "<id>" + model.id + "</id>";
     xml += "<name><![CDATA[" + model.name + "]]></name>";
     xml += "<description><![CDATA[" + model.description + "]]></description>";
@@ -354,8 +354,7 @@ function createXml(model) {
     xml += "</classDefs>";
     xml += "<classRelDefs/>"; // Currently no relationships are implemented.
 
-    xml += "</annotationSchema>\n";
-    xml += "</annotationSchemas>";
+    xml += "</annotationSchema>";
     return xml;
 }
 

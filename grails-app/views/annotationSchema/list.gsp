@@ -58,12 +58,12 @@
                 <input type="file" name="myFile" title="Choose a schema file to upload"/>
                   <div class="checkbox" style="margin-top: 10px">
                       <label>
-                          <input type="checkbox" value="true" name="changeUUIDS" > Change UUIDs
+                          <input type="checkbox" name="changeUUIDS" checked> Change UUIDs
                       </label>
                   </div>
                   <div class="checkbox" style="margin-top: 10px">
                       <label>
-                          <input type="checkbox" value="false" name="changeName" id="changeNameCheckBox" >  Change Name
+                          <input type="checkbox" name="changeName" id="changeNameCheckBox">  Change Name
                       </label>
                        <input type="text" id="newNameInput" name="newName"  disabled/>
                   </div>
@@ -71,9 +71,6 @@
             </fieldset>
             </g:uploadForm>
         </div>
-
-
-
 
         <!-- Modal -->
         <div class="modal hide fade" id="myModal">

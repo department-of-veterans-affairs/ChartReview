@@ -70,7 +70,22 @@ class AnnotationSchemaController {
 
     def copy() {
         Project p = Project.get(params.projectId);
-        annotationSchemaService.copy(p, annotationSchemaService.get(p, params.id), params.newName, springSecurityService.principal.username);
+        AnnotationSchemaRecord record = annotationSchemaService.get(p, params.id);
+        AnnotationSchema schema = annotationSchemaService.parseSchemaXml(record.serializationData, true);
+        schema.name = params.newName;
+        AnnotationSchemaRecord newRecord = new AnnotationSchemaRecord(
+                id: schema.id,
+                name: schema.name,
+                description: schema.description,
+                createdDate: new Date(),
+                createdBy: springSecurityService.principal.username,
+                lastModifiedDate: new Date(),
+                lastModifiedBy: springSecurityService.principal.username,
+                serializationVersion: record.version,
+                version: new Timestamp(System.currentTimeMillis()));
+        newRecord.serializationData = schema as XML;
+        annotationSchemaService.insert(p, newRecord);
+//        annotationSchemaService.copy(p, annotationSchemaService.get(p, params.id), params.newName, springSecurityService.principal.username);
         redirect(action: "list");
     }
 
@@ -128,12 +143,12 @@ class AnnotationSchemaController {
                 Validator.validate(xmlString, xsdString);
 
                 if (params.changeUUIDS) {
-                    changeUUIDS = Boolean.parseBoolean(params.changeUUIDS);
+                    changeUUIDS = params.changeUUIDS == 'on';
                 }
 
                 schema = annotationSchemaService.parseSchemaXml(xmlString, changeUUIDS);
-                if (params.changeName &&  Boolean.parseBoolean(params.changeName) ) {
-                    schema.name = params.newName;
+                if (params.changeName == 'on' && params.newName) {
+                    schema.setName(params.newName);
                 }
 
             } catch (Exception e) {
@@ -236,8 +251,17 @@ class AnnotationSchemaController {
      */
     def getSchema(String id, String projectId) {
         AnnotationSchemaRecord record = annotationSchemaService.get(Project.get(params.projectId), id);
-//        render record.serializationData;
-//        return null;
+        render record.serializationData;
+        return null;
+    }
+
+    /**
+     * Get the schema record xml
+     * @param id  the id of the schema to get.
+     * @return  the annotation schema.
+     */
+    def getSchemaForClient(String id, String projectId) {
+        AnnotationSchemaRecord record = annotationSchemaService.get(Project.get(params.projectId), id);
         AnnotationSchema schema = annotationSchemaService.parseSchemaXml(record.serializationData, false);
         if (!schema) {
             throw new ValidationException("Annotation schema ${params.id} not found.");
