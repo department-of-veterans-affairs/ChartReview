@@ -347,7 +347,7 @@ class ClinicalElementConfigurationController {
                    return columnDefinitionStep();
                }
 
-                List<Map> results  = clinicalElementService.getExampleResults(dto);
+                List<Map> results  = clinicalElementService.getExampleResults(conversation.project, dto);
                 conversation.exampleResults = results;
                 if (dto.contentTemplate?.trim().length() > 0 && results.size()>0) {
                     conversation.exampleContentTemplate = clinicalElementService.resultSetToContentTemplate(results.get(0), dto.contentTemplate, true);

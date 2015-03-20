@@ -568,12 +568,12 @@ class ClinicalElementService  {
         return config;
     }
 
-    public List getExampleResults(ClinicalElementConfigurationDetails config) {
+    public List getExampleResults(Project p,  ClinicalElementConfigurationDetails config) {
         // Get a connection to the database
         Connection conn = null;
         List<Map> results = new ArrayList<Map>();
         try {
-            conn = getConnection(config)
+            conn = projectService.getDatabaseConnection(p);
 
             PreparedStatement dataQueryStatement = conn.prepareStatement(config.query);
 
