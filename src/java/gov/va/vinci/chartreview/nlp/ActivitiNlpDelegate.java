@@ -2,12 +2,13 @@ package gov.va.vinci.chartreview.nlp;
 
 import chartreview.ProcessService;
 import chartreview.ProjectService;
-import chartreview.SchemaService;
+import chartreview.AnnotationSchemaService;
 import gov.va.vinci.chartreview.ProcessVariablesEnum;
 import gov.va.vinci.chartreview.Utils;
 import gov.va.vinci.chartreview.model.ActivitiRuntimeProperty;
 import gov.va.vinci.chartreview.model.Project;
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema;
+import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord;
 import gov.va.vinci.leo.tools.LeoUtils;
 import gov.va.vinci.siman.cr.SimanPatientCollectionReader;
 import grails.util.Holders;
@@ -48,7 +49,7 @@ public class ActivitiNlpDelegate implements JavaDelegate {
 
             ApplicationContext ctx = Holders.getGrailsApplication().getMainContext();
             ProcessService processService = (ProcessService) ctx.getBean("processService");
-            SchemaService schemaService = (SchemaService) ctx.getBean("schemaService");
+            AnnotationSchemaService annotationSchemaService = (AnnotationSchemaService) ctx.getBean("annotationSchemaService");
             ProjectService projectService = (ProjectService) ctx.getBean("projectService");
 
             Map<String, Object> allVariables = delegateExecution.getVariables();
@@ -89,8 +90,12 @@ public class ActivitiNlpDelegate implements JavaDelegate {
 
             Project p = projectService.getProject((String) allVariables.get(ProcessVariablesEnum.PROJECT_ID.getName()));
 
-            AnnotationSchema schema = schemaService.getSchema(schemaId);
-            String[] inputType = schemaService.schemaToUimaTypeNames(schema, "chartreview." + p.getTypeSystemPackageName());
+            AnnotationSchemaRecord annotationSchemaRecord = annotationSchemaService.get(p, schemaId);
+            if (annotationSchemaRecord == null) {
+                throw new IllegalArgumentException("Could not find schema with id ${annotationType}.");
+            }
+            AnnotationSchema schema = annotationSchemaService.parseSchemaXml(annotationSchemaRecord.getSerializationData(), false);
+            String[] inputType = annotationSchemaService.schemaToUimaTypeNames(schema, "chartreview." + p.getTypeSystemPackageName());
 
             String clinicalElementValue = null;
             if (Utils.getActivitiRuntimePropertyFromList(ProcessVariablesEnum.CLINICAL_ELEMENT_GROUP.getName(), propertyList) != null) {

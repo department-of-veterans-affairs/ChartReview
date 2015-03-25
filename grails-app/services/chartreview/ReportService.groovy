@@ -9,6 +9,7 @@ import gov.va.vinci.chartreview.model.AnnotationTask
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.QAnnotationTask
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
+import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
 import gov.va.vinci.chartreview.model.schema.ClassDef
 import gov.va.vinci.chartreview.report.AnnotationByAnnotatorDetailModel
 import gov.va.vinci.chartreview.report.PrimaryClinicalElementUserClassificationCount
@@ -20,18 +21,18 @@ import gov.va.vinci.siman.model.QClinicalElement
 import gov.va.vinci.siman.model.QClinicalElementConfiguration
 import gov.va.vinci.siman.model.QFeature
 import gov.va.vinci.siman.tools.ConnectionProvider
-import gov.va.vinci.siman.tools.SimanUtils
 
 import java.math.RoundingMode
 import java.text.DecimalFormat;
+import java.util.regex.Pattern;
 
 import java.sql.Connection
 
 import static gov.va.vinci.chartreview.Utils.closeConnection
 
 class ReportService {
-    def schemaService;
     def projectService;
+    def annotationSchemaService;
 
     public annotations(String projectId, List<String> processNames) {
         Map<String, AnnotationSchema> schemaMap = new HashMap<>();
@@ -84,12 +85,17 @@ class ReportService {
                             end: t.get(qAnnotation.end),
                             userId: t.get(qAnnotation.userId));
 
-                    String annotationType =    t.get(qAnnotation.annotationType);
-                    annotationType = annotationType.split(";")[0];
-                    annotationType = annotationType.split(":")[1];
+                    def annotationType = t.get(qAnnotation.annotationType)
+                    Map<String, String> keyMap = deSerializeStringToMap(annotationType, ";");
+                    def schemaId = keyMap.get("annotationSchema");
 
-                    if (!schemaMap.containsKey(annotationType)) {
-                        schemaMap.put(annotationType, schemaService.getSchema(annotationType));
+                    if (!schemaMap.containsKey(schemaId)) {
+                        AnnotationSchemaRecord annotationSchemaRecord = annotationSchemaService.get(Project.get(projectId), schemaId);
+                        if (!annotationSchemaRecord) {
+                            throw new IllegalArgumentException("Could not find schema with id ${schemaId}.");
+                        }
+                        AnnotationSchema annotationSchema = annotationSchemaService.parseSchemaXml(annotationSchemaRecord.serializationData, false);
+                        schemaMap.put(schemaId, annotationSchema);
                     }
 
                     results.add(a);
@@ -177,12 +183,21 @@ class ReportService {
                             end: t.get(qAnnotation.end),
                             userId: t.get(qAnnotation.userId));
 
-                    String annotationType =    t.get(qAnnotation.annotationType);
-                    annotationType = annotationType.split(";")[0];
-                    annotationType = annotationType.split(":")[1];
+                    def annotationType = t.get(qAnnotation.annotationType)
+                    Map<String, String> keyMap = deSerializeStringToMap(annotationType, ";");
+                    def schemaId = keyMap.get("annotationSchema");
 
-                    if (!schemaMap.containsKey(annotationType)) {
-                        schemaMap.put(annotationType, schemaService.getSchema(annotationType));
+                    AnnotationSchema annotationSchema = schemaMap.get(schemaId);
+                    if (!annotationSchema) {
+                        AnnotationSchemaRecord annotationSchemaRecord = annotationSchemaService.get(p, schemaId);
+                        if (!annotationSchemaRecord) {
+                            throw new IllegalArgumentException("Could not find schema with id ${schemaId}.");
+                        }
+                        annotationSchema = annotationSchemaService.parseSchemaXml(annotationSchemaRecord.serializationData, false);
+                        schemaMap.put(schemaId, annotationSchema);
+                    }
+                    if (!annotationSchema) {
+                        throw new IllegalArgumentException("Could not find schema with id ${schemaId}.");
                     }
 
                     AnnotationTask at = new AnnotationTask(annotationGuid: t.get(qAnnotationTask.annotationGuid),
@@ -194,7 +209,7 @@ class ReportService {
                             annotationTask: at,
                             clinicalElementConfigurationId: t.get(qClinicalElementConfiguration.id),
                             clinicalElementConfigurationName: t.get(qClinicalElementConfiguration.name),
-                            annotationSchema: schemaMap.get(annotationType),
+                            annotationSchema: annotationSchema,
                             clinicalElementSerializedKeys: "clinicalElementConfigurationId=${t.get(qClinicalElementConfiguration.id)};" + t.get(qClinicalElement.serializedKeys)));
                 }
                 if (t.get(qFeature.guid)) {
@@ -327,6 +342,7 @@ class ReportService {
      * @return
      */
     public iaa(String projectId, List<String> processNames) {
+        Map<String, AnnotationSchema> schemaMap = new HashMap<>();
         Project p = projectService.getProject(projectId);
         SQLTemplates sqlTemplate = Utils.getSQLTemplate(p.jdbcDriver);
         Connection connection = null;
@@ -345,10 +361,26 @@ class ReportService {
             SQLQuery query = new SQLQueryFactoryImpl(sqlTemplate, new ConnectionProvider(connection)).query();
             query.from(qAnnotation, qAnnotationTask).where(qAnnotation.guid.eq(qAnnotationTask.annotationGuid).and(qAnnotationTask.processName.in(processNames)))
 
-            def results = query.list(qAnnotation.annotationType, qAnnotation.userId, qAnnotationTask.principalElementId, qAnnotation.guid);
+            def results = query.list(qAnnotation.annotationType, qAnnotation.userId, qAnnotationTask.principalElementId, qAnnotation.guid, qAnnotation.annotationType);
             for (com.mysema.query.Tuple t: results) {
                 def patientId = t.get(qAnnotationTask.principalElementId)
                 def annotatorId = t.get(qAnnotation.userId)
+                String annotationType = t.get(qAnnotation.annotationType)
+                Map<String, String> keyMap = deSerializeStringToMap(annotationType, ";");
+                def schemaId = keyMap.get("annotationSchema");
+
+                AnnotationSchema annotationSchema = schemaMap.get(schemaId);
+                if (!annotationSchema) {
+                    AnnotationSchemaRecord annotationSchemaRecord = annotationSchemaService.get(p, schemaId);
+                    if (!annotationSchemaRecord) {
+                        throw new IllegalArgumentException("Could not find schema with id ${schemaId}.");
+                    }
+                    annotationSchema = annotationSchemaService.parseSchemaXml(annotationSchemaRecord.serializationData, false);
+                    schemaMap.put(schemaId, annotationSchema);
+                }
+                if (!annotationSchema) {
+                    throw new IllegalArgumentException("Could not find schema with id ${schemaId}.");
+                }
 
                 def annotatorsList = patientIdToAnnotatorsListMap.get(patientId);
                 if(!annotatorsList)
@@ -366,12 +398,9 @@ class ReportService {
                     classificationCountMap = new HashMap<String, Integer>();
                     patientIdToClassificationAllCountMapMap.put(patientId, classificationCountMap);
                 }
-                def classDefRef = t.get(qAnnotation.annotationType);
-                String classDefRef2 = classDefRef.substring(classDefRef.indexOf(";") + 1);
-                String classDefId = classDefRef2.substring(classDefRef2.indexOf(":") + 1);
-                ClassDef classDef = ClassDef.get(classDefId);
+                def classDefRef = keyMap.get("classDef");
+                ClassDef classDef = annotationSchema.getClassDefs().find{it.id==classDefRef};
                 Integer classificationCount = classificationCountMap.get(classDef.getName());
-
 
                 if(!classificationCount)
                 {
@@ -525,6 +554,28 @@ class ReportService {
             } else {
                 count.count = count.count + 1;
             }
+        }
+        return results;
+    }
+
+    /**
+     * de-serialize a string into a map based on a delimeter. The string should be in the format:
+     * <pre>
+     *     key1=value1<delimeter>key2=value2<delimeter>
+     * </pre>
+     * @param   string the string to de-serialize.
+     * @param   delimeter the delimeter seperating name/value pairs in the string.
+     * @return  a map of the name/value pairs in the string;
+     */
+    public static LinkedHashMap<String, String> deSerializeStringToMap(String string, String delimeter) {
+        String regex = "(?<!\\\\)" + Pattern.quote(delimeter);
+        LinkedHashMap<String, String> results = new LinkedHashMap<String, String>();
+        for(String keyValue : string.split(regex)) {
+            String value = keyValue.substring(keyValue.indexOf(":") + 1);
+            if (value.length() < 1) {
+                value = null;
+            }
+            results.put(keyValue.substring(0, keyValue.indexOf(":")), value);
         }
         return results;
     }
