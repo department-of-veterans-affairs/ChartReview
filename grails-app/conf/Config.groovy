@@ -134,6 +134,7 @@ grails.plugin.springsecurity.interceptUrlMap = [
         '/sessiontimeout':	            ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/login/**':     		        ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/logout/**':    		        ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/test/**':     		        ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/schema/uimaTypeSystem/**':     ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/admin/deleteRunningProcessInstancesByProjectProcess':                    ['IS_AUTHENTICATED_FULLY'],
         '/admin/**':                    ['ROLE_ADMIN_CHARTREVIEW'],
