@@ -1216,7 +1216,10 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
          */
         doSync: function(jumpToHomePageAfter, resetAnnotationAware)
         {
-            this.fireAnnotationAwareEvent('beforeSync');
+            if(resetAnnotationAware == true)
+            {
+                this.fireAnnotationAwareEvent('beforeSync');
+            }
 
             // If there is not a current task, then just load tasks.
             if(this.selectedPrincipalClinicalElement==null)
