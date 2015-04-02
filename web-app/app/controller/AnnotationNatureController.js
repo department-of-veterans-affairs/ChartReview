@@ -1216,7 +1216,7 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
          */
         doSync: function(jumpToHomePageAfter, resetAnnotationAware)
         {
-            if(resetAnnotationAware == true)
+            if(resetAnnotationAware == true) // Do not want to reset views on save, for example - this will delete the annotation html...
             {
                 this.fireAnnotationAwareEvent('beforeSync');
             }
