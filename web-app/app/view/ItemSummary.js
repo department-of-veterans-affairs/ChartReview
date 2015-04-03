@@ -36,18 +36,18 @@ Ext.define('CR.app.view.ItemSummary', {
 
     doResize: function(box)
     {
-        var curBox = this.getBox();
-        if(box.width != curBox.width || box.height != curBox.height)
-        {
-            curBox.width = box.width;
-            curBox.height = box.height;
-            this.setBox(curBox);
-        }
-        for(var i = 0; i < this.items.items.length; i++)
-        {
-            var comp = this.items.items[i];
-            comp.doResize(box);
-        }
+        //var curBox = this.getBox();
+        //if(box.width != curBox.width || box.height != curBox.height)
+        //{
+        //    curBox.width = box.width;
+        //    curBox.height = box.height;
+        //    this.setBox(curBox);
+        //}
+        //for(var i = 0; i < this.items.items.length; i++)
+        //{
+        //    var comp = this.items.items[i];
+        //    comp.doResize(box);
+        //}
     },
 
     /**

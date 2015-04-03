@@ -13,14 +13,17 @@ Ext.define('CR.app.view.Portlet', {
     closable: true,
     collapsible: true,
     animCollapse: true,
-    draggable: {
-        moveOnDrag: false
-    },
+    draggable: true,
+    //draggable: {
+    //    moveOnDrag: false
+    //},
     // Important: Portlets are fixed width. Only height may change, and then only from bottom
 //    resizeHandles: 's',
     resizeHandles: 'all',
     resizable: true,
     cls: 'x-portlet',
+    minWidth: 250,
+    minHeight: 100,
 
     // Override Panel's default doClose to provide a custom fade out effect
     // when a portlet is removed from the portal

@@ -450,7 +450,7 @@ Ext.define('CR.app.view.ChartReviewPanel', {
     },
 
     addPortlet: function(clinicalElementConfigurationId, ifNotFound) {
-        var dashboard = Ext.ComponentQuery.query('component[id="dashboard"]')[0];
+        var dashboard = Ext.ComponentQuery.query('component[id="app-portal"]')[0];
         var portletType = this.getPortletType(clinicalElementConfigurationId);
         var portlet = this.getFirstPortletByType(clinicalElementConfigurationId);
         if(!ifNotFound || ifNotFound && !portlet)
@@ -461,17 +461,21 @@ Ext.define('CR.app.view.ChartReviewPanel', {
 
             var clinicalElementConfiguration = this.getClinicalElementConfiguration(clinicalElementConfigurationId);
             portlet.title = clinicalElementConfiguration.text;
-            portlet.setClinicalElementConfigurationId(clinicalElementConfigurationId);
             portlet.columnIndex = 0;
-//            portlet.columnIndex = CR.app.view.ChartReviewPanel.curColumnIndex;
-//            if(CR.app.view.ChartReviewPanel.curColumnIndex == 0)
-//            {
-//                CR.app.view.ChartReviewPanel.curColumnIndex = 1;
-//            }
-//            else
-//            {
-//                CR.app.view.ChartReviewPanel.curColumnIndex = 0;
-//            }
+            portlet.height = 500;
+            portlet.resizable = true;
+            portlet.minWidth = 250;
+            portlet.minHeight = 100;
+            portlet.setClinicalElementConfigurationId(clinicalElementConfigurationId);
+            portlet.columnIndex = CR.app.view.ChartReviewPanel.curColumnIndex;
+            if(CR.app.view.ChartReviewPanel.curColumnIndex == 0)
+            {
+                CR.app.view.ChartReviewPanel.curColumnIndex = 1;
+            }
+            else
+            {
+                CR.app.view.ChartReviewPanel.curColumnIndex = 0;
+            }
 
             var portletAdded = false;
             if(!portletAdded)

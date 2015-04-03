@@ -41,14 +41,14 @@ Ext.define('CR.app.view.ItemInfo', {
         resize: function(comp, width, height, oldWidth, oldHeight, eOpts )
         {
 //            alert('width='+width+' oldWidth='+oldWidth);
-            for(var i = 0; i < this.items.items.length; i++)
-            {
-                var comp = this.items.items[i];
-                if(typeof comp.doResize != "undefined")
-                {
-                    comp.doResize(this.getBox());
-                }
-            }
+//            for(var i = 0; i < this.items.items.length; i++)
+//            {
+//                var comp = this.items.items[i];
+//                if(typeof comp.doResize != "undefined")
+//                {
+//                    comp.doResize(this.getBox());
+//                }
+//            }
         },
         annotationSelectedByUserInList: function(drawEyeToSelectedAnnotationResult)
         {
