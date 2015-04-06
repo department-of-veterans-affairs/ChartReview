@@ -566,65 +566,6 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
                     annotationAware.oneRange = selRange.getRangeAt(0);
                 }
             }
-            if(CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement != null)
-            {
-                if(!CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin)
-                {
-                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin = Ext.create('CR.app.view.AnnotationSchemaPopupWindow', {});
-                }
-                if (CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent != null)
-                {
-                    alert("Another annotation is already progress.");
-                }
-                else
-                {
-                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent = annotationComponent;
-                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware = annotationAware;
-                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick = isDoubleClick;
-                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.addListener('classificationChosen', CR.app.controller.AnnotationNatureControllerText.handleClassificationChosen);
-                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.addListener('cleanupClassificationChosen', CR.app.controller.AnnotationNatureControllerText.cleanupClassificationChosen);
-                    CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.show();
-                }
-            }
-        },
-        /**
-         * Temporary call back for annotation schema classification choosing.
-         * @param schemaElement
-         */
-        handleClassificationChosen: function(schemaElement)
-        {
-            var annotationComponent = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent;
-            var annotationAware = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware;
-            var isDoubleClick = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick;
-            CR.app.controller.AnnotationNatureControllerText.handleAnnotationComponentTextSelectionSchemaPicked(annotationComponent, annotationAware, isDoubleClick, schemaElement);
-        },
-        /**
-         * Remove listeners and data from annotationSchemaPopupWin.
-         * @param schemaElement
-         */
-        cleanupClassificationChosen: function()
-        {
-            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.removeListener('classificationChosen', CR.app.controller.AnnotationNatureControllerText.handleClassificationChosen);
-            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.removeListener('cleanupClassificationChosen', CR.app.controller.AnnotationNatureControllerText.cleanupClassificationChosen);
-            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent = null;
-            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware = null;
-            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick = null;
-        },
-        /**
-         * This method will:
-         *  1) Obtain current document selection,
-         *  2) Walk DOM hierarchy from start element to end element of the selection range,
-         *  3) For each AnnotatableHTMLElement found in its path, it will create a Span value under that element,
-         *  4) It will collect all found elements with their spans attached and return them.
-         * @param annotationComponent - the document element in which the document selection mouse event happened
-         * @param annotationAware - the annotation aware component whose text we are marking up
-         * Good site to understand this code: http://www.w3.org/TR/2000/REC-DOM-Level-2-Traversal-Range-20001113/ranges.html
-         */
-        handleAnnotationComponentTextSelectionSchemaPicked: function (annotationComponent, annotationAware, isDoubleClick, schemaElement) {
-            if(CR.app.model.CRAppData.readOnly)
-            {
-                return;
-            }
             if (annotationAware.oneRange) {
                 var oneRange = annotationAware.oneRange
 
@@ -773,56 +714,23 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
                     var spanArray = CR.app.controller.AnnotationNatureControllerText.createSpans(startContainer, startOffset, endContainer, endOffset, spanContainer, annotatableHTMLElements);
 
                     if (spanArray && spanArray.length > 0) {
-                        if (!schemaElement) {
-                            alert('A schema element must be selected for annotation.');
-                            return;
-                        }
-
-                        /*
-                         * This needs to change. The calling component will need to item the selected clinicalElement to this function.
-                         */
-                        if (!annotationComponent) {
-                            alert('Cannot add annotation without selected component.');
-                            return;
-                        }
-                        var clinicalElementId = annotationAware.clinicalElementId;
-                        if (!clinicalElementId) {
-                            alert('Cannot add annotation because id cannot be found for selected component.');
-                            return;
-                        }
-
-                        var principalClinicalElement = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement;
-
-                        // Ensure that the context clinical element exists if it does not already.
-                        var clinicalElement = CR.app.controller.AnnotationNatureController.principalClinicalElementsById[clinicalElementId];
-                        if(!clinicalElement)
+                        if(CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement != null)
                         {
-                            var clinicalElementConfiguration = CR.app.model.CRAppData.getClinicalElementConfiguration(annotationComponent.clinicalElementConfigurationId);
-                            clinicalElement = CR.app.controller.AnnotationNatureController.createClinicalElementFromPrincipalClinicalElement(clinicalElementId, clinicalElementConfiguration.dataIndex, clinicalElementConfiguration.text, principalClinicalElement);
-                            CR.app.controller.AnnotationNatureController.principalClinicalElementsById[clinicalElementId] = clinicalElement;
-
-                            // In the this case of direct annotation creation on the text, set this clinical element as the selected clinical element as well.
-                            CR.app.controller.AnnotationNatureController.setSelectedClinicalElement(clinicalElement);
+                            if(!CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin)
+                            {
+                                CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin = Ext.create('CR.app.view.AnnotationSchemaPopupWindow', {});
+                            }
+                            if (CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent == null)
+                            {
+                                CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent = annotationComponent;
+                                CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware = annotationAware;
+                                CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick = isDoubleClick;
+                                CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.spanArray = spanArray;
+                                CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.addListener('classificationChosen', CR.app.controller.AnnotationNatureControllerText.handleClassificationChosen);
+                                CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.addListener('cleanupClassificationChosen', CR.app.controller.AnnotationNatureControllerText.cleanupClassificationChosen);
+                                CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.show();
+                            }
                         }
-
-                        var d1 = new Date();
-                        var today = Ext.Date.format(d1, "Y-m-d\\TH:i:s\\Z");
-
-                        var annotation = CR.app.controller.AnnotationNatureControllerAnnotations.createAnnotation(
-                            CR.app.controller.AnnotationNatureController.getNewId(), // id
-                            clinicalElement.id, // clinicalElementName
-                            clinicalElement.schemaId, // schemaId
-                            schemaElement, // schemaElement
-                            today, // creationDate
-                            clinicalElement.clinicalElementConfigurationId, // clinicalElementConfigurationId
-                            spanArray, // spans
-                            [], // features
-                            true); // isNew
-
-                        CR.app.controller.AnnotationNatureControllerAnnotations.updateAnnotation(annotation.clinicalElementId, annotation, true);
-//						CR.app.controller.AnnotationNatureControllerAnnotations.updateAnnotationWithClinicalElementDateAndName(annotation, clinicalElementDate, clinicalElementName);
-                        CR.app.controller.AnnotationNatureController.setSelectedAnnotation(annotation);
-                        CR.app.controller.AnnotationNatureController.fireAnnotationAwareEvent('annotationCreatedByUserTextLevel');
                     }
                 }
             }
@@ -831,6 +739,94 @@ Ext.define('CR.app.controller.AnnotationNatureControllerText',{
                 CR.app.controller.AnnotationNatureController.fireAnnotationAwareEvent('annotationSelectionBlur');
             }
         },
+        /**
+         * Temporary call back for annotation schema classification choosing.
+         * @param schemaElement
+         */
+        handleClassificationChosen: function(schemaElement)
+        {
+            var annotationComponent = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent;
+            var annotationAware = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware;
+            var isDoubleClick = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick;
+            var spanArray = CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.spanArray;
+            CR.app.controller.AnnotationNatureControllerText.handleAnnotationComponentTextSelectionSchemaPicked(annotationComponent, annotationAware, isDoubleClick, spanArray, schemaElement);
+        },
+        /**
+         * Remove listeners and data from annotationSchemaPopupWin.
+         * @param schemaElement
+         */
+        cleanupClassificationChosen: function()
+        {
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.removeListener('classificationChosen', CR.app.controller.AnnotationNatureControllerText.handleClassificationChosen);
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.removeListener('cleanupClassificationChosen', CR.app.controller.AnnotationNatureControllerText.cleanupClassificationChosen);
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent = null;
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationAware = null;
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.isDoubleClick = null;
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.spanArray = null;
+        },
+        /**
+         * This method will:
+         *  1) Obtain current document selection,
+         *  2) Walk DOM hierarchy from start element to end element of the selection range,
+         *  3) For each AnnotatableHTMLElement found in its path, it will create a Span value under that element,
+         *  4) It will collect all found elements with their spans attached and return them.
+         * @param annotationComponent - the document element in which the document selection mouse event happened
+         * @param annotationAware - the annotation aware component whose text we are marking up
+         * Good site to understand this code: http://www.w3.org/TR/2000/REC-DOM-Level-2-Traversal-Range-20001113/ranges.html
+         */
+        handleAnnotationComponentTextSelectionSchemaPicked: function (annotationComponent, annotationAware, isDoubleClick, spanArray, schemaElement) {
+            if (!schemaElement) {
+                alert('A schema element must be selected for annotation.');
+                return;
+            }
+
+            /*
+             * This needs to change. The calling component will need to item the selected clinicalElement to this function.
+             */
+            if (!annotationComponent) {
+                alert('Cannot add annotation without selected component.');
+                return;
+            }
+            var clinicalElementId = annotationAware.clinicalElementId;
+            if (!clinicalElementId) {
+                alert('Cannot add annotation because id cannot be found for selected component.');
+                return;
+            }
+
+            var principalClinicalElement = CR.app.controller.AnnotationNatureController.selectedPrincipalClinicalElement;
+
+            // Ensure that the context clinical element exists if it does not already.
+            var clinicalElement = CR.app.controller.AnnotationNatureController.principalClinicalElementsById[clinicalElementId];
+            if(!clinicalElement)
+            {
+                var clinicalElementConfiguration = CR.app.model.CRAppData.getClinicalElementConfiguration(annotationComponent.clinicalElementConfigurationId);
+                clinicalElement = CR.app.controller.AnnotationNatureController.createClinicalElementFromPrincipalClinicalElement(clinicalElementId, clinicalElementConfiguration.dataIndex, clinicalElementConfiguration.text, principalClinicalElement);
+                CR.app.controller.AnnotationNatureController.principalClinicalElementsById[clinicalElementId] = clinicalElement;
+
+                // In the this case of direct annotation creation on the text, set this clinical element as the selected clinical element as well.
+                CR.app.controller.AnnotationNatureController.setSelectedClinicalElement(clinicalElement);
+            }
+
+            var d1 = new Date();
+            var today = Ext.Date.format(d1, "Y-m-d\\TH:i:s\\Z");
+
+            var annotation = CR.app.controller.AnnotationNatureControllerAnnotations.createAnnotation(
+                CR.app.controller.AnnotationNatureController.getNewId(), // id
+                clinicalElement.id, // clinicalElementName
+                clinicalElement.schemaId, // schemaId
+                schemaElement, // schemaElement
+                today, // creationDate
+                clinicalElement.clinicalElementConfigurationId, // clinicalElementConfigurationId
+                spanArray, // spans
+                [], // features
+                true); // isNew
+
+            CR.app.controller.AnnotationNatureControllerAnnotations.updateAnnotation(annotation.clinicalElementId, annotation, true);
+//						CR.app.controller.AnnotationNatureControllerAnnotations.updateAnnotationWithClinicalElementDateAndName(annotation, clinicalElementDate, clinicalElementName);
+            CR.app.controller.AnnotationNatureController.setSelectedAnnotation(annotation);
+            CR.app.controller.AnnotationNatureController.fireAnnotationAwareEvent('annotationCreatedByUserTextLevel');
+        },
+
 
         findNextTextOrBreakNode: function(node)
         {

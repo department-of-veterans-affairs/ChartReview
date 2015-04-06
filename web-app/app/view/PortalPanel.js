@@ -17,7 +17,7 @@ Ext.define('CR.app.view.PortalPanel', {
         0.50,
         0.50
     ],
-    bodyPadding: 3,
+    //bodyPadding: 3,
     parts: {
         portlet: {
             viewTemplate: {

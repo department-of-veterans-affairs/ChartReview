@@ -120,6 +120,29 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
         {
             topElement.addListener("dragend", this.dragEndOnAnnotationComponent, this);
             topElement.addListener("dblclick", this.dblClickOnAnnotationComponent, this);
+            topElement.addListener("mouseup", this.mouseUpOnAnnotationComponent, this);
+        }
+    },
+
+    /**
+     * Triggers the work of creating or selecting an annotation with a single drag or click.
+     */
+    mouseUpOnAnnotationComponent: function(evt, el)
+    {
+        if(this.clinicalElementId != null)
+        {
+            if (CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent != null)
+            {
+                alert("Another annotation is already progress.");
+            }
+            // Get the document element in which the document selection mouse event happened.
+            var annotationComponent = this.getAnnotationComponent();
+
+            // Is NOT double click; However, this happens on double click too - just treat it as a single click and handle the double click after...
+            CR.app.controller.AnnotationNatureControllerText.handleAnnotationComponentTextSelection(annotationComponent, this, false);
+//            this.fireEvent('clinicalElementchanged'); // Indirectly makes this paint annotations. Should probably be methodized.
+//            Ext.getCmp('annotationlist').fireEvent('annotationschanged');
+            CR.app.controller.AnnotationNatureControllerText.removeCurrentAnnotationComponentTextSelection();
         }
     },
 
