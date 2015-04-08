@@ -378,7 +378,10 @@ Ext.define('CR.app.view.ItemListDetail', {
             {
                 var btnViewInNewTabId = this.id + '-viewInNewTab';
                 var btnViewInNewTab = Ext.ComponentQuery.query('[id^='+btnViewInNewTabId+']')[0];
-                btnViewInNewTab.disabled = true;
+                if(btnViewInNewTab)
+                {
+                    btnViewInNewTab.disabled = true;
+                }
             }
         }
     },

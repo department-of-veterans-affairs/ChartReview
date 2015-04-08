@@ -267,7 +267,10 @@ Ext.define('CR.app.view.ItemList', {
                 this.east.hide();
                 var btnItemId = this.id + '-theDetailPaneButton';
                 var btn = Ext.ComponentQuery.query('[id^='+btnItemId+']')[0];
-                btn.disabled = true;
+                if(btn)
+                {
+                    btn.disabled = true;
+                }
             }
         }
     },
