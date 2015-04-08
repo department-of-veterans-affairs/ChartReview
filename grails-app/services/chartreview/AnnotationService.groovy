@@ -8,6 +8,8 @@ import com.mysema.query.sql.dml.SQLInsertClause
 import gov.va.vinci.chartreview.Utils
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.QAnnotationTask
+import gov.va.vinci.chartreview.model.schema.AnnotationSchema
+import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
 import gov.va.vinci.chartreview.model.schema.AttributeDef
 import gov.va.vinci.chartreview.model.schema.AttributeDefOptionDef
 import gov.va.vinci.chartreview.model.schema.ClassRelDef
@@ -31,6 +33,7 @@ import static gov.va.vinci.chartreview.Utils.closeConnection
 class AnnotationService {
     def clinicalElementService;
     def projectService;
+    def annotationSchemaService;
 
     DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
 
@@ -392,7 +395,7 @@ class AnnotationService {
      * @param taskId the task id to get
      * @return the xml definition of the task with its metadata.
      */
-    public String getXmlForAnnotations(List<ClinicalElement> clinicalElements, String filterSchema, String projectId) {
+    public String getXmlForAnnotations(List<ClinicalElement> clinicalElements, String filterSchema, Project p) {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         org.w3c.dom.Document document = builder.newDocument()
         Element root = document.createElement('annotations')
@@ -400,8 +403,9 @@ class AnnotationService {
 
         Connection connection = null;
         try {
-            Map connectionInfo = getConnections(projectId);
+            Map connectionInfo = getConnections(p.getId());
             connection= connectionInfo.connection;
+            Map<String, AnnotationSchema> annotationSchemaIdToAnnotationSchemaMap = new HashMap<String, AnnotationSchema>();
             for (ClinicalElement clinicalElement : clinicalElements) {
                 if (clinicalElement.annotations == null || clinicalElement.annotations.size() < 1) {
                     continue;
@@ -414,15 +418,24 @@ class AnnotationService {
                     }
                     Element annotationElement = document.createElement('annotation')
                     annotationElement.setAttribute("id", annotation.guid);
-
+                    AnnotationSchema annotationSchema = null;
 
                     if (schemaTypePattern.matcher(schema).matches() && schema.contains("annotationSchema:${filterSchema}")) {
                         Map schemaParts = new HashMap();
                         schema.split(";").each {
                             schemaParts.put(it.split(":")[0], it.split(":")[1])
                         }
+                        def annotationSchemaId = schemaParts.get("annotationSchema");
+                        annotationSchema = annotationSchemaIdToAnnotationSchemaMap.get(annotationSchemaId);
+                        if(!annotationSchema)
+                        {
+                            AnnotationSchemaRecord annotationSchemaRecord = annotationSchemaService.get(p, annotationSchemaId);
+                            annotationSchema = annotationSchemaService.parseSchemaXml(annotationSchemaRecord.serializationData, false);
+                            annotationSchemaIdToAnnotationSchemaMap.put(annotationSchema.getId(), annotationSchema);
+                        }
+
                         Element schemaElement = document.createElement("schema");
-                        schemaElement.setAttribute("id", schemaParts.get("annotationSchema"));
+                        schemaElement.setAttribute("id", annotationSchemaId);
                         annotationElement.appendChild(schemaElement);
 
                         Element schemaRefElement = document.createElement("schemaRef");
@@ -467,7 +480,10 @@ class AnnotationService {
 
                         int type = 0;
                         String typeQualifier = "";
-                        (type, typeQualifier) = featureTypeFromSchema(feature);
+                        if(annotationSchema)
+                        {
+                            (type, typeQualifier) = featureTypeFromSchema(annotationSchema, feature);
+                        }
                         featureElement.setAttribute("type", "" + type);
 
                         featureElement.appendChild(createElement(document, "name", feature.name));
@@ -623,18 +639,25 @@ class AnnotationService {
      * @param f the feature to look up the type from.
      * @return the type from the schema definition.
      */
-    protected featureTypeFromSchema(Feature f) {
+    protected featureTypeFromSchema(AnnotationSchema annotationSchema, Feature f) {
         String[] parts = f.featureType.split(";");
 
         String keyType = parts[1].split(":")[0];
         String keyValue = parts[1].split(":")[1];
 
         if (keyType == "attributeDef") {
-            AttributeDef ad = AttributeDef.get(keyValue);
-            return [ad.type, keyType];
+            def attributeDefs = annotationSchema.getAttributeDefs();
+            def attributeDef = annotationSchemaService.getAttributeDef(attributeDefs as Set<AttributeDef>, keyValue);
+            if(attributeDef != null)
+            {
+                return [attributeDef.type, keyType];
+            }
         } else if (keyType == "classRelDef") {
-            ClassRelDef classRelDef = ClassRelDef.get(keyValue);
-            return [classRelDef.type, keyType];
+            def classRelDef = annotationSchemaService.getClassRelDef(annotationSchema.getClassRelDefs() as Set<ClassRelDef>, keyValue);
+            if(classRelDef != null)
+            {
+                return [classRelDef.type, keyType];
+            }
         } else {
             throw new RuntimeException("Could not determine feature type for type: ${f.featureType}. Not a attributeDef or classRelDef.");
         }

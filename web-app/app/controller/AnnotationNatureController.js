@@ -131,7 +131,7 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
     {
         if(this.clinicalElementId != null)
         {
-            if (CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent != null)
+            if (CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin && CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent)
             {
                 alert("Another annotation is already progress.");
             }

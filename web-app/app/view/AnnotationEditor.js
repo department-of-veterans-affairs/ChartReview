@@ -398,7 +398,7 @@ Ext.define('CR.app.view.AnnotationEditor', {
         return curDate;
     },
     dateToStr: function(date){
-        var str = date.format('Y-m-d h:i:s');
+        var str = date.format('Y-m-d H:i:s');
         return str;
     },
     strToDate: function(str){

@@ -148,8 +148,11 @@ class AnnotationController {
                 annotationGroup,
                 patientId));
 
+        String projectId = processVariables.get(ProcessVariablesEnum.PROJECT_ID.getName());
+        Project project= Project.get(projectId);
+
         if (clinicalElements) {
-            String annotationXml = annotationService.getXmlForAnnotations(clinicalElements, filterSchema, processVariables.get(ProcessVariablesEnum.PROJECT_ID.getName()));
+            String annotationXml = annotationService.getXmlForAnnotations(clinicalElements, filterSchema, project);
             render(text: annotationXml, contentType: "text/xml");
         } else {
             render "";
