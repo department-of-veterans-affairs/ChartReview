@@ -1,4 +1,5 @@
 /**
+ * ChartReviewPanel->PortalPanel(center)->Portlet(ClinicalElementPortlet)->ItemInfo->ItemSummary/ItemList->ItemSummaryDetail/ItemListGrid&ItemListDetail
  * @class CR.app.view.ItemInfo
  * @extends Ext.tab.Panel
  *
@@ -16,14 +17,13 @@ Ext.define('CR.app.view.ItemInfo', {
         itemsBase: 'CR.app.store.ItemBase',
         annotationaware: 'CR.app.controller.AnnotationNatureController'
     },
-    layout:
-    {
-        type: 'border',
-        padding: '0 0 0 0'
-    },
-//    bodyStyle: {
-//        background: '#737373'
-//    },
+    // THIS IS THE WIDGET THAT IS BEING RESIZE AND ITS CHILDREN ARE NOT
+    layout: 'fit',
+    //layout:
+    //{
+    //    type: 'border',
+    //    padding: '0 0 0 0'
+    //},
 
     maxTabWidth: 230,
     border: false,
@@ -40,15 +40,15 @@ Ext.define('CR.app.view.ItemInfo', {
     listeners: {
         resize: function(comp, width, height, oldWidth, oldHeight, eOpts )
         {
-//            alert('width='+width+' oldWidth='+oldWidth);
-//            for(var i = 0; i < this.items.items.length; i++)
-//            {
-//                var comp = this.items.items[i];
-//                if(typeof comp.doResize != "undefined")
-//                {
-//                    comp.doResize(this.getBox());
-//                }
-//            }
+            //alert('width='+width+' oldWidth='+oldWidth);
+            for(var i = 0; i < this.items.items.length; i++)
+            {
+                var comp = this.items.items[i];
+                if(typeof comp.doResize != "undefined")
+                {
+                    comp.doResize(this.getBox());
+                }
+            }
         },
         annotationSelectedByUserInList: function(drawEyeToSelectedAnnotationResult)
         {
@@ -103,7 +103,7 @@ Ext.define('CR.app.view.ItemInfo', {
                 xtype: xtype,
                 title: title,
                 closable: false,
-                region: 'center',
+                //region: 'center',
                 listeners: {
                     scope: this,
                     opentab: this.onTabOpen,
@@ -118,7 +118,7 @@ Ext.define('CR.app.view.ItemInfo', {
                 xtype: xtype,
                 title: title,
                 closable: false,
-                region: 'center',
+                //region: 'center',
                 listeners: {
                     scope: this,
                     opentab: this.onTabOpen,

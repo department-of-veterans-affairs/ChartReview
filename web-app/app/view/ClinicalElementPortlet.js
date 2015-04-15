@@ -1,12 +1,17 @@
+/**
+ * ChartReviewPanel->PortalPanel(center)->Portlet(ClinicalElementPortlet)->ItemInfo->ItemSummary/ItemList->ItemSummaryDetail/ItemListGrid&ItemListDetail
+ */
 Ext.define('CR.app.view.ClinicalElementPortlet', {
     extend: 'CR.app.view.Portlet',
     alias: 'widget.clinicalelementportlet',
     title: 'Notes',
-    height: 350,
-    width: 1000,
     resizable: true,
-    resizeHandles: 's e',
-//    resizeHandles: 'all',
+    resizeHandles: 's e se',
+    //resizeHandles: 'all',
+    minWidth: 250,
+    minHeight: 100,
+    height: 500,
+    width: 1400,
     mixins: {
         annotationaware: 'CR.app.controller.AnnotationNatureController'
     },

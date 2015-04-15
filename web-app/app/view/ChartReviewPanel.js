@@ -1,15 +1,13 @@
+/**
+ * ChartReviewPanel->PortalPanel(center)->Portlet(ClinicalElementPortlet)->ItemInfo->ItemSummary/ItemList->ItemSummaryDetail/ItemListGrid&ItemListDetail
+ */
 Ext.define('CR.app.view.ChartReviewPanel', {
     extend: 'Ext.container.Viewport',
 //    layout: 'fit',
     renderTo: "appContent",
-//    renderTo: Ext.getBody(),
     alias: 'widget.chartreview',
     id: "app-viewport",
     autoCreateViewPort: false,
-//    plugins: [
-//        {
-//            ptype: 'crfittoparent'
-//        }],
     mixins: {
         annotationaware: 'CR.app.controller.AnnotationNatureController'
     },
@@ -19,29 +17,6 @@ Ext.define('CR.app.view.ChartReviewPanel', {
         numClinicalElementPortlets : new Array(),
         curColumnIndex: 0,
 
-        addPortalColumn2IfNecessary: function()
-        {
-            var appPortal = Ext.ComponentQuery.query('component[id=app-portal]')[0];
-            var col2 = Ext.ComponentQuery.query('component[id=app-portal-col-2]')[0];
-            if(!col2)
-            {
-                col2 = {
-                    id: 'app-portal-col-2',
-                    type: 'portalcolumn',
-                    items:[]
-                };
-                appPortal.add(col2);
-            }
-        },
-        removePortalColumn2IfPossible: function()
-        {
-            var appPortal = Ext.ComponentQuery.query('component[id=app-portal]')[0];
-            var col2 = Ext.ComponentQuery.query('component[id=app-portal-col-2]')[0];
-            if(col2)
-            {
-                appPortal.remove(col2);
-            }
-        },
         refreshClinicalElementConfigurations: function()
         {
             // Tell all the clinical element views the defs changed
@@ -97,7 +72,6 @@ Ext.define('CR.app.view.ChartReviewPanel', {
             type: 'gear',
             handler: function(e, target, header, tool){
                 var parent = this.up('portlet');
-//                var portlet = header.ownerCt;
                 portlet.setLoading('Loading...');
                 Ext.defer(function() {
                     portlet.setLoading(false);
@@ -232,14 +206,6 @@ Ext.define('CR.app.view.ChartReviewPanel', {
                                     },
                                     items:
                                     [
-//                                        {
-//                                            id: 'app-header-column-button',
-//                                            xtype: 'button',
-//                                            icon: 'images/column-double-icon_small.png',
-//                                            tooltip: 'Single column, double column toggle',
-//                                            enableToggle: true,
-//                                            handler: this.onNumPortalColumnsChange
-//                                        },
                                         {
                                             id: 'app-header-clinical-view-menu',
                                             xtype: 'button',
@@ -338,63 +304,6 @@ Ext.define('CR.app.view.ChartReviewPanel', {
         }
     },
 
-//    onNumPortalColumnsChange: function(btn) {
-//        var col1 = Ext.getCmp('app-portal-col-1');
-//        var col1portals = col1.items.items;
-//        var col2 = Ext.getCmp('app-portal-col-2');
-//        if(col2)
-//        {
-//            // move column 2 portals to column 1
-//            var col2portals = col2.items.items;
-//            var col2portalsToMove = new Array();
-//            for (key in col2portals)
-//            {
-//                var col2portal = col2portals[key];
-//                col2portalsToMove.push(col2portal);
-//            }
-//            for (key in col2portalsToMove)
-//            {
-//                var col2portal = col2portalsToMove[key];
-//                // Note: add removes from old parent and adds to new parent
-//                col1.add(col2portal);
-//            }
-//
-//            // Remove the column
-//            CR.app.view.ChartReviewPanel.removePortalColumn2IfPossible()
-//
-//            // Change button icon to double-column
-//            var btn = Ext.getCmp('app-header-column-button');
-//            btn.setIcon('images/column-double-icon_small.png');
-//        }
-//        else
-//        {
-//            // Change button icon to single-column
-//            var btn = Ext.getCmp('app-header-column-button');
-//            btn.setIcon('images/column-single-icon_small.png');
-//
-//            // Add the column
-//            CR.app.view.ChartReviewPanel.addPortalColumn2IfNecessary();
-//            col2 = Ext.getCmp('app-portal-col-2');
-//            // move half of column 1 portals to column 2
-//            var numCol1Portals = col1portals.length;
-//            if(numCol1Portals > 1)
-//            {
-//                var col1portalsToMove = new Array();
-//                for (var i = Math.round(numCol1Portals/2); i < numCol1Portals; i++)
-//                {
-//                    var col1portal = col1portals[i];
-//                    col1portalsToMove.push(col1portal);
-//                }
-//                for (key in col1portalsToMove)
-//                {
-//                    var col1portal = col1portalsToMove[key];
-//                    // Note: add removes from old parent and adds to new parent
-//                    col2.add(col1portal);
-//                }
-//            }
-//        }
-//    },
-
     getPortletName: function(clinicalElementConfigurationId)
     {
         var clinicalElementConfiguration = this.getClinicalElementConfiguration(clinicalElementConfigurationId);
@@ -456,16 +365,12 @@ Ext.define('CR.app.view.ChartReviewPanel', {
         if(!ifNotFound || ifNotFound && !portlet)
         {
             portlet = Ext.create(portletType);
-            portlet.objectType = 'portlet' ;
+            portlet.objectType = 'portlet'; // Used to search for portlets later in Ext.ComponentQuery.query("[objectType=portlet]');
             portlet.clinicalElementConfigurationId = clinicalElementConfigurationId;
 
             var clinicalElementConfiguration = this.getClinicalElementConfiguration(clinicalElementConfigurationId);
             portlet.title = clinicalElementConfiguration.text;
             portlet.columnIndex = 0;
-            portlet.height = 500;
-            portlet.resizable = true;
-            portlet.minWidth = 250;
-            portlet.minHeight = 100;
             portlet.setClinicalElementConfigurationId(clinicalElementConfigurationId);
             portlet.columnIndex = CR.app.view.ChartReviewPanel.curColumnIndex;
             if(CR.app.view.ChartReviewPanel.curColumnIndex == 0)

@@ -1,3 +1,6 @@
+/**
+ * ChartReviewPanel->PortalPanel(center)->Portlet(ClinicalElementPortlet)->ItemInfo->ItemSummary/ItemList->ItemSummaryDetail/ItemListGrid&ItemListDetail
+ */
 Ext.define('CR.app.view.ItemListGrid', {
     extend: 'Ext.grid.Panel',
     userWrapChoice: false,

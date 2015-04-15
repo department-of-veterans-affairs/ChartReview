@@ -1,4 +1,5 @@
 /**
+ * ChartReviewPanel->PortalPanel(center)->Portlet(ClinicalElementPortlet)->ItemInfo->ItemSummary/ItemList->ItemSummaryDetail/ItemListGrid&ItemListDetail
  * @class CR.app.view.ItemListDetail
  * @extends Ext.panel.Panel
  *

@@ -1,4 +1,5 @@
 /**
+ * ChartReviewPanel->PortalPanel(center)->Portlet(ClinicalElementPortlet)->ItemInfo->ItemSummary/ItemList->ItemSummaryDetail/ItemListGrid&ItemListDetail
  * @class CR.app.view.ItemSummaryDetail
  * @extends Ext.panel.Panel
  *
@@ -16,14 +17,12 @@ Ext.define('CR.app.view.ItemSummaryDetail', {
         itemsBase: 'CR.app.store.ItemBase',
         annotationaware: 'CR.app.controller.AnnotationNatureController'
     },
-//    cls: 'preview',
     scrollable: true,
     border: true,
     curDoneAnnotatingState: false,
     width: 1500,
     height: 1500,
 
-//    padding: '0 5 0 5', // Left and right space gives the annotator the ability to capture the left-most character without the resize icon getting in the way.
     listeners: {
         doneAnnotating: function(cmp, pid) {
             this.doDoneAnnotating();

@@ -1,4 +1,5 @@
 /**
+ * ChartReviewPanel->PortalPanel(center)->Portlet(ClinicalElementPortlet)->ItemInfo->ItemSummary/ItemList->ItemSummaryDetail/ItemListGrid&ItemListDetail
  * @class Portal.view.Portlet
  * @extends Ext.panel.Panel
  * A {@link Ext.panel.Panel Panel} class that is managed by {@link Portal.view.PortalPanel}.
@@ -14,13 +15,6 @@ Ext.define('CR.app.view.Portlet', {
     collapsible: true,
     animCollapse: true,
     draggable: true,
-    //draggable: {
-    //    moveOnDrag: false
-    //},
-    // Important: Portlets are fixed width. Only height may change, and then only from bottom
-//    resizeHandles: 's',
-    resizeHandles: 'all',
-    resizable: true,
     cls: 'x-portlet',
     minWidth: 250,
     minHeight: 100,

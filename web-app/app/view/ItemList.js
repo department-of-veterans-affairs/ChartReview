@@ -1,4 +1,5 @@
 /**
+ * ChartReviewPanel->PortalPanel(center)->Portlet(ClinicalElementPortlet)->ItemInfo->ItemSummary/ItemList->ItemSummaryDetail/ItemListGrid&ItemListDetail
  * @class CR.app.view.ItemList
  * @extends Ext.panel.Panel
  *
@@ -35,13 +36,13 @@ Ext.define('CR.app.view.ItemList', {
 
     doResize: function(box)
     {
-        //var curBox = this.getBox();
-        //if(box.width != curBox.width || box.height != curBox.height)
-        //{
-        //    curBox.width = box.width;
-        //    curBox.height = box.height;
-        //    this.setBox(curBox);
-        //}
+        var curBox = this.getBox();
+        if(box.width != curBox.width || box.height != curBox.height)
+        {
+            curBox.width = box.width;
+            curBox.height = box.height;
+            this.setBox(curBox);
+        }
     },
 
     /**
