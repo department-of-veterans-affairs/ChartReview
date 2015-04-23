@@ -8,5 +8,6 @@ driverClassName="com.mysql.jdbc.Driver"
 url="jdbc:mysql://localhost:3306/chartreview"
 validationQuery="select 1"
 maxActive="25"
-maxIdle="3"/>
+maxIdle="3"
+factory="org.apache.commons.dbcp.BasicDataSourceFactory" />
 </Context>
