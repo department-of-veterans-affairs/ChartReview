@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.ghost-cursor {
+    position                    : absolute;
+    width                       : 19px;
+    height                      : 22px;
+    left                        : 0px;
+    top                         : 0px;
+    z-index                     : 1000001;
+    -webkit-transition-property : opacity;
+    -moz-transition-property    : opacity;
+    -ms-transition-property     : opacity;
+    -o-transition-property      : opacity;
+    transition-property         : opacity;
+    -webkit-transition-duration : 2s;
+    -moz-transition-duration    : 2s;
+    -ms-transition-duration     : 2s;
+    -o-transition-duration      : 2s;
+    transition-duration         : 2s;
+}
+
+.ghost-cursor-hidden {
+    opacity : 0;
+}
+
+.ghost-cursor-click-indicator {
+    position                    : absolute;
+    border-radius               : 100%;
+    margin-left                 : -3px;
+    margin-top                  : -3px;
+    -webkit-transition-property : opacity, width, height, margin-left, margin-top;
+    -webkit-transition-duration : 2s;
+    -moz-transition-property    : opacity, width, height, margin-left, margin-top;
+    -moz-transition-duration    : 2s;
+    transition-property         : opacity, width, height, margin-left, margin-top;
+    transition-duration         : 2s;
+    border                      : 2px solid;
+    opacity                     : 0.7;
+    width                       : 7px;
+    height                      : 7px;
+    z-index                     : 101;
+}
+
+.ghost-cursor-click-indicator-big {
+    margin-left : -21px;
+    margin-top  : -21px;
+    height      : 50px;
+    width       : 50px;
+    opacity     : 0;
+}
+
+</pre>
+</body>
+</html>

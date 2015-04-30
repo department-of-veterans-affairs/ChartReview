@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# get the directory in which the script reside
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+which java > /dev/null 2>&1
+
+if [ "$?" -eq "1" ]; then
+    echo '[ERROR]: Java executable (`java`) is not installed or not available in the PATH'
+    exit 9
+fi
+
+java -cp "$DIR/binary/selenium-server-standalone-2.45.0.jar:$DIR/binary/js.jar:$DIR/commons-io-2.2/commons-io-2.2.jar" \
+    org.mozilla.javascript.tools.shell.Main -f "$DIR/launcher-common.js" "$DIR/webdriver-launcher.js" "$DIR" "$@" \
+    2>"$DIR/webdriver.log"

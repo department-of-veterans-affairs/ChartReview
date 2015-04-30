@@ -1,0 +1,69 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+Siesta.Harness.Browser.my.meta.extend({
+
+    has : {
+        commandId           : 1,
+        
+        commands            : null,
+        commandCallbacks    : null
+    },
+
+    
+    override : {
+        
+        start : function () {
+            this.commands           = []
+            this.commandCallbacks   = {}
+            
+            this.on('beforescreenshot', this.onBeforeScreenshot, this)
+            this.on('screenshot', this.onScreenshot, this)
+            
+            this.SUPERARG(arguments)
+        },
+        
+        
+        onCommandDone : function (commandId) {
+            this.commandCallbacks[ commandId ]()
+            
+            delete this.commandCallbacks[ commandId ]
+        },
+        
+        
+        queueCommand : function (command, callback) {
+            var id                      = this.commandId++
+            
+            command.id                  = id
+            this.commandCallbacks[ id ] = callback
+            
+            this.commands.push(command)
+        },
+
+        
+        flushAutomationCommands : function () {
+            var commands    = this.commands
+            
+            this.commands   = []
+            
+            return commands
+        },
+        
+        
+        onBeforeScreenshot : function (event) {
+            this.showForcedIFrameScreenshot(event.source)
+        },
+        
+        
+        onScreenshot : function (event) {
+            this.hideForcedIFrameScreenshot(event.source)
+        }
+    }
+})
+
+

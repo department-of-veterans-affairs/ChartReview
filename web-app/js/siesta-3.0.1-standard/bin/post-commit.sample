@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# An example hook script that is called after a successful
+# commit is made.
+#
+# To enable this hook, rename this file to "post-commit" and put it into your ".git/hooks".
+
+SIESTA=/home/nickolay/workspace/JavaScript/siesta
+
+$SIESTA/bin/phantomjs http://local/workspace/JavaScript/siesta/t | $SIESTA/bin/notify.pl \
+--notify-email nickolay@bryntum.com \
+--smtp-host smtp.gmail.com --smtp-user siesta.automation@gmail.com --smtp-password secret_password --smtp-ssl \
+--notify-aim nickolayplatonov --aim-screen-name nickolayplatonov --aim-password secret_password
+
+true
+
+#--notify-email mats@bryntum.com

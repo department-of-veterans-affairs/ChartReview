@@ -1,0 +1,99 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+/* GENERAL GRID STYLES */
+
+.sch-tree-filtered .x-tree-expander {
+    visibility : hidden;
+}
+
+.tr-testgrid .filterfield {
+    width  : 95% !important;
+    margin : 13px 9px 0 9px;
+}
+
+.tr-testgrid .filterfield .x-form-text,
+.tr-testgrid .filterfield .x-form-trigger {
+    height : 35px !important;
+}
+
+.tr-testgrid .x-tree-view {
+    user-select         : none;
+    -o-user-select      : none;
+    -ms-user-select     : none;
+    -moz-user-select    : -moz-none;
+    -webkit-user-select : none;
+}
+
+.tr-testgrid .x-grid-cell-inner {
+    margin        : 3px 0;
+    white-space   : nowrap;
+    text-overflow : clip;
+}
+
+/* TOP TOOLBAR STYLES */
+
+.tr-testgrid .x-tree-icon {
+    display : none;
+}
+
+.x-ie9 .tr-testgrid .x-tree-view {
+    z-index : 1;
+}
+
+.sch-tree-filtered .x-tree-expander {
+    visibility : hidden;
+}
+
+.toggle-expand {
+    border : 0 none;
+}
+
+/* BOTTOM TOOLBAR STYLES */
+.main-bbar .x-btn,
+.main-bbar .x-btn.x-btn-disabled {
+    margin-left : 4px;
+    border      : 0 none;
+    background  : transparent none;
+}
+
+/* Hide arrow on gear button */
+.main-bbar .x-btn-wrap-default-toolbar-large.x-btn-arrow-right:after {
+    display : none;
+}
+
+.x-ie .tr-icon-options .x-btn-arrow-right {
+    height : 22px !important;
+}
+
+.main-bbar .icon-book,
+.main-bbar .icon-cog {
+    line-height : 1.4em;
+}
+
+.x-btn-disabled .icon-book .x-btn-glyph{
+    color: #ddd;
+}
+
+/* SUMMARY BAR */
+.summary-bar {
+    padding    : 6px 3px 0px 0;
+    text-align : right;
+}
+
+.summary-bar .icon-checkmark,
+.summary-bar .icon-bug {
+    margin-left : 6px;
+    margin-top  : -1px;
+}
+
+/* Sizing toolbar */
+.size-toolbar {
+    border-top-width : 1px !important;
+    border-top-style : solid !important;
+}

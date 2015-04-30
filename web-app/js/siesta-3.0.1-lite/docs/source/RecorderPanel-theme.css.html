@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.icon-delete {
+    background-image : url(../images/cross.png);
+    background-size  : 8px 8px !important;
+    cursor           : pointer;
+}
+
+
+.icon-record {
+    border-radius : 15px;
+    margin-top    : 4px;
+    width         : 15px !important;
+    height        : 15px !important;
+    background    : #fff;
+}
+
+.icon-clear .x-btn-glyph {
+    font-size : 19px;
+}
+
+.cheatsheet {
+    background : #eee;
+}
+
+.cheatsheet-type {
+    font-weight : bold;
+}
+
+.cheatsheet td {
+    color : #555;
+}
+
+@keyframes blink {
+    0% {
+        opacity : 0;
+    }
+    100% {
+        opacity : 1;
+    }
+}
+
+@-webkit-keyframes blink {
+    0% {
+        opacity : 0;
+    }
+    100% {
+        opacity : 1;
+    }
+}
+
+.recorder-recording .icon-record {
+    -webkit-animation                 : blink 0.5s linear infinite;
+    -moz-animation                    : blink 0.5s linear infinite;
+    animation                         : blink 0.5s linear infinite;
+    -webkit-animation-timing-function : cubic-bezier(1.0, 0, 0, 1.0);
+    -webkit-animation-direction       : alternate;
+    animation-direction               : alternate;
+}</pre>
+</body>
+</html>

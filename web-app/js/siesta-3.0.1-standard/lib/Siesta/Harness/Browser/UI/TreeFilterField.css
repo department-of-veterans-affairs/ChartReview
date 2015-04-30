@@ -1,0 +1,45 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.filterfield .x-form-text {
+    padding-left : 5px;
+}
+
+.filterfield .x-form-text,
+.filterfield .x-form-trigger {
+    height : 30px !important;
+}
+
+.filterfield .x-form-trigger {
+    text-align       : center;
+    vertical-align   : middle;
+    background-image : none;
+}
+
+.x-gecko .filterfield .x-form-trigger {
+    display : table-cell;
+}
+
+.filterfield .x-form-trigger-wrap-default {
+    border : 0;
+}
+
+.filterfield .x-form-trigger {
+    text-align     : center;
+    vertical-align : middle;
+}
+
+/*
+ * IE 11 shows a clear-field cross
+   http://stackoverflow.com/questions/20473413/remove-ie11s-clear-field-x-button-on-windows-8
+*/
+.filterfield input::-ms-clear {
+    display : none;
+    width   : 0;
+    height  : 0;
+}

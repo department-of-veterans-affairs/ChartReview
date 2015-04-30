@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# get the directory in which the script reside
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+if [[ $OSTYPE =~ "darwin" ]]; then
+    SAUCELABS_BINARY="osx"
+else
+    SAUCELABS_BINARY="linux"
+fi
+
+"$DIR/binary/saucelabs/$SAUCELABS_BINARY/bin/sc" "$@"

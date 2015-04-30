@@ -1,0 +1,24 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.filterfield .x-form-trigger {
+    color          : #999;
+    text-shadow    : 1px 0px 1px #f5f5f5;
+}
+
+.filterfield .x-form-trigger:hover {
+    color      : #666;
+}
+
+.tr-filter-trigger-leaf {
+    background-image        : url("../images/trigger-leafs.gif");
+}
+
+.tr-filter-trigger-group {
+    background-image        : url("../images/trigger-groups.gif");  
+}

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# get the directory in which the script reside
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+if [[ $OSTYPE =~ "darwin" ]]; then
+    BROWSERSTACK_BINARY="macos"
+elif [[ `expr match $(uname -m) ".*64"` == "0" ]]; then
+    BROWSERSTACK_BINARY="linux32"
+else
+    BROWSERSTACK_BINARY="linux64"
+fi
+
+"$DIR/binary/browserstack/$BROWSERSTACK_BINARY/BrowserStackLocal" "$@"

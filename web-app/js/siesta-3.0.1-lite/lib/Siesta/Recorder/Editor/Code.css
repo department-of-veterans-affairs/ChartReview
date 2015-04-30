@@ -1,0 +1,18 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.siesta-recorder-codeeditor .CodeMirror {
+    background-image    : url(../images/ok.png);
+    background-repeat   : no-repeat;
+    background-position : right top;
+    background-size     : 10px 10px;
+}
+
+.siesta-recorder-codeeditor.siesta-invalid-syntax .CodeMirror {
+    background-image : url(../images/cross.png);
+}

@@ -1,0 +1,41 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.icon-delete {
+    height            : 10px;
+    width             : 10px;
+    margin            : 4px 2px;
+    background-repeat : no-repeat;
+}
+
+.recorder-tool {
+    background : none !important;
+    border     : none !important;
+}
+
+.recorder-tool-icon {
+    padding-top : 0.1em;
+}
+
+.recorder-tool-icon.icon-close {
+    padding-top : 0.2em;
+}
+
+.cheatsheet {
+    padding : 5px;
+}
+
+.cheatsheet-type {
+    width      : 135px;
+    margin-top : 5px;
+}
+
+.cheatsheet td {
+    white-space : nowrap;
+}
+

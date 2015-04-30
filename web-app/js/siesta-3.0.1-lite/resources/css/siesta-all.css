@@ -1,0 +1,2276 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.filterfield .x-form-text {
+    padding-left : 5px;
+}
+
+.filterfield .x-form-text,
+.filterfield .x-form-trigger {
+    height : 30px !important;
+}
+
+.filterfield .x-form-trigger {
+    text-align       : center;
+    vertical-align   : middle;
+    background-image : none;
+}
+
+.x-gecko .filterfield .x-form-trigger {
+    display : table-cell;
+}
+
+.filterfield .x-form-trigger-wrap-default {
+    border : 0;
+}
+
+.filterfield .x-form-trigger {
+    text-align     : center;
+    vertical-align : middle;
+}
+
+/*
+ * IE 11 shows a clear-field cross
+   http://stackoverflow.com/questions/20473413/remove-ie11s-clear-field-x-button-on-windows-8
+*/
+.filterfield input::-ms-clear {
+    display : none;
+    width   : 0;
+    height  : 0;
+}.siesta-header {
+    height : 60px;
+}body > .x-splitter-vertical div {
+    display : none;
+}
+
+/*=======================================================================================================================================================================================================================
+    Vertically aligned content
+*/
+
+.tr-vertical-align-helper-content {
+    display        : -moz-inline-box;
+    display        : inline-block;
+    vertical-align : middle;
+    zoom           : 1;
+}
+
+.tr-vertical-align-helper {
+    display        : -moz-inline-box;
+    display        : inline-block;
+    vertical-align : middle;
+    height         : 100%;
+    width          : 0px;
+    zoom           : 1;
+}
+
+.tr-rounded-box {
+    padding       : 30px;
+    border-radius : 24px;
+}
+
+.tr-main-area-centered {
+    text-align : center;
+}
+
+.ghost-cursor {
+    position                    : absolute;
+    width                       : 19px;
+    height                      : 22px;
+    left                        : 0px;
+    top                         : 0px;
+    z-index                     : 1000001;
+    -webkit-transition-property : opacity;
+    -moz-transition-property    : opacity;
+    -ms-transition-property     : opacity;
+    -o-transition-property      : opacity;
+    transition-property         : opacity;
+    -webkit-transition-duration : 2s;
+    -moz-transition-duration    : 2s;
+    -ms-transition-duration     : 2s;
+    -o-transition-duration      : 2s;
+    transition-duration         : 2s;
+}
+
+.ghost-cursor-hidden {
+    opacity : 0;
+}
+
+.ghost-cursor-click-indicator {
+    position                    : absolute;
+    border-radius               : 100%;
+    margin-left                 : -3px;
+    margin-top                  : -3px;
+    -webkit-transition-property : opacity, width, height, margin-left, margin-top;
+    -webkit-transition-duration : 2s;
+    -moz-transition-property    : opacity, width, height, margin-left, margin-top;
+    -moz-transition-duration    : 2s;
+    transition-property         : opacity, width, height, margin-left, margin-top;
+    transition-duration         : 2s;
+    border                      : 2px solid;
+    opacity                     : 0.7;
+    width                       : 7px;
+    height                      : 7px;
+    z-index                     : 101;
+}
+
+.ghost-cursor-click-indicator-big {
+    margin-left : -21px;
+    margin-top  : -21px;
+    height      : 50px;
+    width       : 50px;
+    opacity     : 0;
+}
+
+.target-inspector-box {
+    position            : absolute;
+    pointer-events      : none;
+    z-index             : 100001;
+    border              : 2px solid;
+    transition-property : left, top, width, height;
+    transition-duration : 0.3s;
+}
+
+.target-inspector-label {
+    display        : inline-block;
+    margin-top     : -10px;
+    font-size      : 10px;
+    padding        : 2px;
+    pointer-events : auto;
+    text-decoration: none;
+    white-space    : nowrap;
+}
+
+.target-inspector-label:hover {
+    text-decoration: underline;
+}.siesta-domcontainer {
+}
+
+/*=======================================================================================================================================================================================================================
+    Panel with test iframe
+*/
+
+.tr-ui-mask {
+	position       : absolute;
+	width          : 100%;
+	height         : 100%;
+	z-index        : 90000;
+	left           : 0;
+	top            : 0;
+}
+
+.tr-container {
+    visibility : visible !important;
+}
+
+.x-ie9 .tr-container {
+    z-index : 1;
+}
+
+.tr-container .x-panel-collapsed {
+    display    : block !important;
+    visibility : hidden !important;
+    z-index    : -1 !important;
+}
+
+td.tr-td-vertical-align {
+    vertical-align : middle;
+}
+
+.tr-iframe-wrapper {
+    position : absolute;
+    left     : -10000px;
+    top      : -10000px;
+    overflow : auto;
+    z-index  : 6; /* Without this, the dom container Ext panel will be on top of the iframe (in IE10)*/
+}
+
+.tr-iframe-forced {
+    z-index               : 100000 !important;
+    border                : 5px solid;
+}
+
+.tr-iframe-forced-screenshot {
+    z-index                 : 100000 !important;
+    left                    : 0 !important;
+    top                     : 0 !important;
+    border                  : 0 solid;
+    
+    width                   : auto !important;
+    height                  : auto !important;
+}
+
+.tr-iframe-hidden {
+    left : -10000px !important;
+    top  : -10000px !important;
+}
+
+.siesta-domcontainer .x-panel-body {
+    background : transparent;
+    border     : 0 none;
+}
+
+.domcontainer-console {
+    z-index    : 5;
+}
+
+.domcontainer-console input {
+    height          : 24px;
+    width           : 100%;
+    padding         : 2px 2px 2px 20px;
+    background-size : 12px;
+    line-height     : 19px;
+    border          : 1px solid;
+}
+
+/* GENERAL GRID STYLES */
+
+.sch-tree-filtered .x-tree-expander {
+    visibility : hidden;
+}
+
+.tr-testgrid .filterfield {
+    width  : 95% !important;
+    margin : 13px 9px 0 9px;
+}
+
+.tr-testgrid .filterfield .x-form-text,
+.tr-testgrid .filterfield .x-form-trigger {
+    height : 35px !important;
+}
+
+.tr-testgrid .x-tree-view {
+    user-select         : none;
+    -o-user-select      : none;
+    -ms-user-select     : none;
+    -moz-user-select    : -moz-none;
+    -webkit-user-select : none;
+}
+
+.tr-testgrid .x-grid-cell-inner {
+    margin        : 3px 0;
+    white-space   : nowrap;
+    text-overflow : clip;
+}
+
+/* TOP TOOLBAR STYLES */
+
+.tr-testgrid .x-tree-icon {
+    display : none;
+}
+
+.x-ie9 .tr-testgrid .x-tree-view {
+    z-index : 1;
+}
+
+.sch-tree-filtered .x-tree-expander {
+    visibility : hidden;
+}
+
+.toggle-expand {
+    border : 0 none;
+}
+
+/* BOTTOM TOOLBAR STYLES */
+.main-bbar .x-btn,
+.main-bbar .x-btn.x-btn-disabled {
+    margin-left : 4px;
+    border      : 0 none;
+    background  : transparent none;
+}
+
+/* Hide arrow on gear button */
+.main-bbar .x-btn-wrap-default-toolbar-large.x-btn-arrow-right:after {
+    display : none;
+}
+
+.x-ie .tr-icon-options .x-btn-arrow-right {
+    height : 22px !important;
+}
+
+.main-bbar .icon-book,
+.main-bbar .icon-cog {
+    line-height : 1.4em;
+}
+
+.x-btn-disabled .icon-book .x-btn-glyph{
+    color: #ddd;
+}
+
+/* SUMMARY BAR */
+.summary-bar {
+    padding    : 6px 3px 0px 0;
+    text-align : right;
+}
+
+.summary-bar .icon-checkmark,
+.summary-bar .icon-bug {
+    margin-left : 6px;
+    margin-top  : -1px;
+}
+
+/* Sizing toolbar */
+.size-toolbar {
+    border-top-width : 1px !important;
+    border-top-style : solid !important;
+}
+.resultPanel-panel {
+    border : 0 none;
+}
+
+.resultpanel-toolbar {
+}
+
+.test-source-ct .syntaxhighlighter {
+    overflow : hidden !important;
+}
+
+/* fixes row height sync in Chrome */
+.syntaxhighlighter .line {
+    height         : 1.2em !important;
+    vertical-align : middle !important;
+}
+
+.siesta-test-title {
+    position : absolute;
+    top      : -23px;
+    left     : 0
+}
+
+.resultPanel-panel > .x-panel-body > .x-splitter-vertical div {
+    display : none;
+}
+/*=======================================================================================================================================================================================================================
+    Common and unsorted
+*/
+
+.siesta-test-initializing .x-grid-item-container:empty::after {
+    content : ' Initializing...';
+    padding : 8px 24px;
+    display : block;
+}
+
+.siesta-assertion-grid .x-grid-cell-inner {
+    line-height    : 23px !important;
+    padding-bottom : 4px !important;
+    padding-left   : 2px;
+}
+
+.siesta-assertion-grid {
+    border-bottom : 0 none;
+}
+
+.siesta-assertion-grid td {
+    border-width : 0;
+}
+
+.siesta-assertion-grid .x-grid-cell-inner {
+    margin : 0;
+}
+
+.tr-tree-column .x-grid-cell-inner {
+    position : relative;
+}
+
+.siesta-assertion-grid .x-tree-node-text {
+    padding-left : 0;
+}
+
+/*=======================================================================================================================================================================================================================
+    Summary row
+*/
+
+.tr-summary-row .x-tree-icon,
+.tr-summary-row .x-tree-elbow-empty,
+.tr-summary-row .x-tree-elbow-end {
+    display : none !important;
+}
+
+.tr-summary-row .x-grid-cell {
+    padding-left : 10px;
+}
+
+.tr-summary-row .x-grid-cell-inner {
+    border-top  : 10px solid;
+    line-height : 17px;
+    margin      : 15px 17px 6px 7px;
+    padding     : 5px 0 0 3px;
+}
+
+.tr-summary-failure .x-grid-cell-inner {
+    border-top : 10px solid;
+}
+
+/*=======================================================================================================================================================================================================================
+    Diagnostic row
+*/
+
+.tr-diagnostic-row {
+    border-top     : 1px solid;
+    text-transform : uppercase;
+}
+
+.tr-diagnostic-row .x-tree-icon {
+    display : none !important;
+}
+
+.tr-diagnostic-row td {
+    border-width     : 1px;
+    border-style     : solid;
+    border-left      : 0 none;
+    border-right     : 0 none;
+    background-image : none !important;
+}
+
+/*=======================================================================================================================================================================================================================
+    Annotation
+*/
+
+.tr-assert-row-annontation {
+    padding-top   : 10px;
+    line-height   : 13px;
+    margin-top    : 4px;
+    margin-bottom : 4px;
+    padding-left  : 28px;
+}
+
+/*=======================================================================================================================================================================================================================
+    Assertion row
+*/
+
+.si-hide-passes .tr-assertion-row-passed {
+    display : none;
+}
+
+.siesta-assertion-grid .x-grid-cell-inner img {
+    vertical-align : middle;
+}
+
+.siesta-assertion-grid .x-tree-icon {
+    margin-right : 5px;
+}
+
+.test-name-cell .x-tree-expander {
+    margin-top   : 3px;
+    margin-right : 7px;
+    margin-left  : 1px;
+    height       : 0;
+    width        : 0;
+    background   : none !important;
+    border-style : solid;
+    border-width : 5px 0 5px 8px;
+    border-color : transparent;
+    cursor       : pointer;
+}
+
+.x-grid-tree-node-expanded .test-name-cell .x-tree-expander {
+    margin-top   : 6px;
+    margin-right : 7px;
+    margin-left  : -1px;
+    border-width : 8px 5px 0 5px;
+}
+
+.x-ie9m .test-name-cell .x-tree-expander {
+    position : relative;
+    top      : -4px;
+}
+
+/* ICONS AND TEXT */
+.test-name-cell span.x-tree-node-text {
+    padding-left : 24px;
+    position     : relative;
+}
+
+/* TEST STATUS ICONS */
+
+.test-icon {
+    font-size : 1.2em;
+    position  : absolute;
+    left      : 2px;
+    top       : -1px;
+}
+
+body.x-linux .test-icon {
+    margin-top : 2px;
+}
+
+.x-ie .test-icon,
+.x-ie10 .test-icon {
+    top : 3px;
+}
+
+.icon-checkmark {
+    background-position : 3px center;
+    background-repeat   : no-repeat;
+}
+
+.test-name-cell .icon-bug {
+    font-size  : 1.1em;
+    margin-top : 1px;
+}
+
+.icon-folder-open,
+.icon-folder {
+    top : -2px;
+}
+
+
+.test-name-cell .x-grid-cell-inner {
+    position : relative;
+}
+
+.test-name-cell .x-grid-cell-inner {
+    user-select         : none;
+    -o-user-select      : none;
+    -ms-user-select     : none;
+    -moz-user-select    : -moz-none;
+    -webkit-user-select : none;
+}
+
+.test-name-cell .x-grid-cell-inner {
+    cursor : pointer;
+}
+.changelog-window .light-button {
+    /* FROM TWITTER BOOTSTRAP */
+    background-color  : #5bb75b;
+    background-image  : -moz-linear-gradient(top, #62c462, #51a351);
+    background-image  : -webkit-gradient(linear, 0 0, 0 100%, from(#62c462), to(#51a351));
+    background-image  : -webkit-linear-gradient(top, #62c462, #51a351);
+    background-image  : -o-linear-gradient(top, #62c462, #51a351);
+    background-image  : linear-gradient(to bottom, #62c462, #51a351);
+    background-repeat : repeat-x;
+    border-color      : #51a351 #51a351 #387038;
+    border-color      : rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+
+.changelog-window .light-button .x-btn-inner {
+    color       : #ffffff;
+    text-shadow : 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* CHANGELOG STYLING*/
+
+.changelog-window .x-window-body {
+    background : #fff;
+    padding    : 10px 20px !important;
+}
+
+.changelog-window h3 {
+    background    : none repeat scroll 0 0 #FFEEEE;
+    border-bottom : 1px solid #EEEEEE;
+    color         : #333333;
+    margin-top    : 30px;
+    padding       : 15px;
+}
+
+.changelog-window h4 {
+    color         : Navy;
+    line-height   : 17px;
+    margin-bottom : 5px;
+    margin-top    : 20px;
+    padding-left  : 20px;
+}
+
+.changelog-window ul li {
+    margin-top   : 5px;
+    padding-left : 5px;
+    margin-left  : 20px;
+}
+
+.siesta-hidden {
+	position       : absolute;
+	left           : -10000px;
+	top            : -10000px;
+}@font-face {
+	font-family: 'icomoon';
+	src:url('fonts/icomoon.eot');
+	src:url('fonts/icomoon.eot?#iefix') format('embedded-opentype'),
+		url('fonts/icomoon.ttf') format('truetype'),
+		url('fonts/icomoon.woff') format('woff'),
+		url('fonts/icomoon.svg#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-file:before {
+	content: "\e600";
+}
+.icon-file-2:before {
+	content: "\e601";
+}
+.icon-stats:before {
+	content: "\e602";
+}
+.icon-checkmark:before {
+	content: "\e603";
+}
+.icon-close:before {
+	content: "\e604";
+}
+.icon-star:before {
+	content: "\e605";
+}
+.icon-star-2:before {
+	content: "\e606";
+}
+.icon-file-css:before {
+	content: "\e607";
+}
+.icon-file-xml:before {
+	content: "\e608";
+}
+.icon-arrow-up:before {
+	content: "\e609";
+}
+.icon-arrow-down:before {
+	content: "\e60a";
+}
+.icon-attachment:before {
+	content: "\e60b";
+}
+.icon-link:before {
+	content: "\e60c";
+}
+.icon-plus:before {
+	content: "\e60d";
+}
+.icon-minus:before {
+	content: "\e60e";
+}
+.icon-play:before {
+	content: "\e60f";
+}
+.icon-pause:before {
+	content: "\e610";
+}
+.icon-stop:before {
+	content: "\e611";
+}
+.icon-forward:before {
+	content: "\e612";
+}
+.icon-search:before {
+	content: "\e613";
+}
+.icon-camera:before {
+	content: "\e614";
+}
+.icon-blocked:before {
+	content: "\e615";
+}
+.icon-cancel-circle:before {
+	content: "\e616";
+}
+.icon-book:before {
+	content: "\e617";
+}
+.icon-cog:before {
+	content: "\e618";
+}
+.icon-screen:before {
+	content: "\e619";
+}
+.icon-keyboard:before {
+	content: "\e61a";
+}
+.icon-tag:before {
+	content: "\e61b";
+}
+.icon-folder:before {
+	content: "\e61c";
+}
+.icon-folder-open:before {
+	content: "\e61d";
+}
+.icon-clock:before {
+	content: "\e61e";
+}
+.icon-busy:before {
+	content: "\e61f";
+}
+.icon-spinner:before {
+	content: "\e620";
+}
+.icon-cog-2:before {
+	content: "\e621";
+}
+.icon-bug:before {
+	content: "\e622";
+}
+.icon-play-2:before {
+	content: "\e623";
+}
+.icon-stop-2:before {
+	content: "\e624";
+}
+.icon-flag:before {
+	content: "\e625";
+}
+.icon-lightning:before {
+	content: "\e626";
+}
+/**
+ * SyntaxHighlighter
+ * http://alexgorbatchev.com/SyntaxHighlighter
+ *
+ * SyntaxHighlighter is donationware. If you are using it, please donate.
+ * http://alexgorbatchev.com/SyntaxHighlighter/donate.html
+ *
+ * @version
+ * 3.0.83 (July 02 2010)
+ * 
+ * @copyright
+ * Copyright (C) 2004-2010 Alex Gorbatchev.
+ *
+ * @license
+ * Dual licensed under the MIT and GPL licenses.
+ */
+.syntaxhighlighter a,
+.syntaxhighlighter div,
+.syntaxhighlighter code,
+.syntaxhighlighter table,
+.syntaxhighlighter table td,
+.syntaxhighlighter table tr,
+.syntaxhighlighter table tbody,
+.syntaxhighlighter table thead,
+.syntaxhighlighter table caption,
+.syntaxhighlighter textarea {
+  -moz-border-radius: 0 0 0 0 !important;
+  -webkit-border-radius: 0 0 0 0 !important;
+  background: none !important;
+  border: 0 !important;
+  bottom: auto !important;
+  float: none !important;
+  height: auto !important;
+  left: auto !important;
+  line-height: 1.1em !important;
+  margin: 0 !important;
+  outline: 0 !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  position: static !important;
+  right: auto !important;
+  text-align: left !important;
+  top: auto !important;
+  vertical-align: baseline !important;
+  width: auto !important;
+  box-sizing: content-box !important;
+  font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  font-size: 1em !important;
+  min-height: inherit !important;
+  min-height: auto !important;
+}
+
+.syntaxhighlighter {
+  width: 100% !important;
+  margin: 1em 0 1em 0 !important;
+  position: relative !important;
+  overflow: auto !important;
+  font-size: 1em !important;
+}
+.syntaxhighlighter.source {
+  overflow: hidden !important;
+}
+.syntaxhighlighter .bold {
+  font-weight: bold !important;
+}
+.syntaxhighlighter .italic {
+  font-style: italic !important;
+}
+.syntaxhighlighter .line {
+  white-space: pre !important;
+}
+.syntaxhighlighter table {
+  width: 100% !important;
+}
+.syntaxhighlighter table caption {
+  text-align: left !important;
+  padding: .5em 0 0.5em 1em !important;
+}
+.syntaxhighlighter table td.code {
+  width: 100% !important;
+}
+.syntaxhighlighter table td.code .container {
+  position: relative !important;
+}
+.syntaxhighlighter table td.code .container textarea {
+  box-sizing: border-box !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  background: white !important;
+  padding-left: 1em !important;
+  overflow: hidden !important;
+  white-space: pre !important;
+}
+.syntaxhighlighter table td.gutter .line {
+  text-align: right !important;
+  padding: 0 0.5em 0 1em !important;
+}
+.syntaxhighlighter table td.code .line {
+  padding: 0 1em !important;
+}
+.syntaxhighlighter.nogutter td.code .container textarea, .syntaxhighlighter.nogutter td.code .line {
+  padding-left: 0em !important;
+}
+.syntaxhighlighter.show {
+  display: block !important;
+}
+.syntaxhighlighter.collapsed table {
+  display: none !important;
+}
+.syntaxhighlighter.collapsed .toolbar {
+  padding: 0.1em 0.8em 0em 0.8em !important;
+  font-size: 1em !important;
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+}
+.syntaxhighlighter.collapsed .toolbar span {
+  display: inline !important;
+  margin-right: 1em !important;
+}
+.syntaxhighlighter.collapsed .toolbar span a {
+  padding: 0 !important;
+  display: none !important;
+}
+.syntaxhighlighter.collapsed .toolbar span a.expandSource {
+  display: inline !important;
+}
+.syntaxhighlighter .toolbar {
+  position: absolute !important;
+  right: 1px !important;
+  top: 1px !important;
+  width: 11px !important;
+  height: 11px !important;
+  font-size: 10px !important;
+  z-index: 10 !important;
+}
+.syntaxhighlighter .toolbar span.title {
+  display: inline !important;
+}
+.syntaxhighlighter .toolbar a {
+  display: block !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  padding-top: 1px !important;
+}
+.syntaxhighlighter .toolbar a.expandSource {
+  display: none !important;
+}
+.syntaxhighlighter.ie {
+  font-size: .9em !important;
+  padding: 1px 0 1px 0 !important;
+}
+.syntaxhighlighter.ie .toolbar {
+  line-height: 8px !important;
+}
+.syntaxhighlighter.ie .toolbar a {
+  padding-top: 0px !important;
+}
+.syntaxhighlighter.printing .line.alt1 .content,
+.syntaxhighlighter.printing .line.alt2 .content,
+.syntaxhighlighter.printing .line.highlighted .number,
+.syntaxhighlighter.printing .line.highlighted.alt1 .content,
+.syntaxhighlighter.printing .line.highlighted.alt2 .content {
+  background: none !important;
+}
+.syntaxhighlighter.printing .line .number {
+  color: #bbbbbb !important;
+}
+.syntaxhighlighter.printing .line .content {
+  color: black !important;
+}
+.syntaxhighlighter.printing .toolbar {
+  display: none !important;
+}
+.syntaxhighlighter.printing a {
+  text-decoration: none !important;
+}
+.syntaxhighlighter.printing .plain, .syntaxhighlighter.printing .plain a {
+  color: black !important;
+}
+.syntaxhighlighter.printing .comments, .syntaxhighlighter.printing .comments a {
+  color: #008200 !important;
+}
+.syntaxhighlighter.printing .string, .syntaxhighlighter.printing .string a {
+  color: blue !important;
+}
+.syntaxhighlighter.printing .keyword {
+  color: #006699 !important;
+  font-weight: bold !important;
+}
+.syntaxhighlighter.printing .preprocessor {
+  color: gray !important;
+}
+.syntaxhighlighter.printing .variable {
+  color: #aa7700 !important;
+}
+.syntaxhighlighter.printing .value {
+  color: #009900 !important;
+}
+.syntaxhighlighter.printing .functions {
+  color: #ff1493 !important;
+}
+.syntaxhighlighter.printing .constants {
+  color: #0066cc !important;
+}
+.syntaxhighlighter.printing .script {
+  font-weight: bold !important;
+}
+.syntaxhighlighter.printing .color1, .syntaxhighlighter.printing .color1 a {
+  color: gray !important;
+}
+.syntaxhighlighter.printing .color2, .syntaxhighlighter.printing .color2 a {
+  color: #ff1493 !important;
+}
+.syntaxhighlighter.printing .color3, .syntaxhighlighter.printing .color3 a {
+  color: red !important;
+}
+.syntaxhighlighter.printing .break, .syntaxhighlighter.printing .break a {
+  color: black !important;
+}
+/**
+ * SyntaxHighlighter
+ * http://alexgorbatchev.com/SyntaxHighlighter
+ *
+ * SyntaxHighlighter is donationware. If you are using it, please donate.
+ * http://alexgorbatchev.com/SyntaxHighlighter/donate.html
+ *
+ * @version
+ * 3.0.83 (July 02 2010)
+ * 
+ * @copyright
+ * Copyright (C) 2004-2010 Alex Gorbatchev.
+ *
+ * @license
+ * Dual licensed under the MIT and GPL licenses.
+ */
+.syntaxhighlighter {
+  background-color: white !important;
+}
+.syntaxhighlighter .line.alt1 {
+  background-color: white !important;
+}
+.syntaxhighlighter .line.alt2 {
+  background-color: white !important;
+}
+.syntaxhighlighter .line.highlighted.alt1, .syntaxhighlighter .line.highlighted.alt2 {
+  background-color: #e0e0e0 !important;
+}
+.syntaxhighlighter .line.highlighted.number {
+  color: black !important;
+}
+.syntaxhighlighter table caption {
+  color: black !important;
+}
+.syntaxhighlighter .gutter {
+  color: #afafaf !important;
+}
+.syntaxhighlighter .gutter .line {
+  border-right: 3px solid #6ce26c !important;
+}
+.syntaxhighlighter .gutter .line.highlighted {
+  background-color: #6ce26c !important;
+  color: white !important;
+}
+.syntaxhighlighter.printing .line .content {
+  border: none !important;
+}
+.syntaxhighlighter.collapsed {
+  overflow: visible !important;
+}
+.syntaxhighlighter.collapsed .toolbar {
+  color: blue !important;
+  background: white !important;
+  border: 1px solid #6ce26c !important;
+}
+.syntaxhighlighter.collapsed .toolbar a {
+  color: blue !important;
+}
+.syntaxhighlighter.collapsed .toolbar a:hover {
+  color: red !important;
+}
+.syntaxhighlighter .toolbar {
+  color: white !important;
+  background: #6ce26c !important;
+  border: none !important;
+}
+.syntaxhighlighter .toolbar a {
+  color: white !important;
+}
+.syntaxhighlighter .toolbar a:hover {
+  color: black !important;
+}
+.syntaxhighlighter .plain, .syntaxhighlighter .plain a {
+  color: black !important;
+}
+.syntaxhighlighter .comments, .syntaxhighlighter .comments a {
+  color: #008200 !important;
+}
+.syntaxhighlighter .string, .syntaxhighlighter .string a {
+  color: blue !important;
+}
+.syntaxhighlighter .keyword {
+  color: #006699 !important;
+}
+.syntaxhighlighter .preprocessor {
+  color: gray !important;
+}
+.syntaxhighlighter .variable {
+  color: #aa7700 !important;
+}
+.syntaxhighlighter .value {
+  color: #009900 !important;
+}
+.syntaxhighlighter .functions {
+  color: #ff1493 !important;
+}
+.syntaxhighlighter .constants {
+  color: #0066cc !important;
+}
+.syntaxhighlighter .script {
+  font-weight: bold !important;
+  color: #006699 !important;
+  background-color: none !important;
+}
+.syntaxhighlighter .color1, .syntaxhighlighter .color1 a {
+  color: gray !important;
+}
+.syntaxhighlighter .color2, .syntaxhighlighter .color2 a {
+  color: #ff1493 !important;
+}
+.syntaxhighlighter .color3, .syntaxhighlighter .color3 a {
+  color: red !important;
+}
+
+.syntaxhighlighter .keyword {
+  font-weight: bold !important;
+}
+.st-cov-report-tree-panel,
+.st-cov-report-source-panel {
+    border-bottom : 0 none;
+}
+
+.st-cov-report-tree-panel .x-toolbar {
+    padding-top : 3px;
+}
+
+.st-cov-report-tree-panel .x-grid-cell {
+    padding : 0 4px;
+    border  : 0 none !important;
+}
+
+.st-cov-report-tree-panel .x-grid-cell-inner {
+    padding-bottom : 2px;
+    text-overflow  : clip;
+}
+
+.st-cov-report-tree-panel .x-grid-row-selected .cov-result-cell {
+    background : transparent !important;
+}
+
+.st-cov-report-tree-panel .x-tree-icon {
+    background-size : 16px 16px !important;
+    border-radius   : 16px;
+}
+
+.st-cov-report-tree-panel .x-btn {
+    background-image : none !important;
+}
+
+.st-cov-level-high .x-grid-cell-inner {
+    border-bottom : 4px solid;
+}
+
+.st-cov-level-medium .x-grid-cell-inner {
+    border-bottom : 4px solid;
+    font-weight   : 300;
+}
+
+.st-cov-level-low .x-grid-cell-inner {
+    border-bottom : 4px solid #ff1111 !important;
+    font-weight   : 300;
+}
+
+/* CODE AREA STYLING Styles from Istanbul, TODO: remove unused rules, or completely re-style */
+
+pre.coverage {
+    margin        : 0;
+    padding       : 0;
+    line-height   : 15px;
+    font-size     : 13px;
+    -moz-tab-size : 2;
+    -o-tab-size   : 2;
+    tab-size      : 2;
+}
+
+table.coverage {
+    border-collapse : collapse;
+    margin          : 0;
+    padding         : 0
+}
+
+table.coverage td {
+    margin         : 0;
+    padding        : 0;
+    vertical-align : top;
+}
+
+table.coverage td.line-count {
+    text-align    : right;
+    padding-right : 5px;
+}
+
+table.coverage td.line-coverage {
+    color        : #777 !important;
+    border-left  : 1px solid;
+    border-right : 1px solid;
+}
+
+table.coverage td span.cline-any {
+    display : inline-block;
+    padding : 0 5px;
+    width   : 40px;
+}
+
+.missing-if-branch {
+    display         : inline-block;
+    margin-right    : 10px;
+    position        : relative;
+    padding         : 0 4px;
+    text-decoration : line-through;
+}
+
+.missing-if-branch .typ {
+    color : inherit !important;
+}
+
+span.cover-fill, span.cover-empty {
+    display    : inline-block;
+    border     : 1px solid;
+    height     : 12px;
+}
+
+span.cover-fill {
+    border-right : 1px solid;
+}
+
+span.cover-empty {
+    border-left : none;
+}
+
+span.cover-full {
+    border-right : none !important;
+}
+
+pre.prettyprint {
+    border  : none !important;
+    padding : 0 !important;
+    margin  : 0 !important;
+}
+
+/* EOF Styles from Istanbul */.pln { color : #333 }
+
+@media screen {
+    .str { color : #080 }
+
+    .kwd { color : #008 }
+
+    .com { color : #800 }
+
+    .typ { color : #606 }
+
+    .lit { color : #066 }
+
+    .pun, .opn, .clo { color : #660 }
+
+    .tag { color : #008 }
+
+    .atn { color : #606 }
+
+    .atv { color : #080 }
+
+    .dec, .var { color : #606 }
+
+    .fun { color : red }
+}
+
+@media print, projection {
+    .str { color : #060 }
+
+    .kwd { color : #006; font-weight : bold }
+
+    .com { color : #600; font-style : italic }
+
+    .typ { color : #404; font-weight : bold }
+
+    .lit { color : #044 }
+
+    .pun, .opn, .clo { color : #440 }
+
+    .tag { color : #006; font-weight : bold }
+
+    .atn { color : #404 }
+
+    .atv { color : #060 }
+}
+
+pre.prettyprint { padding : 2px; border : 1px solid #888 }
+
+ol.linenums { margin-top : 0; margin-bottom : 0 }
+
+li.L0, li.L1, li.L2, li.L3, li.L5, li.L6, li.L7, li.L8 { list-style-type : none }
+
+li.L1, li.L3, li.L5, li.L7, li.L9 { background : #eee }
+.icon-delete {
+    height            : 10px;
+    width             : 10px;
+    margin            : 4px 2px;
+    background-repeat : no-repeat;
+}
+
+.recorder-tool {
+    background : none !important;
+    border     : none !important;
+}
+
+.recorder-tool-icon {
+    padding-top : 0.1em;
+}
+
+.recorder-tool-icon.icon-close {
+    padding-top : 0.2em;
+}
+
+.cheatsheet {
+    padding : 5px;
+}
+
+.cheatsheet-type {
+    width      : 135px;
+    margin-top : 5px;
+}
+
+.cheatsheet td {
+    white-space : nowrap;
+}
+
+.eventview-offsetcolumn > .x-grid-cell-inner {
+    position : relative;
+}
+
+.eventview-clearoffset {
+    position : absolute;
+    width    : 11px;
+    height   : 11px;
+    right    : 4px;
+    top      : 0px;
+}
+
+.siesta-recorder-codeeditor .CodeMirror {
+    background-image    : url(../images/ok.png);
+    background-repeat   : no-repeat;
+    background-position : right top;
+    background-size     : 10px 10px;
+}
+
+.siesta-recorder-codeeditor.siesta-invalid-syntax .CodeMirror {
+    background-image : url(../images/cross.png);
+}.CodeMirror {
+    line-height : 1em;
+    font-family : monospace;
+    background  : #fff;
+    border      : 1px solid #aaa;
+}
+
+.CodeMirror-scroll {
+    overflow : auto;
+    height   : 300px;
+    /* This is needed to prevent an IE[67] bug where the scrolled content
+       is visible outside of the scrolling box. */
+    position : relative;
+    outline  : none;
+}
+
+.CodeMirror-gutter {
+    position         : absolute; left : 0; top : 0;
+    z-index          : 10;
+    background-color : #f7f7f7;
+    border-right     : 1px solid #eee;
+    min-width        : 2em;
+    height           : 100%;
+}
+
+.CodeMirror-gutter-text {
+    color       : #aaa;
+    text-align  : right;
+    padding     : .4em .2em .4em .4em;
+    white-space : pre !important;
+}
+
+.CodeMirror-lines {
+    padding     : .4em;
+    white-space : pre;
+}
+
+.CodeMirror pre {
+    -moz-border-radius    : 0;
+    -webkit-border-radius : 0;
+    -o-border-radius      : 0;
+    border-radius         : 0;
+    border-width          : 0; margin : 0; padding : 0; background : transparent;
+    font-family           : inherit;
+    font-size             : inherit;
+    padding               : 0; margin : 0;
+    white-space           : pre;
+    word-wrap             : normal;
+    line-height           : inherit;
+}
+
+.CodeMirror-wrap pre {
+    word-wrap   : break-word;
+    white-space : pre-wrap;
+    word-break  : normal;
+}
+
+.CodeMirror-wrap .CodeMirror-scroll {
+    overflow-x : hidden;
+}
+
+.CodeMirror textarea {
+    outline : none !important;
+}
+
+.CodeMirror pre.CodeMirror-cursor {
+    z-index      : 10;
+    position     : absolute;
+    visibility   : hidden;
+    border-left  : 1px solid black;
+    border-right : none;
+    width        : 0;
+}
+
+.CodeMirror pre.CodeMirror-cursor.CodeMirror-overwrite { }
+
+.CodeMirror-focused pre.CodeMirror-cursor {
+    visibility : visible;
+}
+
+div.CodeMirror-selected { background : #d9d9d9; }
+
+.CodeMirror-focused div.CodeMirror-selected { background : #d7d4f0; }
+
+.CodeMirror-searching {
+    background : #ffa;
+    background : rgba(255, 255, 0, .4);
+}
+
+/* Default theme */
+
+.cm-s-default span.cm-keyword { color : #708; }
+
+.cm-s-default span.cm-atom { color : #219; }
+
+.cm-s-default span.cm-number { color : #164; }
+
+.cm-s-default span.cm-def { color : #00f; }
+
+.cm-s-default span.cm-variable { color : black; }
+
+.cm-s-default span.cm-variable-2 { color : #05a; }
+
+.cm-s-default span.cm-variable-3 { color : #085; }
+
+.cm-s-default span.cm-property { color : black; }
+
+.cm-s-default span.cm-operator { color : black; }
+
+.cm-s-default span.cm-comment { color : #a50; }
+
+.cm-s-default span.cm-string { color : #a11; }
+
+.cm-s-default span.cm-string-2 { color : #f50; }
+
+.cm-s-default span.cm-meta { color : #555; }
+
+.cm-s-default span.cm-error { color : #f00; }
+
+.cm-s-default span.cm-qualifier { color : #555; }
+
+.cm-s-default span.cm-builtin { color : #30a; }
+
+.cm-s-default span.cm-bracket { color : #cc7; }
+
+.cm-s-default span.cm-tag { color : #170; }
+
+.cm-s-default span.cm-attribute { color : #00c; }
+
+.cm-s-default span.cm-header { color : #a0a; }
+
+.cm-s-default span.cm-quote { color : #090; }
+
+.cm-s-default span.cm-hr { color : #999; }
+
+.cm-s-default span.cm-link { color : #00c; }
+
+span.cm-header, span.cm-strong { font-weight : bold; }
+
+span.cm-em { font-style : italic; }
+
+span.cm-emstrong { font-style : italic; font-weight : bold; }
+
+span.cm-link { text-decoration : underline; }
+
+div.CodeMirror span.CodeMirror-matchingbracket { color : #0f0; }
+
+div.CodeMirror span.CodeMirror-nonmatchingbracket { color : #f22; }
+;
+.x-tree-panel .x-column-header,
+.x-tree-panel .x-column-header-over {
+    border           : 0 none;
+    background-image : none;
+}
+
+.x-tree-panel .x-tree-cell {
+    height      : 22px;
+    line-height : 19px;
+    cursor      : pointer;
+}
+
+/* MAIN THEME COLORS */
+.resultpanel-toolbar,
+.tr-testgrid .x-grid-header-ct,
+.tr-testgrid .x-column-header {
+    height : 60px;
+}
+
+body.siesta,
+body > .x-splitter-vertical,
+.resultPanel-panel > .x-panel-body > .x-splitter-vertical,
+div.x-border-layout-ct,
+.resultpanel-toolbar,
+.tr-testgrid .x-grid-header-ct,
+.tr-testgrid .x-column-header {
+    background-color : #539da0;
+}
+
+#siesta-logo {
+    position        : absolute;
+    top             : 6px;
+    right           : 20px;
+    height          : 47px;
+    width           : 96px;
+    background      : transparent url(../images/logo_small2.png) no-repeat 0 0;
+    background-size : contain;
+}
+
+.siesta-toolbar {
+    height           : 45px;
+    padding-top      : 2px;
+    background-color : #00897B;
+    color            : #fff;
+}
+
+.siesta-toolbar .x-btn {
+    border-color     : transparent !important;
+    border-radius    : 1px;
+}
+
+.siesta-toolbar .x-btn-glyph {
+    color   : #fff;
+    opacity : 1;
+}
+
+
+.x-toolbar .x-btn-glyph {
+    opacity     : 1;
+    color       : #fff;
+    text-shadow : 1px 0px 1px #444;
+}
+
+.x-toolbar .x-btn-glyph:hover {
+    color : #ddd;
+}
+
+
+/* EOF MAIN THEME COLORS */
+a.logo-link {
+    position : absolute;
+    top      : 5px;
+    left     : 8px;
+    z-index  : 2;
+}
+
+a.logo-link {
+    height          : 47px;
+    width           : 96px;
+    background      : transparent url(../images/logo_small2.png) no-repeat 0 0;
+    background-size : contain;
+}
+
+.x-ie9m a.logo-link {
+    background : transparent url(../images/logo_small3.png) no-repeat 0 0;
+}
+
+.tr-version-indicator {
+    position  : absolute;
+    color     : #eee;
+    font-size : 10px;
+    right     : 0 !important;
+    bottom    : -8px !important;
+    font-size : 9px;
+}
+
+.x-ie9m .tr-version-indicator {
+    bottom : -5px !important;
+}
+
+#update-ct {
+    position : absolute;
+    top      : 30px;
+    right    : 5px;
+    z-index  : 5;
+}
+
+.right-top-area {
+    position   : absolute;
+    top        : 5px;
+    right      : 3px;
+    padding    : 0;
+    margin     : 0;
+    list-style : none;
+    z-index    : 5;
+    width      : 100px;
+    height     : 100%;
+}
+
+.right-top-area a {
+    text-align      : right;
+    color           : #fff;
+    font-size       : 10px;
+    text-decoration : none;
+}
+
+.right-top-area a:hover {
+    text-decoration : underline;
+}
+
+.right-top-area .apidocs-link {
+    position : absolute;
+    right    : 0;
+    bottom   : 7px;
+}
+
+#bryntum-logo {
+    background      : transparent url(../images/logo2.png) no-repeat right top;
+    background-size : contain;
+    height          : 25px;
+    display         : block;
+}
+
+.x-linux .x-btn-icon-el {
+    margin-top : 2px;
+}
+
+.ghost-cursor {
+    background : url(../images/cursor-hand.png) no-repeat left center;
+}
+
+.ghost-cursor-press {
+    background : url(../images/cursor-hand-press.png) no-repeat left center;
+}
+
+.ghost-cursor-click-indicator {
+    border-color : darkred;
+}
+.target-inspector-box {
+    border-color     : red;
+    background-color : rgba(195, 218, 249, 0.3);
+}
+
+.target-inspector-label {
+    background : rgb(32, 169, 220);
+    color      : #fff;
+}
+.resultpanel-toolbar .testaction-button {
+    background : none !important;
+    border     : 0 none;
+}
+
+.resultpanel-toolbar .x-btn-glyph {
+    font-size   : 21px !important;
+    color       : #fff;
+    opacity     : 1;
+    text-shadow : none;
+}
+
+.resultpanel-toolbar .x-btn-pressed .x-btn-glyph {
+    color : #81D4FA;
+}
+
+.resultpanel-testtitle {
+    font-size  : 1.3em;
+    margin-top : 2px !important;
+    color      : #fff;
+    cursor     : text;
+}
+
+.test-source-ct {
+    background : #fff;
+}
+
+.siesta-test-title {
+    color       : #fff;
+    font-size   : 1.4em;
+    font-weight : bold;
+    text-shadow : 0 1px rgba(55, 55, 55, 0.5);
+}
+
+.x-btn.rerun-button {
+    height        : 35px;
+    background    : #8BC34A;
+    border        : 1px solid #2E7D32;
+    border-radius : 0px;
+    box-shadow    : 0 1px 1px #A5D6A7 inset !important;
+}
+
+.x-btn.rerun-button .x-btn-inner {
+    font-size    : 1.1em !important;
+    color        : #fff;
+    font-weight  : bold;
+    padding-left : 2px;
+}
+
+.x-btn.rerun-button:hover,
+.x-btn.rerun-button.x-btn-pressed {
+    background-color : #7CB342;
+    border           : 1px solid #558B2F;
+}
+
+.tr-rounded-box {
+    background : #FFFFFF;
+    color      : black;
+    font-size  : larger;
+    border     : 3px solid #d5e7f0;
+}
+.tr-ui-mask {
+	background-color   : white;
+}
+
+.tr-iframe-forced {
+    border-color          : #d5e7f0;
+    background-color      : white;
+}
+
+.siesta-domcontainer {
+    background    : #fff url(../images/domcontainer-bg.png) repeat;
+    box-shadow    : inset 3px 3px 4px #dfdfdf;
+}
+
+.domcontainer-console input {
+    color           : #666;
+    background      : #fff url(../images/prompt.png) no-repeat 4px center;
+    font            : 14px "Consolas";
+    border-color    : #ccc;
+    box-shadow      : 0 1px 3px 0 rgba(150, 150, 150, 0.2) inset, 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.filterfield .x-form-trigger {
+    color          : #999;
+    text-shadow    : 1px 0px 1px #f5f5f5;
+}
+
+.filterfield .x-form-trigger:hover {
+    color      : #666;
+}
+
+.tr-filter-trigger-leaf {
+    background-image        : url("../images/trigger-leafs.gif");
+}
+
+.tr-filter-trigger-group {
+    background-image        : url("../images/trigger-groups.gif");  
+}
+.tr-testgrid .x-tree-view {
+    background : #E8F5E9;
+}
+
+.tr-testgrid .x-grid-item {
+    background : transparent;
+}
+
+.tr-testgrid .x-grid-item-selected {
+    background-color : #81C784;
+}
+
+.tr-testgrid .x-column-header-text {
+    color : #fff;
+}
+
+.tr-testgrid .x-grid-body {
+    border-top    : 0 none;
+    border-bottom : 0 none;
+}
+
+.tr-testgrid .x-tree-view,
+.test-name-cell .x-grid-cell-inner {
+    cursor : pointer;
+}
+
+.tr-testgrid .x-column-header,
+.tr-testgrid .x-column-header-over {
+    border           : 0 none;
+    background       : transparent;
+    background-image : none;
+}
+
+.tr-testgrid .x-column-header-inner-empty {
+    display : none;
+}
+
+.tr-testgrid {
+    color : #444;
+}
+
+.tr-testgrid .x-grid-item-selected .x-grid-cell-inner {
+    color : #fff;
+}
+
+.toggle-expand {
+    background : url(../images/expand.png) no-repeat left center !important;
+}
+
+/* BOTTOM TOOLBAR STYLES */
+
+.main-bbar .x-btn-glyph {
+    font-size   : 28px;
+}
+
+.main-bbar .options .x-btn-glyph,
+.main-bbar .show-coverage .x-btn-glyph {
+    font-size : 23px;
+}
+
+.main-bbar .x-btn {
+    background-color : transparent !important;
+}
+
+.run-failed .icon-bug:before,
+.run-checked .icon-checkmark:before {
+    position  : absolute;
+    right     : 3px;
+    bottom    : 2px;
+    font-size : 9px;
+    color     : #fff;
+}
+
+/* EOF Bottom toolbar styling */
+
+/* SUMMARY BAR */
+.summary-bar {
+    color : #fff;
+}
+
+.summary-bar div {
+    height : 50%;
+}
+
+.summary-bar .icon-checkmark,
+.summary-bar .icon-bug {
+    color       : #fff;
+    text-shadow : none;
+    font-size   : 0.7em !important;
+}
+
+.summary-bar .icon-close {
+    font-size : 0.6em;
+}
+
+/* Sizing toolbar */
+.size-toolbar {
+    background       : #fff;
+    border-top-color : #cecece;
+}
+
+.size-label,
+.x-form-cb-label {
+    color : #666;
+}
+/*=======================================================================================================================================================================================================================
+    Common and unsorted
+*/
+
+.siesta-test-initializing .x-grid-item-container:empty::after {
+    background      : url(../images/hourglass.png) no-repeat 9px 9px;
+    font-style      : italic;
+    font-size       : 0.85em;
+    color           : #555;
+    background-size : 12px 12px;
+}
+
+.siesta-assertion-grid .x-grid-body {
+    border-top : 0 none;
+}
+
+/*=======================================================================================================================================================================================================================
+    Summary row
+*/
+
+.tr-summary-row .x-grid-cell-inner {
+    border-top-color : rgb(89, 205, 82);
+}
+
+.tr-summary-failure .x-grid-cell-inner {
+    border-top-color : #ff1111;
+}
+
+.tr-summary-failure span {
+    font-weight : bold;
+}
+
+/*=======================================================================================================================================================================================================================
+    Diagnostic row
+*/
+
+.tr-diagnostic-row {
+    background-color : #f7f7f7 !important;
+}
+
+.tr-warning-row span.assertion-text {
+    color : #ff1111;
+}
+
+.tr-diagnostic-row td {
+    border-top-color    : #e6e6e6 !important;
+    border-bottom-color : #e6e6e6 !important;
+}
+
+/*=======================================================================================================================================================================================================================
+    Annotation
+*/
+
+.tr-assert-row-annontation {
+    font-family : "Courier New", monospace, serif;
+    font-size   : 1em;
+}
+
+/*=======================================================================================================================================================================================================================
+    Assertion row
+*/
+
+.tr-waiting-row .x-tree-icon {
+    background-image : url(../images/spinner.gif);
+}
+
+.tr-assertion-row-passed .x-tree-icon,
+.tr-subtest-row-green .x-tree-icon {
+    background-image : url(../images/ok.png);
+}
+
+.tr-assertion-row-failed .x-tree-icon,
+.tr-subtest-row-red .x-tree-icon {
+    background-image : url(../images/bug.png);
+}
+
+.tr-assertion-row-failed {
+    background-color : #ff8186;
+}
+
+.tr-todo-row-passed .x-tree-icon {
+    background-image : url(../images/ok-todo.png);
+}
+
+.tr-todo-row-failed .x-tree-icon {
+    background-image : url(../images/bug-todo.png);
+}
+
+.tr-waiting-row .assertion-text {
+    color : #666;
+}
+
+.tr-waiting-row-passed .x-tree-icon {
+    background-image : url(../images/clock_check.png);
+}
+
+.tr-waiting-row-passed .assertion-text {
+    color : #666;
+}
+
+.tr-subtest-row-working .x-tree-icon {
+    background-image : url(../images/spinner.gif);
+}
+
+/*=======================================================================================================================================================================================================================
+    Exception row
+*/
+
+.tr-exception-row .x-tree-icon {
+    background-image : url(../images/flag-red.png) !important;
+}
+
+.tr-exception-row {
+    background-color : #ff8186;
+}
+
+.tr-exception-row .x-grid-cell {
+    font-weight : bolder;
+}
+
+.tr-exception-todo-row .x-tree-icon {
+    background-image : url(../images/flag-green.png) !important;
+}
+
+/*=======================================================================================================================================================================================================================
+    Sub test row (including describe/it)
+*/
+
+.tr-subtest-row-describe .x-tree-node-text {
+    font-weight : bold;
+}
+
+.st-cov-report-tree-panel,
+.st-cov-report-tree-panel,
+.st-cov-report-source-panel {
+    border-color  : #bbb;
+    border-bottom : 0 none;
+}
+
+.x-grid-row-selected .cov-result-cell .x-grid-cell-inner {
+    color       : #000;
+    font-weight : 400;
+}
+
+.st-cov-report-tree-panel .x-tree-icon-parent {
+    background-image : url(../images/ns.png);
+}
+
+.st-cov-report-tree-panel .x-tree-icon-leaf {
+    background-image : url(../images/leaf.png);
+}
+
+.st-cov-report-tree-panel .x-btn-pressed {
+    background   : #d8d8d8;
+    border-color : #aaa;
+}
+
+.st-cov-level-high .x-grid-cell-inner {
+    border-color : rgb(89, 205, 82);
+    font-weight  : 300;
+}
+
+.st-cov-level-medium .x-grid-cell-inner {
+    border-bottom-color : rgb(215, 213, 40);
+    font-weight         : 300;
+}
+
+.st-cov-level-low .x-grid-cell-inner {
+    border-bottom-top : #ff1111 !important;
+    font-weight       : 300;
+}
+
+.coveragechart-container {
+    background : #fff;
+}
+
+/* CODE AREA STYLING Styles from Istanbul, TODO: remove unused rules, or completely re-style */
+
+pre.coverage {
+    font-family : "Monaco", "Inconsolata", "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important;
+}
+
+div.path {
+    font-size : 110%;
+}
+
+div.path a:link, div.path a:visited {
+    color : #555;
+}
+
+table.coverage td {
+    color : #111;
+}
+
+table.coverage td.line-count {
+    font-size : 11px;
+    color     : #afafaf;
+}
+
+table.coverage td.line-coverage {
+    color              : #777 !important;
+    border-left-color  : #ccc;
+    border-right-color : #ccc;
+}
+
+table.coverage td span.cline-neutral {
+    background : #f4f4f4;
+}
+
+table.coverage td span.cline-yes {
+    background : #b5d592;
+    color      : #999;
+}
+
+table.coverage td span.cline-no {
+    background : #fc8c84;
+}
+
+.cstat-yes {
+    color : #555;
+}
+
+.cstat-no {
+    background : #fc8c84;
+    color      : #111;
+}
+
+.fstat-no {
+    background : #ffc520;
+    color      : #111 !important;
+}
+
+.cbranch-no {
+    background : yellow !important;
+    color      : #111;
+}
+
+.missing-if-branch {
+    background : black;
+    color      : yellow;
+}
+
+.high {
+    background : #b5d592 !important;
+}
+
+.medium {
+    background : #ffe87c !important;
+}
+
+.low {
+    background : #fc8c84 !important;
+}
+
+span.cover-fill, span.cover-empty {
+    border-color : #444;
+    background   : white;
+}
+
+span.cover-fill {
+    background         : #ccc;
+    border-right-color : #444;
+}
+
+span.cover-empty {
+    background : white;
+}
+
+.st-cov-stat-abs-statements,
+.st-cov-stat-abs-branches,
+.st-cov-stat-abs-lines,
+.st-cov-stat-abs-functions {
+    font-size : 0.8em;
+}
+
+pre.prettyprint {
+    border  : none !important;
+    padding : 0 !important;
+    margin  : 0 !important;
+}
+
+.com {
+    color : #999 !important;
+}
+
+/* EOF Styles from Istanbul */.test-name-cell .x-tree-expander {
+    border-left-color : #999;
+}
+
+.x-grid-tree-node-expanded .test-name-cell .x-tree-expander {
+    border-left-color : transparent;
+    border-top-color  : #999;
+}
+
+/* ICONS AND TEXT */
+.test-name-cell span.x-tree-node-text {
+    font-size : 14px;
+}
+
+/* TEST STATUS ICONS */
+/*.test-name-cell .x-tree-node-text span {*/
+/*line-height: inherit !important;*/
+/*}*/
+
+.icon-checkmark {
+    color       : rgb(89, 205, 82);
+    text-shadow : 1px 0 1px green;
+}
+
+.test-name-cell .icon-file-2 {
+    color : #bbb;
+}
+
+.x-grid-item-selected .test-name-cell .test-icon {
+    color : #fff;
+}
+
+.test-name-cell .icon-bug {
+    color : #EF5350;
+}
+
+.icon-busy {
+    color : #777;
+}
+
+.test-name-cell .icon-close {
+    color : #ff1111;
+}
+
+.icon-lightning {
+    color       : rgb(251, 249, 176);
+    text-shadow : 1px 0 1px rgb(148, 120, 87);
+}
+
+.icon-folder-open,
+.icon-folder {
+    color       : rgb(215, 213, 40);
+    text-shadow : 1px 0 1px rgb(148, 120, 87);
+}
+
+.icon-folder-open.tr-folder-green,
+.icon-folder.tr-folder-green {
+    color       : rgb(89, 205, 82);
+    text-shadow : 1px 0 1px green;
+}
+
+.test-name-cell .folder-status-icon {
+    position    : absolute;
+    bottom      : 1px;
+    left        : 6px;
+    font-size   : 9px;
+    text-shadow : none;
+}
+
+.folder-status-icon.icon-checkmark {
+    color : #006600;
+}
+
+.folder-status-icon.icon-bug {
+    color : #F52222;
+}
+
+.x-grid-item-selected .folder-status-icon.icon-checkmark {
+    color : #81C784;
+}
+
+.x-grid-tree-node-expanded .folder-status-icon {
+    bottom    : 0;
+    transform : rotate(14deg);
+}
+
+.run-failed .icon-bug:before, .run-checked .icon-checkmark:before {
+    position  : absolute;
+    right     : 3px;
+    bottom    : 2px;
+    font-size : 9px;
+    color     : #fff;
+}
+
+.x-grid-row .icon-folder-open.tr-folder-red,
+.x-grid-row .icon-folder.tr-folder-red,
+.icon-flag {
+    color       : #F52222;
+    text-shadow : 1px 0 1px darkred;
+}
+
+
+.icon-delete {
+    background-image : url(../images/cross.png);
+    background-size  : 8px 8px !important;
+    cursor           : pointer;
+}
+
+
+.icon-record {
+    border-radius : 15px;
+    margin-top    : 4px;
+    width         : 15px !important;
+    height        : 15px !important;
+    background    : #fff;
+}
+
+.icon-clear .x-btn-glyph {
+    font-size : 19px;
+}
+
+.cheatsheet {
+    background : #eee;
+}
+
+.cheatsheet-type {
+    font-weight : bold;
+}
+
+.cheatsheet td {
+    color : #555;
+}
+
+@keyframes blink {
+    0% {
+        opacity : 0;
+    }
+    100% {
+        opacity : 1;
+    }
+}
+
+@-webkit-keyframes blink {
+    0% {
+        opacity : 0;
+    }
+    100% {
+        opacity : 1;
+    }
+}
+
+.recorder-recording .icon-record {
+    -webkit-animation                 : blink 0.5s linear infinite;
+    -moz-animation                    : blink 0.5s linear infinite;
+    animation                         : blink 0.5s linear infinite;
+    -webkit-animation-timing-function : cubic-bezier(1.0, 0, 0, 1.0);
+    -webkit-animation-direction       : alternate;
+    animation-direction               : alternate;
+}.eventview-offsetcolumn > .x-grid-cell-inner {
+    color    : #777;
+}
+
+.eventview-clearoffset {
+    cursor   : pointer;
+}
+
+.x-grid-item-over .eventview-clearoffset {
+    background : transparent url(../images/bullet_delete.png) no-repeat left center !important;
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+Ext.define('Siesta.Harness.Browser.UI.Header', {
+
+    extend : 'Ext.Component',
+
+    xtype : 'siesta-header',
+    cls   : 'siesta-header',
+
+    afterRender : function () {
+        var R = Siesta.Resource('Siesta.Harness.Browser.UI.Viewport');
+
+        this.callParent(arguments);
+
+        this.getEl().createChild([
+            {
+                tag  : 'a',
+                cls  : &quot;logo-link&quot;,
+                href : &quot;#&quot;,
+                cn   : [
+                    {
+                        tag  : 'span',
+                        html : (Siesta.meta.VERSION || &quot;1.0.0&quot;),
+                        cls  : 'tr-version-indicator'
+                    }
+                ]
+            },
+            {
+                tag : 'div',
+                cls : &quot;right-top-area&quot;,
+                cn  : [
+                    {
+                        tag    : 'a',
+                        id     : &quot;bryntum-logo&quot;,
+                        href   : &quot;http://bryntum.com/&quot;,
+                        target : &quot;_blank&quot;,
+                        cls  : &quot;bryntum-logo&quot;
+                    },
+                    {
+                        tag    : 'a',
+                        cls    : 'apidocs-link',
+                        href   : R.get('apiLinkUrl'),
+                        target : '_blank',
+                        html   : R.get('apiLinkText')
+                    }
+                ]
+            },
+
+            {
+                tag : 'div',
+                id  : 'update-ct'
+            }
+        ]);
+    }
+})
+</pre>
+</body>
+</html>

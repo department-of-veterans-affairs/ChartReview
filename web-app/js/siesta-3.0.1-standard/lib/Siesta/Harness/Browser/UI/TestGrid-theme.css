@@ -1,0 +1,113 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.tr-testgrid .x-tree-view {
+    background : #E8F5E9;
+}
+
+.tr-testgrid .x-grid-item {
+    background : transparent;
+}
+
+.tr-testgrid .x-grid-item-selected {
+    background-color : #81C784;
+}
+
+.tr-testgrid .x-column-header-text {
+    color : #fff;
+}
+
+.tr-testgrid .x-grid-body {
+    border-top    : 0 none;
+    border-bottom : 0 none;
+}
+
+.tr-testgrid .x-tree-view,
+.test-name-cell .x-grid-cell-inner {
+    cursor : pointer;
+}
+
+.tr-testgrid .x-column-header,
+.tr-testgrid .x-column-header-over {
+    border           : 0 none;
+    background       : transparent;
+    background-image : none;
+}
+
+.tr-testgrid .x-column-header-inner-empty {
+    display : none;
+}
+
+.tr-testgrid {
+    color : #444;
+}
+
+.tr-testgrid .x-grid-item-selected .x-grid-cell-inner {
+    color : #fff;
+}
+
+.toggle-expand {
+    background : url(../images/expand.png) no-repeat left center !important;
+}
+
+/* BOTTOM TOOLBAR STYLES */
+
+.main-bbar .x-btn-glyph {
+    font-size   : 28px;
+}
+
+.main-bbar .options .x-btn-glyph,
+.main-bbar .show-coverage .x-btn-glyph {
+    font-size : 23px;
+}
+
+.main-bbar .x-btn {
+    background-color : transparent !important;
+}
+
+.run-failed .icon-bug:before,
+.run-checked .icon-checkmark:before {
+    position  : absolute;
+    right     : 3px;
+    bottom    : 2px;
+    font-size : 9px;
+    color     : #fff;
+}
+
+/* EOF Bottom toolbar styling */
+
+/* SUMMARY BAR */
+.summary-bar {
+    color : #fff;
+}
+
+.summary-bar div {
+    height : 50%;
+}
+
+.summary-bar .icon-checkmark,
+.summary-bar .icon-bug {
+    color       : #fff;
+    text-shadow : none;
+    font-size   : 0.7em !important;
+}
+
+.summary-bar .icon-close {
+    font-size : 0.6em;
+}
+
+/* Sizing toolbar */
+.size-toolbar {
+    background       : #fff;
+    border-top-color : #cecece;
+}
+
+.size-label,
+.x-form-cb-label {
+    color : #666;
+}

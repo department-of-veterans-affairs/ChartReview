@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+/*=======================================================================================================================================================================================================================
+    Common and unsorted
+*/
+
+.siesta-test-initializing .x-grid-item-container:empty::after {
+    content : ' Initializing...';
+    padding : 8px 24px;
+    display : block;
+}
+
+.siesta-assertion-grid .x-grid-cell-inner {
+    line-height    : 23px !important;
+    padding-bottom : 4px !important;
+    padding-left   : 2px;
+}
+
+.siesta-assertion-grid {
+    border-bottom : 0 none;
+}
+
+.siesta-assertion-grid td {
+    border-width : 0;
+}
+
+.siesta-assertion-grid .x-grid-cell-inner {
+    margin : 0;
+}
+
+.tr-tree-column .x-grid-cell-inner {
+    position : relative;
+}
+
+.siesta-assertion-grid .x-tree-node-text {
+    padding-left : 0;
+}
+
+/*=======================================================================================================================================================================================================================
+    Summary row
+*/
+
+.tr-summary-row .x-tree-icon,
+.tr-summary-row .x-tree-elbow-empty,
+.tr-summary-row .x-tree-elbow-end {
+    display : none !important;
+}
+
+.tr-summary-row .x-grid-cell {
+    padding-left : 10px;
+}
+
+.tr-summary-row .x-grid-cell-inner {
+    border-top  : 10px solid;
+    line-height : 17px;
+    margin      : 15px 17px 6px 7px;
+    padding     : 5px 0 0 3px;
+}
+
+.tr-summary-failure .x-grid-cell-inner {
+    border-top : 10px solid;
+}
+
+/*=======================================================================================================================================================================================================================
+    Diagnostic row
+*/
+
+.tr-diagnostic-row {
+    border-top     : 1px solid;
+    text-transform : uppercase;
+}
+
+.tr-diagnostic-row .x-tree-icon {
+    display : none !important;
+}
+
+.tr-diagnostic-row td {
+    border-width     : 1px;
+    border-style     : solid;
+    border-left      : 0 none;
+    border-right     : 0 none;
+    background-image : none !important;
+}
+
+/*=======================================================================================================================================================================================================================
+    Annotation
+*/
+
+.tr-assert-row-annontation {
+    padding-top   : 10px;
+    line-height   : 13px;
+    margin-top    : 4px;
+    margin-bottom : 4px;
+    padding-left  : 28px;
+}
+
+/*=======================================================================================================================================================================================================================
+    Assertion row
+*/
+
+.si-hide-passes .tr-assertion-row-passed {
+    display : none;
+}
+
+.siesta-assertion-grid .x-grid-cell-inner img {
+    vertical-align : middle;
+}
+
+.siesta-assertion-grid .x-tree-icon {
+    margin-right : 5px;
+}
+
+</pre>
+</body>
+</html>

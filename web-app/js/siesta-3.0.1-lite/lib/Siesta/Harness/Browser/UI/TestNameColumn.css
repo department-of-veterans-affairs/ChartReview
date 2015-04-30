@@ -1,0 +1,88 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.test-name-cell .x-tree-expander {
+    margin-top   : 3px;
+    margin-right : 7px;
+    margin-left  : 1px;
+    height       : 0;
+    width        : 0;
+    background   : none !important;
+    border-style : solid;
+    border-width : 5px 0 5px 8px;
+    border-color : transparent;
+    cursor       : pointer;
+}
+
+.x-grid-tree-node-expanded .test-name-cell .x-tree-expander {
+    margin-top   : 6px;
+    margin-right : 7px;
+    margin-left  : -1px;
+    border-width : 8px 5px 0 5px;
+}
+
+.x-ie9m .test-name-cell .x-tree-expander {
+    position : relative;
+    top      : -4px;
+}
+
+/* ICONS AND TEXT */
+.test-name-cell span.x-tree-node-text {
+    padding-left : 24px;
+    position     : relative;
+}
+
+/* TEST STATUS ICONS */
+
+.test-icon {
+    font-size : 1.2em;
+    position  : absolute;
+    left      : 2px;
+    top       : -1px;
+}
+
+body.x-linux .test-icon {
+    margin-top : 2px;
+}
+
+.x-ie .test-icon,
+.x-ie10 .test-icon {
+    top : 3px;
+}
+
+.icon-checkmark {
+    background-position : 3px center;
+    background-repeat   : no-repeat;
+}
+
+.test-name-cell .icon-bug {
+    font-size  : 1.1em;
+    margin-top : 1px;
+}
+
+.icon-folder-open,
+.icon-folder {
+    top : -2px;
+}
+
+
+.test-name-cell .x-grid-cell-inner {
+    position : relative;
+}
+
+.test-name-cell .x-grid-cell-inner {
+    user-select         : none;
+    -o-user-select      : none;
+    -ms-user-select     : none;
+    -moz-user-select    : -moz-none;
+    -webkit-user-select : none;
+}
+
+.test-name-cell .x-grid-cell-inner {
+    cursor : pointer;
+}

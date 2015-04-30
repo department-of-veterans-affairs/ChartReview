@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="../../../../sencha-touch-2.3.0/resources/css/sencha-touch.css">
+    <script type="text/javascript" src="../../../../sencha-touch-2.3.0/sencha-touch-all-debug.js"></script>
+
+
+</head>
+
+<body>
+<script type="text/javascript">
+    Ext.application({
+        name : 'Foo',
+
+        launch : function () {
+            Ext.Viewport.add({
+                xtype       : 'formpanel',
+                id          : 'form-widgets',
+                title       : 'Form Widgets',
+                frame       : true,
+                collapsible : true,
+                width       : 500,
+                renderTo    : document.body,
+                tools       : [
+                    { type : 'toggle' },
+                    { type : 'close' }
+                ],
+
+                bodyPadding : '10 20',
+
+                defaults : {
+                    anchor     : '98%',
+                    msgTarget  : 'side',
+                    allowBlank : false
+                },
+
+                items : [
+                    {
+                        xtype : 'label',
+                        text  : 'Plain Label'
+                    },
+                    {
+                        label     : 'TextField',
+                        xtype     : 'textfield',
+                        name      : 'someField',
+                        emptyText : 'Enter a value'
+                    },
+                    {
+                        label : 'ComboBox',
+                        xtype : 'selectfield',
+                        my    : 'combo',
+                        options: [
+                            {text: 'First Option',  value: 'first'},
+                            {text: 'Second Option', value: 'second'},
+                            {text: 'Third Option',  value: 'third'}
+                        ]
+                    },
+//                    {
+//                        label : 'DateField',
+//                        xtype : 'datepicker',
+//                        name  : 'date',
+//                        value : new Date()
+//                    },
+                    {
+                        label      : 'NumberField',
+                        xtype      : 'numberfield',
+                        name       : 'number',
+                        allowBlank : true
+                    },
+                    {
+                        label : 'TextArea',
+                        xtype : 'textareafield',
+                        name  : 'message',
+                        cls   : 'x-form-valid',
+                        value : 'Hello'
+                    },
+                    {
+                        label   : 'Checkbox',
+                        xtype   : 'checkboxfield'
+                    },
+                    {
+                        label   : 'Option #1',
+                        xtype   : 'radiofield',
+                        name    : 'radio'
+                    },
+                    {
+                        label   : 'Option #2',
+                        xtype   : 'radiofield',
+                        name    : 'radio'
+                    },
+                    {
+                        label   : 'Option #3',
+                        xtype   : 'radiofield',
+                        name    : 'radio'
+                    }
+                ]
+            });
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,592 @@
+.x-tree-panel .x-column-header,
+.x-tree-panel .x-column-header-over {
+    border           : 0 none;
+    background-image : none;
+}
+
+.x-tree-panel .x-tree-cell {
+    height      : 22px;
+    line-height : 19px;
+    cursor      : pointer;
+}
+
+/* MAIN THEME COLORS */
+.resultpanel-toolbar,
+.tr-testgrid .x-grid-header-ct,
+.tr-testgrid .x-column-header {
+    height : 60px;
+}
+
+body.siesta,
+body > .x-splitter-vertical,
+.resultPanel-panel > .x-panel-body > .x-splitter-vertical,
+div.x-border-layout-ct,
+.resultpanel-toolbar,
+.tr-testgrid .x-grid-header-ct,
+.tr-testgrid .x-column-header {
+    background-color : #539da0;
+}
+
+#siesta-logo {
+    position        : absolute;
+    top             : 6px;
+    right           : 20px;
+    height          : 47px;
+    width           : 96px;
+    background      : transparent url(../images/logo_small2.png) no-repeat 0 0;
+    background-size : contain;
+}
+
+.siesta-toolbar {
+    height           : 45px;
+    padding-top      : 2px;
+    background-color : #00897B;
+    color            : #fff;
+}
+
+.siesta-toolbar .x-btn {
+    border-color     : transparent !important;
+    border-radius    : 1px;
+}
+
+.siesta-toolbar .x-btn-glyph {
+    color   : #fff;
+    opacity : 1;
+}
+
+
+.x-toolbar .x-btn-glyph {
+    opacity     : 1;
+    color       : #fff;
+    text-shadow : 1px 0px 1px #444;
+}
+
+.x-toolbar .x-btn-glyph:hover {
+    color : #ddd;
+}
+
+
+/* EOF MAIN THEME COLORS */
+.st-cov-report-tree-panel,
+.st-cov-report-source-panel {
+    border-bottom : 0 none;
+}
+
+.st-cov-report-tree-panel .x-toolbar {
+    padding-top : 3px;
+}
+
+.st-cov-report-tree-panel .x-grid-cell {
+    padding : 0 4px;
+    border  : 0 none !important;
+}
+
+.st-cov-report-tree-panel .x-grid-cell-inner {
+    padding-bottom : 2px;
+    text-overflow  : clip;
+}
+
+.st-cov-report-tree-panel .x-grid-row-selected .cov-result-cell {
+    background : transparent !important;
+}
+
+.st-cov-report-tree-panel .x-tree-icon {
+    background-size : 16px 16px !important;
+    border-radius   : 16px;
+}
+
+.st-cov-report-tree-panel .x-btn {
+    background-image : none !important;
+}
+
+.st-cov-level-high .x-grid-cell-inner {
+    border-bottom : 4px solid;
+}
+
+.st-cov-level-medium .x-grid-cell-inner {
+    border-bottom : 4px solid;
+    font-weight   : 300;
+}
+
+.st-cov-level-low .x-grid-cell-inner {
+    border-bottom : 4px solid #ff1111 !important;
+    font-weight   : 300;
+}
+
+/* CODE AREA STYLING Styles from Istanbul, TODO: remove unused rules, or completely re-style */
+
+pre.coverage {
+    margin        : 0;
+    padding       : 0;
+    line-height   : 15px;
+    font-size     : 13px;
+    -moz-tab-size : 2;
+    -o-tab-size   : 2;
+    tab-size      : 2;
+}
+
+table.coverage {
+    border-collapse : collapse;
+    margin          : 0;
+    padding         : 0
+}
+
+table.coverage td {
+    margin         : 0;
+    padding        : 0;
+    vertical-align : top;
+}
+
+table.coverage td.line-count {
+    text-align    : right;
+    padding-right : 5px;
+}
+
+table.coverage td.line-coverage {
+    color        : #777 !important;
+    border-left  : 1px solid;
+    border-right : 1px solid;
+}
+
+table.coverage td span.cline-any {
+    display : inline-block;
+    padding : 0 5px;
+    width   : 40px;
+}
+
+.missing-if-branch {
+    display         : inline-block;
+    margin-right    : 10px;
+    position        : relative;
+    padding         : 0 4px;
+    text-decoration : line-through;
+}
+
+.missing-if-branch .typ {
+    color : inherit !important;
+}
+
+span.cover-fill, span.cover-empty {
+    display    : inline-block;
+    border     : 1px solid;
+    height     : 12px;
+}
+
+span.cover-fill {
+    border-right : 1px solid;
+}
+
+span.cover-empty {
+    border-left : none;
+}
+
+span.cover-full {
+    border-right : none !important;
+}
+
+pre.prettyprint {
+    border  : none !important;
+    padding : 0 !important;
+    margin  : 0 !important;
+}
+
+/* EOF Styles from Istanbul */.st-cov-report-tree-panel,
+.st-cov-report-tree-panel,
+.st-cov-report-source-panel {
+    border-color  : #bbb;
+    border-bottom : 0 none;
+}
+
+.x-grid-row-selected .cov-result-cell .x-grid-cell-inner {
+    color       : #000;
+    font-weight : 400;
+}
+
+.st-cov-report-tree-panel .x-tree-icon-parent {
+    background-image : url(../images/ns.png);
+}
+
+.st-cov-report-tree-panel .x-tree-icon-leaf {
+    background-image : url(../images/leaf.png);
+}
+
+.st-cov-report-tree-panel .x-btn-pressed {
+    background   : #d8d8d8;
+    border-color : #aaa;
+}
+
+.st-cov-level-high .x-grid-cell-inner {
+    border-color : rgb(89, 205, 82);
+    font-weight  : 300;
+}
+
+.st-cov-level-medium .x-grid-cell-inner {
+    border-bottom-color : rgb(215, 213, 40);
+    font-weight         : 300;
+}
+
+.st-cov-level-low .x-grid-cell-inner {
+    border-bottom-top : #ff1111 !important;
+    font-weight       : 300;
+}
+
+.coveragechart-container {
+    background : #fff;
+}
+
+/* CODE AREA STYLING Styles from Istanbul, TODO: remove unused rules, or completely re-style */
+
+pre.coverage {
+    font-family : "Monaco", "Inconsolata", "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important;
+}
+
+div.path {
+    font-size : 110%;
+}
+
+div.path a:link, div.path a:visited {
+    color : #555;
+}
+
+table.coverage td {
+    color : #111;
+}
+
+table.coverage td.line-count {
+    font-size : 11px;
+    color     : #afafaf;
+}
+
+table.coverage td.line-coverage {
+    color              : #777 !important;
+    border-left-color  : #ccc;
+    border-right-color : #ccc;
+}
+
+table.coverage td span.cline-neutral {
+    background : #f4f4f4;
+}
+
+table.coverage td span.cline-yes {
+    background : #b5d592;
+    color      : #999;
+}
+
+table.coverage td span.cline-no {
+    background : #fc8c84;
+}
+
+.cstat-yes {
+    color : #555;
+}
+
+.cstat-no {
+    background : #fc8c84;
+    color      : #111;
+}
+
+.fstat-no {
+    background : #ffc520;
+    color      : #111 !important;
+}
+
+.cbranch-no {
+    background : yellow !important;
+    color      : #111;
+}
+
+.missing-if-branch {
+    background : black;
+    color      : yellow;
+}
+
+.high {
+    background : #b5d592 !important;
+}
+
+.medium {
+    background : #ffe87c !important;
+}
+
+.low {
+    background : #fc8c84 !important;
+}
+
+span.cover-fill, span.cover-empty {
+    border-color : #444;
+    background   : white;
+}
+
+span.cover-fill {
+    background         : #ccc;
+    border-right-color : #444;
+}
+
+span.cover-empty {
+    background : white;
+}
+
+.st-cov-stat-abs-statements,
+.st-cov-stat-abs-branches,
+.st-cov-stat-abs-lines,
+.st-cov-stat-abs-functions {
+    font-size : 0.8em;
+}
+
+pre.prettyprint {
+    border  : none !important;
+    padding : 0 !important;
+    margin  : 0 !important;
+}
+
+.com {
+    color : #999 !important;
+}
+
+/* EOF Styles from Istanbul */.pln { color : #333 }
+
+@media screen {
+    .str { color : #080 }
+
+    .kwd { color : #008 }
+
+    .com { color : #800 }
+
+    .typ { color : #606 }
+
+    .lit { color : #066 }
+
+    .pun, .opn, .clo { color : #660 }
+
+    .tag { color : #008 }
+
+    .atn { color : #606 }
+
+    .atv { color : #080 }
+
+    .dec, .var { color : #606 }
+
+    .fun { color : red }
+}
+
+@media print, projection {
+    .str { color : #060 }
+
+    .kwd { color : #006; font-weight : bold }
+
+    .com { color : #600; font-style : italic }
+
+    .typ { color : #404; font-weight : bold }
+
+    .lit { color : #044 }
+
+    .pun, .opn, .clo { color : #440 }
+
+    .tag { color : #006; font-weight : bold }
+
+    .atn { color : #404 }
+
+    .atv { color : #060 }
+}
+
+pre.prettyprint { padding : 2px; border : 1px solid #888 }
+
+ol.linenums { margin-top : 0; margin-bottom : 0 }
+
+li.L0, li.L1, li.L2, li.L3, li.L5, li.L6, li.L7, li.L8 { list-style-type : none }
+
+li.L1, li.L3, li.L5, li.L7, li.L9 { background : #eee }
+@font-face {
+	font-family: 'icomoon';
+	src:url('fonts/icomoon.eot');
+	src:url('fonts/icomoon.eot?#iefix') format('embedded-opentype'),
+		url('fonts/icomoon.ttf') format('truetype'),
+		url('fonts/icomoon.woff') format('woff'),
+		url('fonts/icomoon.svg#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-file:before {
+	content: "\e600";
+}
+.icon-file-2:before {
+	content: "\e601";
+}
+.icon-stats:before {
+	content: "\e602";
+}
+.icon-checkmark:before {
+	content: "\e603";
+}
+.icon-close:before {
+	content: "\e604";
+}
+.icon-star:before {
+	content: "\e605";
+}
+.icon-star-2:before {
+	content: "\e606";
+}
+.icon-file-css:before {
+	content: "\e607";
+}
+.icon-file-xml:before {
+	content: "\e608";
+}
+.icon-arrow-up:before {
+	content: "\e609";
+}
+.icon-arrow-down:before {
+	content: "\e60a";
+}
+.icon-attachment:before {
+	content: "\e60b";
+}
+.icon-link:before {
+	content: "\e60c";
+}
+.icon-plus:before {
+	content: "\e60d";
+}
+.icon-minus:before {
+	content: "\e60e";
+}
+.icon-play:before {
+	content: "\e60f";
+}
+.icon-pause:before {
+	content: "\e610";
+}
+.icon-stop:before {
+	content: "\e611";
+}
+.icon-forward:before {
+	content: "\e612";
+}
+.icon-search:before {
+	content: "\e613";
+}
+.icon-camera:before {
+	content: "\e614";
+}
+.icon-blocked:before {
+	content: "\e615";
+}
+.icon-cancel-circle:before {
+	content: "\e616";
+}
+.icon-book:before {
+	content: "\e617";
+}
+.icon-cog:before {
+	content: "\e618";
+}
+.icon-screen:before {
+	content: "\e619";
+}
+.icon-keyboard:before {
+	content: "\e61a";
+}
+.icon-tag:before {
+	content: "\e61b";
+}
+.icon-folder:before {
+	content: "\e61c";
+}
+.icon-folder-open:before {
+	content: "\e61d";
+}
+.icon-clock:before {
+	content: "\e61e";
+}
+.icon-busy:before {
+	content: "\e61f";
+}
+.icon-spinner:before {
+	content: "\e620";
+}
+.icon-cog-2:before {
+	content: "\e621";
+}
+.icon-bug:before {
+	content: "\e622";
+}
+.icon-play-2:before {
+	content: "\e623";
+}
+.icon-stop-2:before {
+	content: "\e624";
+}
+.icon-flag:before {
+	content: "\e625";
+}
+.icon-lightning:before {
+	content: "\e626";
+}
+.filterfield .x-form-text {
+    padding-left : 5px;
+}
+
+.filterfield .x-form-text,
+.filterfield .x-form-trigger {
+    height : 30px !important;
+}
+
+.filterfield .x-form-trigger {
+    text-align       : center;
+    vertical-align   : middle;
+    background-image : none;
+}
+
+.x-gecko .filterfield .x-form-trigger {
+    display : table-cell;
+}
+
+.filterfield .x-form-trigger-wrap-default {
+    border : 0;
+}
+
+.filterfield .x-form-trigger {
+    text-align     : center;
+    vertical-align : middle;
+}
+
+/*
+ * IE 11 shows a clear-field cross
+   http://stackoverflow.com/questions/20473413/remove-ie11s-clear-field-x-button-on-windows-8
+*/
+.filterfield input::-ms-clear {
+    display : none;
+    width   : 0;
+    height  : 0;
+}.filterfield .x-form-trigger {
+    color          : #999;
+    text-shadow    : 1px 0px 1px #f5f5f5;
+}
+
+.filterfield .x-form-trigger:hover {
+    color      : #666;
+}
+
+.tr-filter-trigger-leaf {
+    background-image        : url("../images/trigger-leafs.gif");
+}
+
+.tr-filter-trigger-group {
+    background-image        : url("../images/trigger-groups.gif");  
+}

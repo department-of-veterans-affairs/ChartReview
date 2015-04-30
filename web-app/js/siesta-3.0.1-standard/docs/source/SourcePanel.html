@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+Ext.define('Siesta.Harness.Browser.UI.SourcePanel', {
+    extend   : 'Ext.Panel',
+    alias      : 'widget.sourcepanel',
+
+    __filled__ : false,
+
+    autoScroll : true,
+    cls        : 'test-source-ct',
+    layout     : 'absolute',
+    border     : false,
+    bodyBorder : false,
+
+    setSource  : function (source, linesToHighlight) {
+        var sourceCtEl = this.el;
+
+        if (!this.__filled__) {
+            this.__filled__ = true;
+
+            this.update(
+                Ext.String.format('&lt;pre class=&quot;brush: javascript;&quot;&gt;{0}&lt;/pre&gt;', source)
+            );
+
+            SyntaxHighlighter.highlight(sourceCtEl);
+        }
+
+        sourceCtEl.select('.highlighted').removeCls('highlighted');
+
+        // Highlight rows
+        Ext.Array.each(linesToHighlight, function (line) {
+            sourceCtEl.select('.line.number' + line).addCls('highlighted');
+        });
+
+        if (linesToHighlight.length &gt; 0) {
+            var el = sourceCtEl.down('.highlighted');
+            el &amp;&amp; el.scrollIntoView(sourceCtEl);
+        }
+    },
+
+    clear : function () {
+        this.__filled__ = false;
+    }
+});
+</pre>
+</body>
+</html>

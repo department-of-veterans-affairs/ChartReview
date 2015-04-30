@@ -1,0 +1,20 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.eventview-offsetcolumn > .x-grid-cell-inner {
+    position : relative;
+}
+
+.eventview-clearoffset {
+    position : absolute;
+    width    : 11px;
+    height   : 11px;
+    right    : 4px;
+    top      : 0px;
+}
+

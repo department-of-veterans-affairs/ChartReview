@@ -1,0 +1,162 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.st-cov-report-tree-panel,
+.st-cov-report-tree-panel,
+.st-cov-report-source-panel {
+    border-color  : #bbb;
+    border-bottom : 0 none;
+}
+
+.x-grid-row-selected .cov-result-cell .x-grid-cell-inner {
+    color       : #000;
+    font-weight : 400;
+}
+
+.st-cov-report-tree-panel .x-tree-icon-parent {
+    background-image : url(../images/ns.png);
+}
+
+.st-cov-report-tree-panel .x-tree-icon-leaf {
+    background-image : url(../images/leaf.png);
+}
+
+.st-cov-report-tree-panel .x-btn-pressed {
+    background   : #d8d8d8;
+    border-color : #aaa;
+}
+
+.st-cov-level-high .x-grid-cell-inner {
+    border-color : rgb(89, 205, 82);
+    font-weight  : 300;
+}
+
+.st-cov-level-medium .x-grid-cell-inner {
+    border-bottom-color : rgb(215, 213, 40);
+    font-weight         : 300;
+}
+
+.st-cov-level-low .x-grid-cell-inner {
+    border-bottom-top : #ff1111 !important;
+    font-weight       : 300;
+}
+
+.coveragechart-container {
+    background : #fff;
+}
+
+/* CODE AREA STYLING Styles from Istanbul, TODO: remove unused rules, or completely re-style */
+
+pre.coverage {
+    font-family : "Monaco", "Inconsolata", "Andale Mono", "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important;
+}
+
+div.path {
+    font-size : 110%;
+}
+
+div.path a:link, div.path a:visited {
+    color : #555;
+}
+
+table.coverage td {
+    color : #111;
+}
+
+table.coverage td.line-count {
+    font-size : 11px;
+    color     : #afafaf;
+}
+
+table.coverage td.line-coverage {
+    color              : #777 !important;
+    border-left-color  : #ccc;
+    border-right-color : #ccc;
+}
+
+table.coverage td span.cline-neutral {
+    background : #f4f4f4;
+}
+
+table.coverage td span.cline-yes {
+    background : #b5d592;
+    color      : #999;
+}
+
+table.coverage td span.cline-no {
+    background : #fc8c84;
+}
+
+.cstat-yes {
+    color : #555;
+}
+
+.cstat-no {
+    background : #fc8c84;
+    color      : #111;
+}
+
+.fstat-no {
+    background : #ffc520;
+    color      : #111 !important;
+}
+
+.cbranch-no {
+    background : yellow !important;
+    color      : #111;
+}
+
+.missing-if-branch {
+    background : black;
+    color      : yellow;
+}
+
+.high {
+    background : #b5d592 !important;
+}
+
+.medium {
+    background : #ffe87c !important;
+}
+
+.low {
+    background : #fc8c84 !important;
+}
+
+span.cover-fill, span.cover-empty {
+    border-color : #444;
+    background   : white;
+}
+
+span.cover-fill {
+    background         : #ccc;
+    border-right-color : #444;
+}
+
+span.cover-empty {
+    background : white;
+}
+
+.st-cov-stat-abs-statements,
+.st-cov-stat-abs-branches,
+.st-cov-stat-abs-lines,
+.st-cov-stat-abs-functions {
+    font-size : 0.8em;
+}
+
+pre.prettyprint {
+    border  : none !important;
+    padding : 0 !important;
+    margin  : 0 !important;
+}
+
+.com {
+    color : #999 !important;
+}
+
+/* EOF Styles from Istanbul */

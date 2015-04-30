@@ -1,0 +1,290 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+/**
+@class Siesta.Test.BDD.Spy
+
+This class implements a "spy" - function wrapper which tracks the calls to itself. Spy can be installed
+instead of a method in some object or can be used standalone.
+
+Note, that spies "belongs" to a spec and once the spec is completed all spies that were installed during it
+will be removed. 
+
+*/
+Class('Siesta.Test.BDD.Spy', {
+    
+    does        : [
+        Siesta.Util.Role.CanGetType
+    ],
+
+    has         : {
+        name                    : null,
+        
+        processor               : {
+            lazy        : 'this.buildProcessor'
+        },
+        
+        hostObject              : null,
+        propertyName            : null,
+        
+        hasOwnOriginalValue     : false,
+        originalValue           : null,
+        
+        strategy                : 'returnValue',
+        
+        returnValueObj          : undefined,
+        fakeFunc                : null,
+        throwErrorObj           : null,
+        
+        // array of { object : scope, args : [], returnValue : }
+        callsLog                : Joose.I.Array,
+        
+        /**
+         * @property {Object} calls This is an object property with several helper methods, related to the calls 
+         * tracking information. It is assigned to the wrapper function of spy.
+         * 
+         * @property {Function} calls.any Returns `true` if spy was called at least once, `false` otherwise
+         * @property {Function} calls.count Returns the number of times this spy was called
+         * @property {Function} calls.argsFor Accepts an number of the call (0-based) and return an array of arguments 
+         * for that call. 
+         * @property {Function} calls.allArgs Returns an array with the arguments for every tracked function call. 
+         * Every element of the array is, in turn, an array of arguments. 
+         * @property {Function} calls.all Returns an array with the context for every tracked function call. 
+         * Every element of the array is an object of the following structure:
+
+    { object : this, args : [ 0, 1, 2 ], returnValue : undefined }
+
+         * @property {Function} calls.mostRecent Returns a context object of the most-recent tracked function call. 
+         * @property {Function} calls.first Returns a context object of the first tracked function call. 
+         * @property {Function} calls.reset Reset all tracking data.
+         *
+         * 
+         * Example:
+
+    t.spyOn(obj, 'someMethod').callThrough()
+    
+    obj.someMethod(0, 1)
+    obj.someMethod(1, 2)
+    
+    t.expect(obj.someMethod.calls.any()).toBe(true)
+    t.expect(obj.someMethod.calls.count()).toBe(2)
+    t.expect(obj.someMethod.calls.first()).toEqual({ object : obj, args : [ 0, 1 ], returnValue : undefined })
+
+         */
+        calls                   : null,
+        
+        t                       : null,
+        
+        /**
+         * @property {Siesta.Test.BDD.Spy} and This is just a reference to itself, to add some syntax sugar. 
+         * 
+         * This property is also assigned to the wrapper function of spy.
+         * 
+
+    t.spyOn(obj, 'someMethod').callThrough()
+
+    // same thing as above
+    t.spyOn(obj, 'someMethod').and.callThrough()
+    
+    // returns spy instance
+    obj.someMethod.and 
+
+         */
+        and                     : function () { return this }
+    },
+    
+    
+    methods     : {
+        
+        initialize : function () {
+            var me              = this
+            
+            this.calls          = {
+                any         : function () { return me.callsLog.length > 0 },
+                count       : function () { return me.callsLog.length },
+                argsFor     : function (i) { return me.callsLog[ i ].args },
+                
+                allArgs     : function (i) { return Joose.A.map(me.callsLog, function (call) { return call.args } ) },
+                all         : function () { return me.callsLog },
+                
+                mostRecent  : function () { return me.callsLog[ me.callsLog.length - 1 ] },
+                first       : function () { return me.callsLog[ 0 ] },
+                
+                reset       : function () { me.reset() }
+            }
+            
+            var R       = Siesta.Resource('Siesta.Test.BDD.Spy')
+            
+            var hostObject      = this.hostObject
+            var propertyName    = this.propertyName
+            
+            if (hostObject) {
+                if (this.typeOf(hostObject[ propertyName ]) != 'Function') throw R.get("spyingNotOnFunction")
+                
+                this.hasOwnOriginalValue    = hostObject.hasOwnProperty(propertyName)
+                this.originalValue          = hostObject[ propertyName ]
+                
+                if (this.originalValue.__SIESTA_SPY__) this.originalValue.__SIESTA_SPY__.remove()
+                
+                hostObject[ propertyName ]  = this.getProcessor()
+            }
+            
+            if (this.t) this.t.spies.push(this)
+        },
+        
+        
+        buildProcessor : function () {
+            var me          = this
+            
+            var processor   = function () {
+                var args        = Array.prototype.slice.call(arguments)
+                var log         = { object : this, args : args }
+                
+                me.callsLog.push(log)
+                
+                return log.returnValue = me[ me.strategy + 'Strategy' ](this, args) 
+            }
+            
+            processor.__SIESTA_SPY__    = processor.and = me
+            processor.calls             = me.calls
+            
+            return processor
+        },
+        
+        
+        returnValueStrategy : function (obj, args) {
+            return this.returnValueObj
+        },
+        
+        
+        callThroughStrategy : function (obj, args) {
+            return this.originalValue.apply(obj, args)
+        },
+        
+        
+        callFakeStrategy : function (obj, args) {
+            return this.fakeFunc.apply(obj, args)
+        },
+        
+        
+        throwErrorStrategy : function (obj, args) {
+            var error       = this.throwErrorObj
+            var ERROR       = this.t && this.t.global ? this.t.global.Error : Error
+            
+            if (!(error instanceof ERROR)) error = new ERROR(error)
+            
+            throw error
+        },
+        
+        
+        /**
+         * This method makes the spy to also execute the original function it has been installed over. The
+         * value returned from original function is returned from the spy.
+         * 
+         * @return {Siesta.Test.BDD.Spy} This spy instance
+         */
+        callThrough : function () {
+            if (!this.hostObject) throw "Need the host object to call through to original method"
+            
+            this.strategy       = 'callThrough'
+            
+            return this
+        },
+        
+        
+        /**
+         * This method makes the spy to just return the `undefined` and not execute the original function.
+         * 
+         * @return {Siesta.Test.BDD.Spy} This spy instance
+         */
+        stub : function () {
+            this.returnValue()
+            
+            return this
+        },
+        
+        
+        /**
+         * This method makes the spy to return the value provided and not execute the original function.
+         * 
+         * @param {Object} value The value that will be returned from the spy.
+         * 
+         * @return {Siesta.Test.BDD.Spy} This spy instance
+         */
+        returnValue : function (value) {
+            this.strategy       = 'returnValue'
+            
+            this.returnValueObj = value
+            
+            return this
+        },
+
+        
+        /**
+         * This method makes the spy to call the provided function and return the value from it, instead of the original function.
+         * 
+         * @param {Function} func The function to call instead of the original function
+         * 
+         * @return {Siesta.Test.BDD.Spy} This spy instance
+         */
+        callFake : function (func) {
+            this.strategy   = 'callFake'
+            
+            this.fakeFunc   = func
+            
+            return this
+        },
+        
+        
+        /**
+         * This method makes the spy to throw the specified `error` value (instead of calling the original function).
+         * 
+         * @param {Object} error The error value to throw. If it is not an `Error` instance, it will be passed to `Error` constructor first.
+         * 
+         * @return {Siesta.Test.BDD.Spy} This spy instance
+         */
+        throwError : function (error) {
+            this.strategy       = 'throwError'
+            
+            this.throwErrorObj  = error
+            
+            return this
+        },
+        
+        
+        remove : function () {
+            var hostObject      = this.hostObject
+            
+            if (hostObject) {
+                if (this.hasOwnOriginalValue) 
+                    hostObject[ this.propertyName ] = this.originalValue
+                else
+                    delete hostObject[ this.propertyName ]
+            }
+            
+            // cleanup paranoya
+            this.originalValue  = this.hostObject = hostObject = null
+            this.callsLog       = []
+            
+            this.returnValueObj = this.fakeFunc = this.throwErrorObj = null
+            
+            var processor       = this.getProcessor()
+            processor.and       = processor.calls   = processor.__SIESTA_SPY__ = null
+            
+            this.processor      = null
+        },
+        
+        
+        /**
+         * This method resets all calls tracking data. Spy will report as it has never been called yet. 
+         */
+        reset : function () {
+            this.callsLog      = []
+        }
+    }
+})

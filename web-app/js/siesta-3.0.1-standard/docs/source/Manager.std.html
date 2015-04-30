@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+Siesta.Content.Manager.meta.extend({
+    
+    has : {
+        instrumentedUrls        : Joose.I.Object,
+        logicalUnits            : Joose.I.Object,
+        logicalUnitsByFile      : Joose.I.Object,
+        
+        includeCoverageUnits    : null,
+        excludeCoverageUnits    : null,
+        
+        collector               : {
+            lazy    : function () {
+                return new IstanbulCollector()
+            }
+        }
+    },
+    
+    
+    methods : {
+        
+        addRawCoverageResultsFrom : function (testGlobal, test) {
+            if (testGlobal.__coverage__) {
+                this.getCollector().add(testGlobal.__coverage__)
+                
+                // success
+                return true
+            }
+        },
+        
+        
+        addRawCoverageResult : function (coverageInfo) {
+            this.getCollector().add(coverageInfo)
+        },
+        
+        
+        disposeCoverageCollector : function () {
+            this.getCollector().dispose()
+        },
+        
+        
+        hasInstrumentedContentOf : function (url) {
+            if (url instanceof Siesta.Content.Resource) url = url.url
+            
+            return typeof this.instrumentedUrls[ url ] == 'string'
+        },
+
+
+        getInstrumentedContentOf : function (url, instrumenter, mode) {
+            if (url instanceof Siesta.Content.Resource) url = url.url
+            
+            var rawContent          = this.getContentOf(url)
+            
+            if (rawContent == null) return null
+            
+            var instrumentedUrls    = this.instrumentedUrls
+            
+            if (instrumentedUrls.hasOwnProperty(url)) return instrumentedUrls[ url ]
+            
+            try {
+                return instrumentedUrls[ url ] = this.instrument(instrumenter, rawContent, url, mode)
+            } catch (e) {
+                window.console &amp;&amp; console.warn('Instrumentation of the file failed: ' + url + ', error: ' + e)
+                
+                // still save &quot;null&quot; in cache to not try to re-instrument this file again
+                return instrumentedUrls[ url ] = null
+            }
+        },
+        
+        
+        filterUnit : function (unitName, mode) {
+            // need to include
+            return (!this.includeCoverageUnits || this.includeCoverageUnits.test(unitName))
+            // and not need to exclude
+                &amp;&amp; !(this.excludeCoverageUnits &amp;&amp; this.excludeCoverageUnits.test(unitName))
+        },
+        
+        
+        instrument : function (instrumenter, content, fileName, mode) {
+            var me                      = this
+            var logicalUnits            = this.getLogicalUnits(content, fileName, mode)
+            
+            var filteredUnits           = []
+            
+            Joose.A.each(logicalUnits, function (unit) {
+                if (me.filterUnit(unit.name, mode)) filteredUnits.push(unit)
+            })
+            
+            if (!filteredUnits.length) return content
+            
+            var instrumentedContent     = []
+            
+            for (var i = 0; i &lt; filteredUnits.length; i++) {
+                var unit                = filteredUnits[ i ]
+                // avoid &quot;substring&quot; call if content is already provided
+                // since files will be big that may save some resources
+                var unitContent         = unit.content = unit.content || content.substring(unit.start, unit.end + 1)
+                
+                var prevStart           = i &gt; 0 ? filteredUnits[ i - 1 ].end + 1 : 0
+                
+                instrumentedContent.push(content.substring(prevStart, unit.start))
+                
+                instrumentedContent.push(instrumenter.instrumentSync(unitContent, unit.name))
+            }
+            
+            instrumentedContent.push(content.substring(filteredUnits[ filteredUnits.length - 1 ].end + 1))
+            
+            Joose.A.each(filteredUnits, function (unit) {
+                var name                = unit.name
+
+                // when concatenating files into one, &quot;\r\n&quot; line endings could be silently transformed to just &quot;\n&quot;
+                if (me.logicalUnits[ name ] &amp;&amp; me.logicalUnits[ name ].replace(/\r\n/g, '\n') != unit.content.replace(/\r\n/g, '\n')) {
+                    throw &quot;Re-declaration of coverage unit: &quot; + name
+                }
+                
+                me.logicalUnits[ name ]             = unit.content
+                me.logicalUnitsByFile[ fileName ]   = me.logicalUnitsByFile[ fileName ] || {}
+                
+                me.logicalUnitsByFile[ fileName ][ name ] = unit
+                
+                delete unit.content
+            })
+            
+            return instrumentedContent.join('')
+        },
+        
+        
+        getState : function () {
+            var cachedUrls      = this.urls
+            var rawContent      = {}
+            
+            // only extract the raw content for the urls that were successfully instrumented
+            Joose.O.each(this.instrumentedUrls, function (content, url) {
+                if (content != null) rawContent[ url ]   = cachedUrls[ url ]
+            })
+            
+            return {
+                rawContent              : rawContent,
+                instrumentedContent     : this.instrumentedUrls,
+                logicalUnitsContent     : this.logicalUnits,
+                logicalUnitsByFile      : this.logicalUnitsByFile
+            }
+        },
+        
+        
+        getLogicalUnitContent : function (unitName) {
+            return this.logicalUnits[ unitName ]
+        },
+
+        
+        getLogicalUnitOfFile : function (fileName, unitName) {
+            return this.logicalUnitsByFile[ fileName ][ unitName ]
+        },
+        
+        
+        getLogicalUnits : function (content, fileName, mode) {
+            return [{
+                name        : fileName,
+                start       : 0,
+                end         : content.length - 1,
+                content     : content,
+                // we'll implement optimization that &quot;loc&quot; object of the unit with &quot;start&quot; 0 will not be used
+                // (as offset will be 0 anyway)
+                loc         : {
+                    start       : {
+                        line        : 1,
+                        column      : 0
+                    },
+                    end         : {
+                        line        : null,
+                        column      : null
+                    }
+                }
+            }]
+        }
+    },
+    
+    
+    override : {
+        cache       : function (callback, errback, ignoreErrors) {
+            var harness         = this.harness  
+            
+            // for automated harness with enabled code coverage and 2nd and following pages
+            // skip caching and instead wait for the content manager state from the previous launch
+            // this state is to be provided by the automation launcher
+            // if there's a previous report we need to wait for the content even for the 1st page
+            if (harness.isAutomated &amp;&amp; harness.enableCodeCoverageAutomation &amp;&amp; (harness.testPage &gt; 0 || harness.hasPreviousReport)) {
+                var me          = this
+                var args        = arguments
+                var SUPER       = this.SUPER
+                
+                var checker     = setInterval(function () {
+                    var state   = window.__CONTENT_MANAGER_STATE__
+                    
+                    if (state) {
+                        me.urls                 = state.rawContent
+                        me.instrumentedUrls     = state.instrumentedContent
+                        me.logicalUnits         = state.logicalUnitsContent
+                        me.logicalUnitsByFile   = state.logicalUnitsByFile
+                        
+                        clearInterval(checker)
+                        
+                        window.__CONTENT_MANAGER_STATE__ = null
+                        
+                        SUPER.apply(me, args)
+                    }
+                }, 100)
+            } else
+                this.SUPERARG(arguments)
+        }
+    }
+})
+
+</pre>
+</body>
+</html>

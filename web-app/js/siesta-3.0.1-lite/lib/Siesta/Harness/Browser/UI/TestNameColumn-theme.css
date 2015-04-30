@@ -1,0 +1,110 @@
+/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+.test-name-cell .x-tree-expander {
+    border-left-color : #999;
+}
+
+.x-grid-tree-node-expanded .test-name-cell .x-tree-expander {
+    border-left-color : transparent;
+    border-top-color  : #999;
+}
+
+/* ICONS AND TEXT */
+.test-name-cell span.x-tree-node-text {
+    font-size : 14px;
+}
+
+/* TEST STATUS ICONS */
+/*.test-name-cell .x-tree-node-text span {*/
+/*line-height: inherit !important;*/
+/*}*/
+
+.icon-checkmark {
+    color       : rgb(89, 205, 82);
+    text-shadow : 1px 0 1px green;
+}
+
+.test-name-cell .icon-file-2 {
+    color : #bbb;
+}
+
+.x-grid-item-selected .test-name-cell .test-icon {
+    color : #fff;
+}
+
+.test-name-cell .icon-bug {
+    color : #EF5350;
+}
+
+.icon-busy {
+    color : #777;
+}
+
+.test-name-cell .icon-close {
+    color : #ff1111;
+}
+
+.icon-lightning {
+    color       : rgb(251, 249, 176);
+    text-shadow : 1px 0 1px rgb(148, 120, 87);
+}
+
+.icon-folder-open,
+.icon-folder {
+    color       : rgb(215, 213, 40);
+    text-shadow : 1px 0 1px rgb(148, 120, 87);
+}
+
+.icon-folder-open.tr-folder-green,
+.icon-folder.tr-folder-green {
+    color       : rgb(89, 205, 82);
+    text-shadow : 1px 0 1px green;
+}
+
+.test-name-cell .folder-status-icon {
+    position    : absolute;
+    bottom      : 1px;
+    left        : 6px;
+    font-size   : 9px;
+    text-shadow : none;
+}
+
+.folder-status-icon.icon-checkmark {
+    color : #006600;
+}
+
+.folder-status-icon.icon-bug {
+    color : #F52222;
+}
+
+.x-grid-item-selected .folder-status-icon.icon-checkmark {
+    color : #81C784;
+}
+
+.x-grid-tree-node-expanded .folder-status-icon {
+    bottom    : 0;
+    transform : rotate(14deg);
+}
+
+.run-failed .icon-bug:before, .run-checked .icon-checkmark:before {
+    position  : absolute;
+    right     : 3px;
+    bottom    : 2px;
+    font-size : 9px;
+    color     : #fff;
+}
+
+.x-grid-row .icon-folder-open.tr-folder-red,
+.x-grid-row .icon-folder.tr-folder-red,
+.icon-flag {
+    color       : #F52222;
+    text-shadow : 1px 0 1px darkred;
+}
+
+

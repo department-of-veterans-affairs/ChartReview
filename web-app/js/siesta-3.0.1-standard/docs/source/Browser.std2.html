@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/*
+
+Siesta 3.0.1
+Copyright(c) 2009-2015 Bryntum AB
+http://bryntum.com/contact
+http://bryntum.com/products/siesta/license
+
+*/
+Siesta.Harness.Browser.my.meta.extend({
+
+    has : {
+        
+<span id='Siesta-Harness-Browser-cfg-separateContext'>        /**
+</span>         * @cfg {Boolean} separateContext When set to `true`, the test scripts (your *.t.js files) will be executed in separate context.
+         * They will not be included on the test page itself. Thus such tests will survive any page redirects or refreshes 
+         * (for example after form submit, etc).
+         * 
+         * Note, when using this option, all &quot;preload&quot; files will still be loaded into test page context, not in the test script context.
+         * Setting this option to `true` will disable the `overrideSetTimeout` option for this test.
+         * 
+         * This option can also (and probably should only) be specified in the test file descriptor.
+         * 
+         * **This option is available only in Standard package**.
+         * 
+         * @member Siesta.Harness.Browser
+         */
+        separateContext             : false,
+        
+        // can't just set the attribute to Joose.I.Object, because its a static class 
+        // that has already been created, so attribute initializer won't be called
+        testScopesByURL             : {
+            lazy    : Joose.I.Object
+        },
+        
+<span id='Siesta-Harness-Browser-cfg-enableCodeCoverage'>        /**
+</span>         * @cfg {Boolean/String} enableCodeCoverage When set to `true`, will enable the collection of the code coverage information
+         * for currently running test suite. Coverage information is only collected for the JavaScript files in the `preload` config,
+         * that are marked with &quot;instrument : true&quot; property:
+         * 
+
+    Harness.configure({
+        enableCodeCoverage  : true,
+        preload         : [
+            {
+                type        : 'js',
+                url         : 'some_file.js',
+                instrument  : true
+            }
+        ],
+        ...
+    })
+
+         * 
+         * When set to `true`, coverage information collection will be enabled only if the `siesta-coverage-all.js` file is loaded on the harness page.
+         * Otherwise Siesta will warn user about missing files. The warning can be disabled with the special value for this 
+         * config option - a string `ifloaded`, which enables coverage only if files are loaded. 
+         * 
+         * Normally, coverage information is collected on a per-file basis, the Ext JS layer adds another special coverage mode - per class.
+         * See {@link #coverageUnit} for details.
+         * 
+         * See also {@link #includeCoverageUnits}, {@link #excludeCoverageUnits}, {@link #installLoaderInstrumentationHook} configs and
+         * &lt;a href=&quot;#!/guide/code_coverage&quot;&gt;Collecting code coverage information&lt;/a&gt; guide. 
+         * 
+         * **This option is available only in the Siesta Standard package**.
+         * 
+         * @member Siesta.Harness.Browser
+         */
+        enableCodeCoverage          : false,
+        
+        
+<span id='Siesta-Harness-Browser-cfg-coverageUnit'>        /**
+</span>         * @cfg {String} coverageUnit A string defining how the instrumented files are processed.
+         * 
+         * At this level, the only recognized and default value is &quot;file&quot;, which means Siesta just instruments the files
+         * in the `preload` config that are marked with `instrument : true` property:
+
+    Harness.configure({
+        preload         : [
+            {
+                type        : 'js',
+                url         : 'some_file.js',
+                instrument  : true
+            }
+        ],
+        ...
+    })
+
+         * The Ext JS layer adds an additional mode - &quot;extjs_class&quot;, please refer to the {@link Siesta.Harness.Browser.ExtJS#coverageUnit documentation}.
+         * 
+         * **This option is available only in the Siesta Standard package**.
+         * 
+         * @member Siesta.Harness.Browser
+         */
+        coverageUnit                : {
+            lazy    : function () { return 'file' }
+        },
+        
+        
+<span id='Siesta-Harness-Browser-cfg-includeCoverageUnits'>        /**
+</span>         * @cfg {RegExp} includeCoverageUnits Regular expression, defining which coverage units to instrument.
+         * By default all found units are included.
+         * 
+         * See also {@link #excludeCoverageUnits}, {@link #coverageUnit}, {@link #enableCodeCoverage}
+         *  
+         * **This option is available only in Standard package**.
+         * 
+         * @member Siesta.Harness.Browser
+         */
+        includeCoverageUnits        : /.*/,
+
+        
+<span id='Siesta-Harness-Browser-cfg-excludeCoverageUnits'>        /**
+</span>         * @cfg {RegExp} excludeCoverageUnits A regular expression, defining which coverage units to exclude from the instrumentation.
+         * Default value is `null` meaning that nothing should be excluded.
+         * 
+         * See also {@link #includeCoverageUnits}, {@link #coverageUnit}, {@link #enableCodeCoverage}
+         *  
+         * **This option is available only in the Siesta Standard package**.
+         * 
+         * @member Siesta.Harness.Browser
+         */
+        excludeCoverageUnits        : null,
+        
+        // if there's a previous report, we need to wait for the content manager state even for the 1st page
+        hasPreviousReport           : false,
+        
+        coverageNoSource            : false,
+        
+        instrumenter                : null,
+        currentContentManager       : null,
+        
+        htmlCoverageReport          : {
+            lazy    : function () { 
+                return new IstanbulSiestaHtmlReport({ mode : this.getCoverageUnit() == 'file' ? 'normal' : 'trueTree' }) 
+            }
+        },
+        lcovCoverageReport          : {
+            lazy    : 'this.buildLcovReport'
+        }
+    },
+
+    override : {
+        
+        setup : function () {
+            var needToWarn  = false
+            
+            if (this.enableCodeCoverage)
+                if (window.Instrumenter &amp;&amp; window.IstanbulCollector &amp;&amp; window.IstanbulSiestaHtmlReport &amp;&amp; window.IstanbulSiestaLcovReport) {
+                    this.instrumenter       = new Instrumenter()
+                } else {
+                    needToWarn              = String(this.enableCodeCoverage).toLowerCase() != 'ifloaded'
+                    this.enableCodeCoverage = false
+                }
+                
+            this.SUPERARG(arguments)
+    
+            // do not show the alert with warning in case of automation - it will throw exception in selenium and is handled in the launchers anyway
+            if (needToWarn &amp;&amp; !this.isAutomated) 
+                alert(Siesta.Resource('Siesta.Harness.Browser', &quot;codeCoverageWarningText&quot;));
+        },
+        
+        
+        launch : function () { 
+            // need to do it here, because UI can override this setting
+            if (this.enableCodeCoverage) this.cachePreload  = true
+            
+            this.SUPERARG(arguments)
+        },
+        
+        
+        onTestSuiteStart : function (descriptors, contentManager) {
+            if (this.enableCodeCoverage) {
+                if (this.currentContentManager) this.currentContentManager.disposeCoverageCollector()
+                
+                this.currentContentManager          = contentManager
+                
+                // a bit ugly but will work
+                contentManager.includeCoverageUnits = this.includeCoverageUnits
+                contentManager.excludeCoverageUnits = this.excludeCoverageUnits
+                
+                this.fireEvent('nocoverageinfo')
+            }
+            
+            this.SUPERARG(arguments)
+        },
+        
+        
+        onTestEnd : function (test) {
+            if (this.enableCodeCoverage) {
+                if (test.contentManager.addRawCoverageResultsFrom(test.scopeProvider.scope, test)) this.fireEvent('hassomecoverageinfo')
+            }
+            
+            this.SUPERARG(arguments)
+        },
+        
+        
+        addPreviousCoverageInfo : function (previousCoverageInfo) {
+            this.currentContentManager.addRawCoverageResult(previousCoverageInfo)
+        },
+        
+        
+        buildLcovReport : function () {
+            var content     = []
+            
+            return new IstanbulSiestaLcovReport({
+                dir         : 'dir',
+                writer      : {
+                    println     : function (text) {
+                        content.push(text)
+                    },
+                    
+                    writeFile   : function (fileName, callback) {
+                        callback(this)
+                    },
+                    
+                    getContent  : function () {
+                        return content.join('\n')
+                    }
+                }
+            })
+        },
+        
+        
+        generateCoverageRawReport : function (asString) {
+            var currentContentManager   = this.currentContentManager
+            
+            var result                  = {
+                contentManagerState     : this.getContentManagerState(),
+                rawReport               : currentContentManager.getCollector().getFinalCoverage(),
+                coverageUnit            : this.coverageUnit
+            }
+            
+            return asString ? JSON.stringify(result) : result
+        },
+        
+        
+        generateCoverageHtmlReport : function (asString) {
+            var currentContentManager   = this.currentContentManager
+            
+            var result                  = {
+                coverageNoSource    : this.coverageNoSource,
+                htmlReport          : this.getHtmlCoverageReport().getTreeReport(currentContentManager.getCollector(), currentContentManager, this.coverageNoSource),
+                coverageUnit        : this.coverageUnit
+            }
+            
+            return asString ? JSON.stringify(result) : result
+        },
+        
+        
+        generateCoverageLcovReport : function (asString) {
+            var report                  = this.getLcovCoverageReport()
+            
+            report.writeReport(this.currentContentManager.getCollector())
+            
+            var result                  = {
+                lcovReport      : report.opts.writer.getContent(),
+                coverageUnit    : this.coverageUnit
+            }
+            
+            return asString ? JSON.stringify(result) : result
+        },
+        
+        
+        canUseCachedContent : function (resource) {
+            return this.enableCodeCoverage ? resource instanceof Siesta.Content.Resource.JavaScript &amp;&amp; resource.instrument : this.SUPER(resource)
+        },
+        
+        
+        addCachedResourceToPreloads : function (scopeProvider, contentManager, resource) {
+            if (this.enableCodeCoverage) {
+                var content     = contentManager.getInstrumentedContentOf(resource, this.instrumenter, this.getCoverageUnit())
+                
+                // if instrumentation has failed we'll fallback to SUPER implementation
+                if (content != null) {
+                    scopeProvider.addPreload({
+                        type        : 'js',
+                        content     : content
+                    })
+                    
+                    return
+                }
+            }
+            
+            this.SUPERARG(arguments)
+        },        
+        
+        
+        getRawTotalCoverageInfo : function (asString, previousCoverageInfo) {
+            var currentContentManager   = this.currentContentManager
+            
+            // previous coverage info can be missing in case test suite fits on single page
+            if (previousCoverageInfo) currentContentManager.addRawCoverageResult(previousCoverageInfo)
+            
+            var result                  = currentContentManager.getCollector().getFinalCoverage()
+        
+            return asString ? JSON.stringify(result) : result
+        },
+        
+        
+        // to be used in automation mode
+        getContentManagerState : function (asString) {
+            var result          = this.currentContentManager.getState()
+                
+            return asString ? JSON.stringify(result) : result
+        },
+        
+         
+        // in case of &quot;separateContext&quot; we don't need to run any seeding script - the test script will ran in different context
+        prepareScopeSeeding : function (scopeProvider, desc, contentManager) {
+            if (!this.getDescriptorConfig(desc, 'separateContext')) this.SUPERARG(arguments)
+        },
+        
+        
+        launchTest : function (options, callback) {
+            var me                          = this
+            var desc                        = options.desc
+            var url                         = desc.url
+            
+            // 
+            if (!this.getDescriptorConfig(desc, 'separateContext')) return this.SUPERARG(arguments)
+            
+            var testScriptScopeProvider     = this.getTestScopesByURL()[ url ] = new Scope.Provider.IFrame({
+                seedingCode     : this.getSeedingCode(desc, options.launchOptions.launchId)
+            })
+            
+            if (this.cachePreload &amp;&amp; options.contentManager.hasContentOf(url))
+                testScriptScopeProvider.addPreload({
+                    type        : 'js', 
+                    content     : options.contentManager.getContentOf(url)
+                })
+            else
+                testScriptScopeProvider.seedingScript = this.resolveURL(url, options.scopeProvider, desc)
+                
+            var testHolder  = options.testHolder
+            
+            if (!this.getDescriptorConfig(desc, 'transparentEx')) testScriptScopeProvider.addOnErrorHandler(function (msg, url, lineNumber, col, error) {
+                var test = testHolder.test
+                
+                test.nbrExceptions++;
+                test.failWithException(error || (msg + ' ' + url + ' ' + lineNumber))
+            })
+                
+            var sup     = this.SUPER
+            
+            testScriptScopeProvider.setup(function () {
+                var scope                       = testScriptScopeProvider.scope
+                
+                options.startTestAnchor         = scope.StartTest
+                options.originalSetTimeout      = scope.setTimeout
+                options.originalClearTimeout    = scope.clearTimeout
+                
+                sup.call(me, options, callback)
+            })
+        },
+        
+        
+        getNewTestConfiguration : function (desc, scopeProvider, contentManager, launchOptions) {
+            var config          = this.SUPERARG(arguments)
+            
+            if (this.getDescriptorConfig(desc, 'separateContext')) {
+                // disable the overriding of `setTimeout` for scripts on separate page
+                config.overrideSetTimeout   = false
+            }
+            
+            return config
+        },
+        
+        
+        cleanupScopeForURL : function (url) {
+            this.SUPER(url)
+            
+            var testScriptScopeProvider = this.getTestScopesByURL()[ url ]
+            
+            if (testScriptScopeProvider) {
+                delete this.getTestScopesByURL()[ url ]
+                
+                testScriptScopeProvider.cleanup()
+            }
+        }
+    }
+})
+
+
+</pre>
+</body>
+</html>

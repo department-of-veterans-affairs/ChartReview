@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        
+        <link rel="stylesheet" type="text/css" href="http://cdn.sencha.com/ext/gpl/4.2.0/resources/css/ext-all.css">
+        <script type="text/javascript" src="http://cdn.sencha.com/ext/gpl/4.2.0/ext-all-debug.js"></script>
+
+        <!-- 
+            The hook needs to be installed after the Ext loader is available on the page
+        -->
+        <script type="text/javascript">
+            // will be executed when running in testing environment only
+            parent.Harness && eval(parent.Harness.getLoaderInstrumentationHook())
+        </script>
+        <!--
+            And before any code that uses it, like main application file or similar.
+            In our example we have all code inline, but in real application it will be in separate file, like
+                <script type="text/javascript" src="index.js"></script>
+         -->
+    </head>
+    <body>
+        <script>
+            Ext.Loader.setConfig({
+                enabled     : true,
+                paths       : {
+                    My      : 'lib/My'
+                }
+            })
+            
+            Ext.onReady(function () {
+                
+                Ext.require('My.Store.ResourceStore', function () {
+                    
+                    STORE   = new My.Store.ResourceStore({})
+                    
+                    STORE.someMethod()
+                })
+            })        
+        </script>
+    </body>
+</html>
