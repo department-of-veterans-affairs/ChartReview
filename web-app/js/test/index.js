@@ -73,6 +73,39 @@ Harness.start(
         ]
     },
     {
+        group : 'CR Annotation List Buttons',
+        hostPageUrl: 'http://localhost:8080/chart-review/chart-review?projectId=de1eb12c-984d-4cd3-9941-0983567a5e81&processId=singleStepChartReview:1:4::50ff8b8e-8091-4f22-8ace-e02a8924efdd&taskId=33081&taskType=COMPLETED',
+        //runInPopup: true,
+        items : [
+            {
+                title : 'CR Annotation List Buttons',
+                url : 'cr-annotationListButtons.js'
+            }
+        ]
+    },
+    {
+        group : 'CR Clinical Element View Buttons',
+        hostPageUrl: 'http://localhost:8080/chart-review/chart-review?projectId=de1eb12c-984d-4cd3-9941-0983567a5e81&processId=singleStepChartReview:1:4::50ff8b8e-8091-4f22-8ace-e02a8924efdd&taskId=33081&taskType=COMPLETED',
+        //runInPopup: true,
+        items : [
+            {
+                title : 'CR Clinical Element View Buttons',
+                url : 'cr-clinicalElementViewButtons.js'
+            }
+        ]
+    },
+    {
+        group : 'CR Portlets',
+        hostPageUrl: 'http://localhost:8080/chart-review/chart-review?projectId=de1eb12c-984d-4cd3-9941-0983567a5e81&processId=singleStepChartReview:1:4::50ff8b8e-8091-4f22-8ace-e02a8924efdd&taskId=33081&taskType=COMPLETED',
+        //runInPopup: true,
+        items : [
+            {
+                title : 'CR Portlets',
+                url : 'cr-portlets.js'
+            }
+        ]
+    },
+    {
         group : 'CR Text Annotation',
         hostPageUrl: 'http://localhost:8080/chart-review/chart-review?projectId=de1eb12c-984d-4cd3-9941-0983567a5e81&processId=singleStepChartReview:1:4::50ff8b8e-8091-4f22-8ace-e02a8924efdd&taskId=33081&taskType=COMPLETED',
         items : [
