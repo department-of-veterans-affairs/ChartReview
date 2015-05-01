@@ -106,6 +106,11 @@ Ext.define('CR.app.controller.AnnotationNatureController', {
             this.configureAnnotationToolbar();
 		}
         this.annotationAwareInitialized = true;
+        if(!CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin)
+        {
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin = Ext.create('CR.app.view.AnnotationSchemaPopupWindow', {});
+            CR.app.controller.AnnotationNatureController.annotationSchemaPopupWin.annotationComponent == null;
+        }
 	},
 
     /**

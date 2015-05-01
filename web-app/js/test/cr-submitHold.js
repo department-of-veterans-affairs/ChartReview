@@ -2,7 +2,7 @@
  * Created by bradadams on 11/14/14.
  */
 StartTest(function(t) {
-    t.diag("CR Test 2");
+    t.diag("CR Submit/Hold");
     var viewDetail = "[clinicalElementConfigurationId='a57ba2f0-e55d-4f4a-848e-9bd7d2c233de']";
     t.chain(
         { click : "#app-portal clinicalelementportlet[title=Public Health Lab1] iteminfo itemlist[title=List (48 of 48)] itemlistgrid [itemId=view] => table.x-grid-item:nth-child(1) .x-grid-cell:nth-child(2) .cellTextNowrap", offset : [59, 8] },

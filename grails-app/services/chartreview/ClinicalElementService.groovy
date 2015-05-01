@@ -134,6 +134,7 @@ class ClinicalElementService  {
         String projectId = keyParts.get("projectId");
         String clinicalElementGroup = keyParts.get("clinicalElementGroup");
         String clinicalElementConfigurationId = keyParts.get("clinicalElementConfigurationId");
+        String clinicalElementId = keyParts.get("id");
         ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(keyParts.get("clinicalElementConfigurationId"), conn, templates);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
         List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
@@ -142,17 +143,13 @@ class ClinicalElementService  {
             return "";
         }
 
-        String content = resultSetToContentTemplate(result, details.contentTemplate, columns, projectId, clinicalElementGroup, clinicalElementConfigurationId, escapeHtml)
+        String content = resultSetToContentTemplate(result, details.contentTemplate, columns, projectId, clinicalElementGroup, clinicalElementConfigurationId, clinicalElementId, escapeHtml)
 
-        // Comment this out for field-level annotations
         if (wrapInText) {
             return "<text name='annotatable' clinicalElementFieldId='WHOLE_CONTENT' >" + content.toString() + "</text>";
         } else {
             return content.toString();
         }
-
-        // Uncomment this for field-level annotations
-//        return content.toString();
     }
 
     /**
@@ -179,18 +176,11 @@ class ClinicalElementService  {
         Map result = getClinicalElementBySerializedKey(serializedKey, true);
         String content = resultSetToContentTemplate(result, details.contentTemplate, columns, projectId, clinicalElementGroup, clinicalElementConfigurationId, clinicalElementId, escapeHtml)
 
-        //println("Content---->:'" + content + "'")
-        String returnText = "";
-        // Comment this out for field-level annotations
         if (wrapInText) {
-            returnText = "<text name='annotatable' clinicalElementFieldId='WHOLE_CONTENT' >" + content.toString() + "</text>";
+            return "<text name='annotatable' clinicalElementFieldId='WHOLE_CONTENT' >" + content.toString() + "</text>";
         } else {
-            returnText =  content.toString();
+            return content.toString();
         }
-
-        //println("ReturnText===>" + returnText);
-        return returnText;
-
     }
 
     public String resultSetToContentTemplate(Map<String, Object> result, String contentTemplate, List<ClinicalElementColumnDef> columns, String projectId, String clinicalElementGroup, String clinicalElementConfigurationId, String clinicalElementId, boolean escapeHtml = true) {
