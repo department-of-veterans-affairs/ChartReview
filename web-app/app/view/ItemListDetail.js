@@ -18,7 +18,8 @@ Ext.define('CR.app.view.ItemListDetail', {
         annotationaware: 'CR.app.controller.AnnotationNatureController'
     },
 //    cls: 'preview',
-    scrollable: true,
+//    scrollable: true,
+    autoScroll: true,
     border: true,
     curDoneAnnotatingState: false,
     isLoaded: false,
@@ -180,7 +181,7 @@ Ext.define('CR.app.view.ItemListDetail', {
                             pnl.checkForExistingClinicalElementAfterRender();
                             pnl.initAnnotationAwareness();
 
-                            var content = records[0].raw.content;
+                            var content = "<div class=\"content-body\" style=\"padding-bottom:30;\">" + records[0].raw.content + "</div>";
                             me.update(content);
                             me.body.scrollTo('top', 0);
                             var clinicalElementConfiguration = CR.app.model.CRAppData.getClinicalElementConfiguration(me.clinicalElementConfigurationId);
@@ -249,7 +250,7 @@ Ext.define('CR.app.view.ItemListDetail', {
         else
         {
             this.initAnnotationAwareness();
-            var content = '';
+            var content = "<div class=\"content-body\" style=\"padding-bottom:30;\"></div>";
             this.update(content);
         }
         this.body.scrollTo('top', 0);
