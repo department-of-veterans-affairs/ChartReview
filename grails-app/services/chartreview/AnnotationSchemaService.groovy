@@ -323,6 +323,21 @@ class AnnotationSchemaService {
         return attributeDef;
     }
 
+    protected AttributeDefOptionDef getAttributeDefOptionDef(Set<AttributeDefOptionDef> attributeDefOptionDefs, String id)
+    {
+        AttributeDefOptionDef attributeDefOptionDef = null;
+        for(int i = 0; i < attributeDefOptionDefs.size(); i++)
+        {
+            AttributeDefOptionDef tAttributeDefOptionDef = attributeDefOptionDefs.getAt(i);
+            if (tAttributeDefOptionDef.id == id)
+            {
+                attributeDefOptionDef = tAttributeDefOptionDef;
+                break;
+            }
+        }
+        return attributeDefOptionDef;
+    }
+
     protected ClassDef getClassDef(Set<ClassDef> classDefs, String id)
     {
         ClassDef classDef = null;

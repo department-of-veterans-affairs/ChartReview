@@ -496,12 +496,20 @@ class AnnotationService {
                         // TODO: Handle multiple options and class relationships.
                         Element elementsElement = document.createElement('elements');
 
+                        AttributeDefOptionDef optionDef = null;
+                        if (type == 3 && typeQualifier == "attributeDef" && !featuresProcessed.contains(feature.name)) {
+                            Map featureTypeParts = new HashMap();
+                            feature.featureType.split(";").each {
+                                featureTypeParts.put(it.split(":")[0], it.split(":")[1])
+                            }
+                            def attributeDefId = featureTypeParts.get("attributeDef");
+                            optionDef = getAttributeDefOptionDef(annotationSchema, attributeDefId, feature.value);
+                        }
                         // Deal with options.
                         if (type == 3 && typeQualifier == "attributeDef" && !featuresProcessed.contains(feature.name)) {
                             annotation.features.findAll { it -> it.name == feature.name }.sort {
                                 it.featureIndex
                             }.each {
-                                AttributeDefOptionDef optionDef = AttributeDefOptionDef.get(feature.value);
                                 Element elementElement = document.createElement('element');
                                 elementElement.appendChild(createElement(document, "value", optionDef.id));
 
@@ -661,6 +669,23 @@ class AnnotationService {
         } else {
             throw new RuntimeException("Could not determine feature type for type: ${f.featureType}. Not a attributeDef or classRelDef.");
         }
+    }
+
+    /**
+     * Given a feature, look up the associated schema to get the attribute or class def type.
+     * @param f the feature to look up the type from.
+     * @return the type from the schema definition.
+     */
+    protected getAttributeDefOptionDef(AnnotationSchema annotationSchema, String attributeDefId, String attributeDefOptionDefId) {
+        def attributeDefOptionDef = null;
+        def attributeDefs = annotationSchema.getAttributeDefs();
+        def attributeDef = annotationSchemaService.getAttributeDef(attributeDefs as Set<AttributeDef>, attributeDefId);
+        if(attributeDef != null)
+        {
+            def attributeDefOptionDefs = attributeDef.getAttributeDefOptionDefs();
+            attributeDefOptionDef = annotationSchemaService.getAttributeDefOptionDef(attributeDefOptionDefs as Set<AttributeDefOptionDef>, attributeDefOptionDefId);
+        }
+        return attributeDefOptionDef;
     }
 
     protected getConnections(String projectId) {
