@@ -21,12 +21,14 @@ import gov.va.vinci.chartreview.util.StringFormTypeSerializable
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
 import gov.va.vinci.siman.model.QAnnotation
 import gov.va.vinci.siman.tools.ConnectionProvider
+import grails.util.Holders
 import org.activiti.engine.form.StartFormData
 import org.activiti.engine.impl.form.FormPropertyImpl
 import org.activiti.engine.repository.Deployment
 import org.activiti.engine.repository.ProcessDefinition
 import org.apache.commons.beanutils.BeanUtils
 import org.apache.commons.validator.GenericValidator
+import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
 import javax.validation.ValidationException
@@ -216,38 +218,68 @@ class ProcessController {
                     conversation.model.schemas = getSchemaOptions(conversation.model.project);
                 }
             }.to "step2"
-            on("finish") {
-                if (conversation.mode == "readOnly") {
-                    finish();
-                    return;
-                } else if (conversation.mode == "edit") {
-                    def variableMap = conversation.editValuesMap;
-                    boolean singleStep = (conversation.serviceParameters.size() == 1);
-                    AddProcessWorkflowModel model = processStep3Params(conversation.model, params, singleStep);
-                    processService.updateProcess(conversation.project.id, conversation.originalProcessName, variableMap, model.processUsers);
-                    flash.message = "Edits saved.";
-                    redirect(controller: "project", action: 'show', id: conversation.project.id);
-                } else {
-                    boolean singleStep = (conversation.serviceParameters.size() == 1);
-                    AddProcessWorkflowModel model = processStep3Params(conversation.model, params, singleStep);
-                    List<Object[]> patientIdResultSet = null;
-                    try {
-                        patientIdResultSet = projectService.runQuery(model.project, model.query);
-                    } catch (Exception e) {
-                        flash.message = "Error: ${e.getMessage()}";
-                        return step3();
-                    }
-                    int instantiatedCount = processService.startProcess(model, conversation.serviceParameters, patientIdResultSet.collect {
-                        it[0]
-                    });
-                    flash.message = "(${instantiatedCount}) processes started.";
-                    redirect(controller: "project", action: 'show', id: conversation.project.id);
+            on("saveEdits") {
+                def variableMap = conversation.editValuesMap;
+                boolean singleStep = (conversation.serviceParameters.size() == 1);
+                AddProcessWorkflowModel model = processStep3Params(conversation.model, params, singleStep);
+                processService.updateProcess(conversation.project.id, conversation.originalProcessName, variableMap, model.processUsers);
+                RequestContextHolder.currentRequestAttributes().flashScope.message = "Edits saved.";
+                redirect(controller: "project", action: 'show', id: conversation.project.id);
+            }.to "finishEdit";
+            on("next") {
+                boolean singleStep = (conversation.serviceParameters.size() == 1);
+                AddProcessWorkflowModel model = processStep3Params(conversation.model, params, singleStep);
+                List<Object[]> patientIdResultSet = null;
+                try {
+                    patientIdResultSet = projectService.runQuery(model.project, model.query);
+                    conversation.requireConfirm = false;
+                } catch (Exception e) {
+                    flash.message = "Error: ${e.getMessage()}";
+                    return step3();
                 }
-            }.to "finish"
+
+                conversation.numberToCreate = patientIdResultSet.size();
+            }.to "confirm"
+
             on("cancel").to "cancel"
+        }
+        confirm {
+            on("previous"){
+
+            }.to "step3"
+
+            on("finish") {
+                if ( conversation.numberToCreate > Holders.config.chartReview.maxElementsInCreateProcess  ) {
+                    return step3();
+                }
+
+                AddProcessWorkflowModel model = conversation.model;
+                List<Object[]> patientIdResultSet = null;
+                try {
+                    patientIdResultSet = projectService.runQuery(model.project, model.query);
+                } catch (Exception e) {
+                    flash.message = "Error: ${e.getMessage()}";
+                    return step3();
+                }
+
+
+                if ( conversation.numberToCreate > Holders.config.chartReview.warnElementsInCreateProcess  &&  !params.confirmedSize ) {
+                    flash.message = "You must confirm the creation of these tasks."
+                    return confirm();
+                }
+
+                int instantiatedCount = processService.startProcess(model, conversation.serviceParameters, patientIdResultSet.collect {
+                    it[0]
+                });
+                flash.message = "(${instantiatedCount}) processes started.";
+                    redirect(controller: "project", action: 'show', id: conversation.project.id);
+            }.to "finish"
         }
         finish {
             // Done, no action. You do need a finish.gsp though, even though it will never be shown.
+        }
+        finishEdit {
+
         }
         cancel {
             redirect(controller: "project", action:'list')

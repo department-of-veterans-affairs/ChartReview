@@ -231,6 +231,16 @@ ckeditor {
     }
 }
 
+/**
+ * The maximum number of elements allowed when a user chooses create process.
+ */
+chartReview.maxElementsInCreateProcess=8;
+/**
+ * More than this number of elements when creating a process causes a warning, up to chartReview.maxElementsInCreateProcess,\
+ * which is the max.
+ */
+chartReview.warnElementsInCreateProcess=5;
+
 grails.doc.title = "Chart Review"
 grails.doc.subtitle = ""
 grails.doc.authors = "University of Utah / VA"

@@ -6,7 +6,6 @@ import gov.va.vinci.chartreview.*
 import gov.va.vinci.chartreview.model.ActivitiRuntimeProperty
 import gov.va.vinci.chartreview.model.ClinicalElementDisplayParameters
 import gov.va.vinci.chartreview.model.Project
-import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.TaskDefinitionWithVariable
 import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
 import gov.va.vinci.chartreview.util.NotFoundException

@@ -31,6 +31,7 @@
             <g:render template="/templates/showErrors" model="[model: "${dataSetConfigurationInstance}"]" />
             <g:form class="form-horizontal" >
                 <fieldset class="form" id="formFields">
+
                     <legend>Task Creation Query</legend>
                     <div>
                         Enter the query to create process tasks.
@@ -111,10 +112,10 @@
                     <g:link controller="project" action="show" id="${project.id}" style="float: right;" class="btn btn-primary">Back To Project</g:link>
                 </g:if>
                 <g:elseif test="${mode == "edit"}">
-                    <g:submitButton name="finish" value="Save Edits" class="btn btn-primary" style="float:right"/>
+                    <g:submitButton name="saveEdits" value="Save Edits" class="btn btn-primary" style="float:right"/>
                 </g:elseif>
                 <g:else>
-                    <g:submitButton name="finish" value="Create Tasks and Finish" class="btn btn-primary" style="float:right"/>
+                    <g:submitButton name="next" value="Next" class="btn btn-primary" style="float:right"/>
                 </g:else>
             </g:form>
 		</div>
