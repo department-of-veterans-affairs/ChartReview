@@ -36,6 +36,7 @@ grails.project.dependency.resolution = {
         compile 'com.mysema.querydsl:querydsl-sql-codegen:3.3.1'
         compile 'org.apache.commons:commons-lang3:3.2.1'
         provided 'com.microsoft.sqlserver:sqljdbc4:4.0'
+//        runtime 'net.sourceforge.jtds:jtds:1.3.0'  Do we need to include this for it to be available as a project jdbc type?
         compile 'com.google.guava:guava:13.0.1'
         build 'gov.va.vinci:jtds:2.0.1'
         test 'net.sourceforge.spnego:spnego:r7'
@@ -43,7 +44,7 @@ grails.project.dependency.resolution = {
             exclude 'org.springframework:spring-asm:3.0.7.RELEASE'
         }
         compile('gov.va.vinci.leo:leo-client:2014.08.0')
-        compile 'gov.va.vinci:leo-siman:2014.08.12'
+        compile 'gov.va.vinci:leo-siman:2015.06.0'
     }
 
     plugins {
