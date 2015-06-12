@@ -33,7 +33,7 @@
                         <td style="text-align: center;">${fieldValue(bean: dataSetConfigurationInstance, field: "active")}</td>
                         <td style="text-align: center"><g:link action="edit" params="${[id: dataSetConfigurationInstance.id, projectId: params.projectId]}" ><i class="icon-pencil"></g:link></i></td>
                         <td style="text-align: center"><g:link action="delete" params="${[id: dataSetConfigurationInstance.id, projectId: params.projectId]}" onclick="return confirm('Delete this clinical element configuration?');"><i class="icon-trash"></g:link></i></td>
-                        <td style="text-align: center"><g:link action="createElementConfiguration" params="${[id: dataSetConfigurationInstance.id, projectId: params.projectId]}" ><i class="icon-share"></g:link></i></td>
+                        <td style="text-align: center"><g:link action="create" params="${[id: dataSetConfigurationInstance.id, projectId: params.projectId]}" ><i class="icon-share"></g:link></i></td>
                         <td style="text-align: center"><g:link action="export" params="${[id: dataSetConfigurationInstance.id, projectId: params.projectId]}" target="_blank"><i class="icon-arrow-down"></g:link></i></td>
                     </tr>
                 </g:each>
@@ -82,7 +82,7 @@
                 </g:uploadForm>
             </div>
             <div class="nav" role="navigation">
-                <g:link class="create btn btn-primary" action="createElementConfiguration" params="${[projectId: params.projectId]}"><g:message code="default.new.label" args="[entityName]" /></g:link>
+                <g:link class="create btn btn-primary" action="create" params="${[projectId: params.projectId]}"><g:message code="default.new.label" args="[entityName]" /></g:link>
             </div>
 
 		</div>

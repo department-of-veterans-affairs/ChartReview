@@ -1,5 +1,4 @@
-<%@ page import="com.google.gson.Gson; grails.plugin.gson.converters.GSON;" %>
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <meta name="layout" content="main">

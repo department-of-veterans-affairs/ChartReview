@@ -1,5 +1,6 @@
 package chartreview
 
+import gov.va.vinci.chartreview.Utils
 import gov.va.vinci.chartreview.Validator
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
@@ -8,8 +9,8 @@ import grails.converters.JSON
 import grails.converters.XML
 import org.apache.commons.lang3.StringUtils
 import org.springframework.core.io.ClassPathResource
-import javax.validation.ValidationException
 
+import javax.validation.ValidationException
 import java.sql.Timestamp
 
 class AnnotationSchemaController {
@@ -17,11 +18,10 @@ class AnnotationSchemaController {
     def springSecurityService;
     def annotationSchemaService;
 
-    public static String SELECTED_PROJECT = "selectedProject";
 
     /** Forward to list page. **/
     def index() {
-        if (session.getAttribute(SELECTED_PROJECT)) {
+        if (session.getAttribute(Utils.SELECTED_PROJECT)) {
             redirect(action: "list", params: params)
         } else {
             redirect(action: "chooseProject", params: params)
@@ -39,17 +39,15 @@ class AnnotationSchemaController {
      */
     def list(Integer max) {
         if (params.projectId) {
-            session.setAttribute(SELECTED_PROJECT, params.projectId);
+            session.setAttribute(Utils.SELECTED_PROJECT, params.projectId);
         }
-        if (session.getAttribute(SELECTED_PROJECT) == null) {
+        if (session.getAttribute(Utils.SELECTED_PROJECT) == null) {
             redirect(action: "chooseProject", params: params)
             return;
         }
-
-
-        Project p = Project.get(session.getAttribute(SELECTED_PROJECT));
+        Project p = Project.get(session.getAttribute(Utils.SELECTED_PROJECT));
         session.setAttribute("projectName", p.getName());
-        if (!session.getAttribute(SELECTED_PROJECT)) {
+        if (!session.getAttribute(Utils.SELECTED_PROJECT)) {
             redirect(action: "chooseProject", params: params)
             return;
         }
@@ -90,7 +88,7 @@ class AnnotationSchemaController {
     }
 
     def view() {
-        if (!session.getAttribute(SELECTED_PROJECT)) {
+        if (!session.getAttribute(Utils.SELECTED_PROJECT)) {
             redirect(action: "chooseProject", params: params)
             return;
         }
@@ -99,7 +97,7 @@ class AnnotationSchemaController {
     }
 
     def create() {
-        if (!session.getAttribute(SELECTED_PROJECT)) {
+        if (!session.getAttribute(Utils.SELECTED_PROJECT)) {
             redirect(action: "chooseProject", params: params)
             return;
         }
@@ -134,7 +132,7 @@ class AnnotationSchemaController {
 
         if(xmlString != null && xmlString.size() > 0)
         {
-            Project p = Project.get(session.getAttribute(SELECTED_PROJECT));
+            Project p = Project.get(session.getAttribute(Utils.SELECTED_PROJECT));
 
             String xsdString = new ClassPathResource("submitSchema.xsd").getFile().newReader().getText()
             AnnotationSchema schema = null;
@@ -194,7 +192,7 @@ class AnnotationSchemaController {
     }
 
     def edit() {
-        if (!session.getAttribute(SELECTED_PROJECT)) {
+        if (!session.getAttribute(Utils.SELECTED_PROJECT)) {
             redirect(action: "chooseProject", params: params)
             return;
         }
@@ -202,7 +200,7 @@ class AnnotationSchemaController {
     }
 
     def save() {
-        if (!session.getAttribute(SELECTED_PROJECT)) {
+        if (!session.getAttribute(Utils.SELECTED_PROJECT)) {
             redirect(action: "chooseProject", params: params)
             return;
         }
@@ -210,7 +208,7 @@ class AnnotationSchemaController {
 
         AnnotationSchema schema = annotationSchemaService.parseSchemaXml(xml, false);
 
-        Project  p = Project.get(session.getAttribute(SELECTED_PROJECT));
+        Project  p = Project.get(session.getAttribute(Utils.SELECTED_PROJECT));
         if ("Create" == params.mode) {
             AnnotationSchemaRecord record = new AnnotationSchemaRecord();
             record.id = schema.id;

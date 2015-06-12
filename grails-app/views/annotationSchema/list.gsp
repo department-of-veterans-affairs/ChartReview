@@ -1,4 +1,4 @@
-<%@ page import="chartreview.AnnotationSchemaController" %>
+<%@ page import="gov.va.vinci.chartreview.Utils; chartreview.AnnotationSchemaController" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,10 +35,10 @@
             <g:each in="${model}" status="i" var="schema">
                 <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
                     <td><g:link action="view" id="${schema.id}">${fieldValue(bean: schema, field: "name")}</g:link></td>
-                    <td style="text-align: center"><g:link action="edit" params="[id: schema.id, projectId: session.getAttribute(chartreview.AnnotationSchemaController.SELECTED_PROJECT)]"><i class="icon-pencil" title="Edit this schema"></i></g:link></td>
-                    <td style="text-align: center"><g:link action="delete" params="[id: schema.id, projectId: session.getAttribute(chartreview.AnnotationSchemaController.SELECTED_PROJECT)]" onclick="return confirm('Delete this schema?');"><i class="icon-trash" title="Delete this schema"></i></g:link></td>
+                    <td style="text-align: center"><g:link action="edit" params="[id: schema.id, projectId: session.getAttribute(Utils.SELECTED_PROJECT)]"><i class="icon-pencil" title="Edit this schema"></i></g:link></td>
+                    <td style="text-align: center"><g:link action="delete" params="[id: schema.id, projectId: session.getAttribute(Utils.SELECTED_PROJECT)]" onclick="return confirm('Delete this schema?');"><i class="icon-trash" title="Delete this schema"></i></g:link></td>
                     <td style="text-align: center"><span  onclick='doModal("${schema.id}")'><i class="icon-share"></i></span></td>
-                    <td style="text-align: center"><g:link action="export" params="[id: schema.id, projectId: session.getAttribute(chartreview.AnnotationSchemaController.SELECTED_PROJECT)]"  target="_blank"><i class="icon-arrow-down"></g:link></i></td>
+                    <td style="text-align: center"><g:link action="export" params="[id: schema.id, projectId: session.getAttribute(Utils.SELECTED_PROJECT)]"  target="_blank"><i class="icon-arrow-down"></g:link></i></td>
                 </tr>
             </g:each>
             </tbody>
@@ -101,7 +101,7 @@
     });
 
     function submitCopy() {
-         window.location ='<g:createLink action="copy"></g:createLink>?id=' + $('#copyId').val() + "&projectId=${session.getAttribute(chartreview.AnnotationSchemaController.SELECTED_PROJECT)}&newName=" + encodeURIComponent($('#newName').val());
+         window.location ='<g:createLink action="copy"></g:createLink>?id=' + $('#copyId').val() + "&projectId=${session.getAttribute(chartreview.Utils.SELECTED_PROJECT)}&newName=" + encodeURIComponent($('#newName').val());
     }
 
     function doModal(schemaId) {

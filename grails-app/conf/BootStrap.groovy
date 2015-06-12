@@ -1,11 +1,7 @@
 import com.google.gson.Gson
 import com.mysema.query.sql.codegen.MetaDataExporter
 import gov.va.vinci.chartreview.db.ExampleDataUtils
-import gov.va.vinci.chartreview.marshallers.AnnotationSchemaMarshaller
-import gov.va.vinci.chartreview.marshallers.AttributeDefMarshaller
-import gov.va.vinci.chartreview.marshallers.AttributeDefOptionDefMarshaller
-import gov.va.vinci.chartreview.marshallers.ClassDefMarshaller
-import gov.va.vinci.chartreview.marshallers.ClassRelDefMarshaller
+import gov.va.vinci.chartreview.marshallers.*
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.Role
 import gov.va.vinci.chartreview.model.User
@@ -13,7 +9,6 @@ import gov.va.vinci.chartreview.model.UserProjectRole
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.model.schema.AttributeDef
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
-import gov.va.vinci.siman.model.ClinicalElementConfigurationDetails
 import grails.converters.XML
 import grails.plugin.springsecurity.SecurityFilterPosition
 import grails.plugin.springsecurity.SpringSecurityUtils
@@ -67,7 +62,6 @@ class BootStrap {
 
         createInitialUsersRolesAndProjectsIfNecessary();
         migrateAttributeDefMinDates();
-
         /**
         ClinicalElementConfiguration.findAll().each { ClinicalElementConfiguration config ->
             def details = config.getConfigurationDetails();
@@ -181,7 +175,7 @@ class BootStrap {
             Role userRole = new Role(id: UUID.randomUUID().toString(), name: "ROLE_USER");
             userRole.save(flush: true, failOnError: true);
 
-            Project chartReviewProject = new Project(id: UUID.randomUUID().toString(), name: "ChartReview", description: "Test Description", jdbcDriver: "com.mysql.jdbc.Driver", databaseConnectionUrl: "jdbc:mysql://localhost/chartreview?useUnicode=yes&characterEncoding=UTF-8", jdbcPassword: "passw0rd", jdbcUsername: "chartreview");
+            Project chartReviewProject = new Project(id: UUID.randomUUID().toString(), name: "ChartReview", description: "Test Description", jdbcDriver: "com.mysql.jdbc.Driver", databaseConnectionUrl: "jdbc:mysql://localhost/chartreview?useUnicode=yes&characterEncoding=UTF-8", jdbcPassword: "passw0rd", jdbcUsername: "chartreview", active: true);
             chartReviewProject.save(flush: true, failOnError: true);
 
             UserProjectRole ur = new UserProjectRole(id: UUID.randomUUID().toString(), user: globalAdmin, role: adminRole, project: chartReviewProject);

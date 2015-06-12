@@ -1,5 +1,4 @@
 package chartreview
-
 import com.google.gson.Gson
 import com.mysema.query.sql.SQLTemplates
 import com.mysema.query.sql.dml.SQLDeleteClause
@@ -9,12 +8,10 @@ import gov.va.vinci.siman.dao.ClinicalElementConfigDAO
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
 import gov.va.vinci.siman.model.ClinicalElementConfigurationDetails
 import gov.va.vinci.siman.model.QClinicalElementConfiguration
-import gov.va.vinci.siman.tools.SimanUtils
-import org.apache.commons.validator.GenericValidator
+import org.apache.commons.dbutils.DbUtils
 
-import javax.validation.ValidationException
+import javax.sql.DataSource
 import java.sql.Connection
-import java.sql.DriverManager
 
 import static gov.va.vinci.chartreview.Utils.closeConnection
 
@@ -22,25 +19,47 @@ class ClinicalElementConfigurationService {
     def projectService;
 
     /**
+     * Get a single clinical element configuration.
+     * @param   id  the id of the clinical element configuration to get.
+     * @param   projectId  the projectId to get clinical element configuration for.
+     * @return    the clinical element configuration. Note, if clinical element configuration is not found, a
+     *          ValidationException is thrown.
+     */
+    public ClinicalElementConfiguration getClinicalElementConfiguration(String id, DataSource ds, Project project) {
+        Connection c = null;
+
+        SQLTemplates templates = Utils.getSQLTemplate(project);
+        try {
+            c = ds.getConnection();
+
+            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates);
+            return  clinicalElementConfigDAO.getClinicalElementConfiguration(id);
+        }finally{
+            DbUtils.closeQuietly((Connection)c);
+        }
+    }
+
+    /**
      * Get all Clinical Element configurations for a project.
      * @param   projectId  the projectId to get clinical element configurations for.
      * @return    A list of clinical element configuration in the project database.
      */
-    public List<ClinicalElementConfiguration> getAllClinicalElementConfigurations(String projectId, boolean activeOnly = true) {
-        Connection connection = null;
-        try {
-            Project project = Project.get(projectId);
-            connection = projectService.getDatabaseConnection(project);
+    public List<ClinicalElementConfiguration> getAllClinicalElementConfigurations(DataSource ds, Project project, boolean activeOnly = true) {
+        Connection c = null;
 
-            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(connection, Utils.getSQLTemplate(project.getJdbcDriver()));
+        SQLTemplates templates = Utils.getSQLTemplate(project);
+        try {
+            c = ds.getConnection();
+
+            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates);
             List<ClinicalElementConfiguration> configurations = clinicalElementConfigDAO.getAllClinicalElementConfigurations();
             if (activeOnly) {
                 return configurations.findAll { it.active }
             } else {
                 return configurations;
             }
-        }finally{
-            closeConnection(connection);
+        } finally {
+            DbUtils.closeQuietly((Connection)c);
         }
     }
 
@@ -57,8 +76,8 @@ class ClinicalElementConfigurationService {
         }
     }
 
-    public ClinicalElementConfiguration getClinicalElementConfigurationByName(String name, String projectId) {
-        List<ClinicalElementConfiguration> configurations = getAllClinicalElementConfigurations(projectId);
+    public ClinicalElementConfiguration getClinicalElementConfigurationByName(String name, DataSource ds, Project p) {
+        List<ClinicalElementConfiguration> configurations = getAllClinicalElementConfigurations(ds, p);
         ClinicalElementConfiguration result = null;
 
         configurations.each {
@@ -69,37 +88,6 @@ class ClinicalElementConfigurationService {
         }
 
         return result;
-    }
-
-    /**
-     * Get a single Clinical Element configuration.
-     * @param id  the id of the clinical element configuration.
-     * @return    the clinical element configuration. Note, if clinical element configuration is not found, a
-     *          ValidationException is thrown.
-     */
-    public ClinicalElementConfiguration getClinicalElementConfiguration(String id, Connection conn, SQLTemplates template) {
-        ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(conn, template);
-        return  clinicalElementConfigDAO.getClinicalElementConfiguration(id);
-    }
-
-    /**
-     * Get a single Clinical Element configuration.
-     * @param id  the id of the clinical element configuration.
-     * @return    the clinical element configuration. Note, if clinical element configuration is not found, a
-     *          ValidationException is thrown.
-     */
-    public ClinicalElementConfiguration getClinicalElementConfiguration(String id, String projectId) {
-
-        Connection connection = null;
-        try {
-            Project project = Project.get(projectId);
-            connection = projectService.getDatabaseConnection(project);
-            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(connection, Utils.getSQLTemplate(project.getJdbcDriver()));
-            return  clinicalElementConfigDAO.getClinicalElementConfiguration(id);
-        }finally{
-            closeConnection(connection);
-        }
-
     }
 
     /**
@@ -127,38 +115,39 @@ class ClinicalElementConfigurationService {
      * @param projectId the project id this clinical element configuration belongs to.
      * @param conf the conf to save.
      */
-    public void addClinicalElementConfiguration(String projectId, ClinicalElementConfiguration conf) {
-        Project project = Project.get(projectId);
-
-        Connection connection = null;
+    public void addClinicalElementConfiguration(DataSource ds, Project project, ClinicalElementConfiguration conf) {
+        Connection c = null;
+        SQLTemplates templates = Utils.getSQLTemplate(project);
         try {
-            connection = projectService.getDatabaseConnection(project);
-            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(connection, Utils.getSQLTemplate(project.getJdbcDriver()));
+            c = ds.getConnection();
 
+            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates);
             clinicalElementConfigDAO.addClinicalElementConfiguration(conf);
         } finally {
-            closeConnection(connection);
+            DbUtils.closeQuietly((Connection)c);
         }
     }
 
-    public void deleteClinicalElementConfig(String projectId, String clinicalElementConfigId) {
-        Project project = Project.get(projectId);
-        Connection connection = null
+    /**
+     * Deletes a clinical element configuration in the project database.
+     * @param projectId the project id this clinical element configuration belongs to.
+     * @param clinicalElementConfigId the config to delete.
+     */
+    public void deleteClinicalElementConfig(DataSource ds, Project project, String clinicalElementConfigId) {
+        Connection c = null;
+        SQLTemplates templates = Utils.getSQLTemplate(project);
 
         try {
-            connection = projectService.getDatabaseConnection(project);
+            c = ds.getConnection();
 
-            long deletedCount = new SQLDeleteClause(connection, Utils.getSQLTemplate(project.jdbcDriver), QClinicalElementConfiguration.clinicalElementConfiguration)
+            long deletedCount = new SQLDeleteClause(c, templates, QClinicalElementConfiguration.clinicalElementConfiguration)
                     .where(QClinicalElementConfiguration.clinicalElementConfiguration.id.eq(clinicalElementConfigId)).execute();
-
 
             if (deletedCount < 1) {
                 throw new IllegalArgumentException("Clinical element configuration: ${clinicalElementConfigId} not found in project: ${projectId}.")
             }
         } finally {
-            closeConnection(connection);
+            DbUtils.closeQuietly((Connection)c);
         }
     }
-
-
 }

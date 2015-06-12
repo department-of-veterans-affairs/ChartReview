@@ -1,30 +1,163 @@
 package gov.va.vinci.chartreview
-
-import com.mysema.query.sql.H2Templates
-import com.mysema.query.sql.HSQLDBTemplates
-import com.mysema.query.sql.MySQLTemplates
-import com.mysema.query.sql.SQLServerTemplates
-import com.mysema.query.sql.SQLTemplates
+import com.mysema.query.sql.*
 import gov.va.vinci.chartreview.model.ActivitiRuntimeProperty
+import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
 import gov.va.vinci.chartreview.model.schema.ClassDef
 import gov.va.vinci.siman.model.Annotation
 import gov.va.vinci.siman.model.ClinicalElement
 import gov.va.vinci.siman.tools.SimanUtils
 import groovy.util.slurpersupport.GPathResult
+import org.apache.commons.dbcp.BasicDataSource
+import org.apache.commons.dbutils.DbUtils
+import org.apache.commons.validator.GenericValidator
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
 
+import javax.servlet.ServletContext
+import javax.servlet.http.HttpSession
+import javax.sql.DataSource
 import javax.validation.ValidationException
 import java.sql.Connection
+import java.sql.DatabaseMetaData
+import java.sql.ResultSet
+import java.sql.ResultSetMetaData
 import java.text.MessageFormat
 
 class Utils {
+    public static String SELECTED_PROJECT = "selectedProject";
     static final NUMBER_FORMAT_ERR = "Validation failed. [{0} {1}]";
     static final String ID_SEPARATOR = ","
 	
 	private static final DateTimeFormatter XML_DATE_TIME_FORMAT = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.UTC);
+
+    public static Project getSelectedProject(HttpSession session, String projectId) {
+
+        Project project = (Project) Project.get(session.getAttribute(SELECTED_PROJECT));
+        if (project == null) {
+            project = Project.get(projectId);
+            session.setAttribute(SELECTED_PROJECT, project);
+//            throw new RuntimeException("Could not find a selected project in the current session.");
+        }
+        return project;
+    }
+
+    public static DataSource getProjectDatasource(Project project) {
+        ServletContext servletContext = org.codehaus.groovy.grails.web.context.ServletContextHolder.getServletContext();
+        DataSource ds = (DataSource) servletContext.getAttribute("STUDY:DATASOURCE:" + project.id);
+
+        if (ds == null) {
+            ds =  Utils.createProjectDatasource(project);
+            servletContext.setAttribute("STUDY:DATASOURCE:" + project.id, ds);
+//            throw new RuntimeException("Could not get datasource: STUDY:DATASOURCE:" + projectId + " from session.");
+        }
+        return ds;
+    }
+
+    /**
+     * Create a basic datasource for a study.
+     * @param project the study to create a datasource for.
+     * @return the datasource for the study.
+     */
+    public static DataSource createProjectDatasource(Project project) {
+        BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setDriverClassName(project.getJdbcDriver());
+        dataSource.setUrl(project.getDatabaseConnectionUrl());
+
+        if (!GenericValidator.isBlankOrNull(project.getJdbcUsername())) {
+            dataSource.setUsername(project.getJdbcUsername());
+        }
+
+        if (!GenericValidator.isBlankOrNull(project.getJdbcPassword())) {
+            dataSource.setPassword(project.getJdbcPassword());
+        } else if ("org.h2.Driver".equals(project.getJdbcDriver())) {
+            dataSource.setPassword("");
+        }
+
+        return dataSource;
+    }
+
+    public static List<String> getTableNames(DataSource ds) {
+        List<String> tableNames = new ArrayList<String>();
+        Connection c = null;
+        try {
+            c = ds.getConnection();
+            DatabaseMetaData md = c.getMetaData();
+            ResultSet rs = md.getTables(null, null, "%", null);
+            while (rs.next()) {
+                String tableName = rs.getString(3);
+                tableNames.add(tableName);
+            }
+        } catch(Exception e) {
+            // Nothing
+        }finally{
+            DbUtils.closeQuietly((Connection) c);
+        }
+        return tableNames;
+    }
+
+    public static String getIdColName(DataSource ds, String tableName)
+    {
+        String idColumnName = "id";
+        List<String> fieldNames = Utils.getFieldNames(ds, tableName);
+        for (int i = fieldNames.size() - 1; i >= 0; i--) {
+            String fieldName = ((String) fieldNames.get(i));
+            if(fieldName.toLowerCase().indexOf("id") >= 0)
+            {
+                idColumnName = fieldName;
+                if(fieldName.toLowerCase().compareToIgnoreCase("id") == 0)
+                {
+                    break;
+                }
+            }
+        }
+        return idColumnName;
+    }
+
+    public static List<String> getFieldNames(DataSource ds, String tableName) {
+        List<String> fieldNames = new ArrayList<String>();
+        Connection c = null;
+        ResultSet rs = null;
+        try {
+            c = ds.getConnection();
+            rs = c.prepareStatement("select * from " + tableName).executeQuery();
+            ResultSetMetaData m = rs.getMetaData();
+            for (int i = 1; i <= m.getColumnCount(); i++)
+            {
+                String fieldName = m.getColumnName(i);
+                fieldNames.add(fieldName);
+            }
+        } catch(Exception e) {
+            // Nothing
+        }finally{
+            DbUtils.closeQuietly((ResultSet)rs);
+            DbUtils.closeQuietly((Connection) c);
+        }
+        return fieldNames;
+    }
+
+    /**
+     * Get the SQLTemplate querydsl needs for a project. This is based on the projects jdbc driver.
+     *
+     * @param p  the project to get the SQLTemplate for.
+     * @return  the SQLTemplate for the projects jdbcdriver.
+     */
+    public static SQLTemplates getSQLTemplate(Project p) {
+        String driver = p.getJdbcDriver();
+        if("org.h2.Driver".equals(driver)) {
+            return H2Templates.builder().quote().build();
+        } else if("org.hsqldb.jdbcDriver".equals(driver)) {
+            return HSQLDBTemplates.builder().quote().build();
+        } else if("com.mysql.jdbc.Driver".equals(driver)) {
+            return MySQLTemplates.builder().quote().build();
+        } else if("com.microsoft.sqlserver.jdbc.SQLServerDriver".equals(driver)
+                || "net.sourceforge.jtds.jdbc.Driver".equals(driver)) {
+            return SQLServerTemplates.builder().quote().printSchema().build();
+        } else {
+            throw new ValidationException("Could not determine dialect from driver. " + driver);
+        }
+    }
 
     public static String getAnnotationFeaturesAsString(Annotation a) {
         String featureString = "";

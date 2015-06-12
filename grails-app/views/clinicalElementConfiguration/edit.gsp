@@ -79,7 +79,7 @@
                     </div>
                     <div class="tab-pane" id="columns" style="margin-left: 20px; margin-right: 20px">
                         <legend>Columns</legend>
-                        <g:render template="templates/elementTable" model="[model: elementConfigurationDTO]" />
+                        <g:render template="create/elementTable" model="[model: elementConfigurationDTO]" />
                     </div>
                     <div class="tab-pane" id="contentTemplateTab" style="margin-left: 20px; margin-right: 20px">
                         <div class="form-inline" style="margin-bottom: 30px" >

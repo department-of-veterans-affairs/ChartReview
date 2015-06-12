@@ -1,6 +1,5 @@
 package chartreview
 
-import com.google.gson.Gson
 import com.mysema.query.sql.SQLTemplates
 import gov.va.vinci.chartreview.ProcessVariablesEnum
 import gov.va.vinci.chartreview.Utils
@@ -12,15 +11,14 @@ import gov.va.vinci.siman.tools.SimanUtils
 import groovy.text.SimpleTemplateEngine
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringEscapeUtils
-import org.apache.commons.validator.GenericValidator
 
+import javax.sql.DataSource
 import javax.validation.ValidationException
 import java.sql.*
-import java.util.regex.Pattern
 import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 import static gov.va.vinci.chartreview.Utils.closeConnection
-
 /**
  * Clinical Element Service
  *
@@ -135,7 +133,11 @@ class ClinicalElementService  {
         String clinicalElementGroup = keyParts.get("clinicalElementGroup");
         String clinicalElementConfigurationId = keyParts.get("clinicalElementConfigurationId");
         String clinicalElementId = keyParts.get("id");
-        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(keyParts.get("clinicalElementConfigurationId"), conn, templates);
+
+        Project p = Project.get(projectId);
+        DataSource ds = Utils.getProjectDatasource(p);
+
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
         List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
 
@@ -165,7 +167,11 @@ class ClinicalElementService  {
         String clinicalElementGroup = keyParts.get("clinicalElementGroup");
         String clinicalElementConfigurationId = keyParts.get("clinicalElementConfigurationId");
         String clinicalElementId = keyParts.get("id");
-        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(keyParts.get("clinicalElementConfigurationId"), keyParts.get("projectId"));
+
+        Project p = Project.get(projectId);
+        DataSource ds = Utils.getProjectDatasource(p);
+
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(keyParts.get("clinicalElementConfigurationId"), ds, p);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
         List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
 
@@ -208,15 +214,18 @@ class ClinicalElementService  {
                     value = w.toString();
                 } else if (o != null && o instanceof byte[]) {
                     String tag = null;
-                    String mimeType = getElementMimeType(projectId, clinicalElementConfigurationId, clinicalElementId, columnName);
-                    if(mimeType.startsWith("video"))
+                    if(columns != null && projectId != null && clinicalElementGroup != null && clinicalElementConfigurationId != null && clinicalElementId != null)
                     {
-                        tag = "<video src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+columnName+"' type='"+mimeType+"'/>";
-                    }
-                    else
+                        String mimeType = getElementMimeType(projectId, clinicalElementConfigurationId, clinicalElementId, columnName);
+                        if(mimeType.startsWith("video"))
+                        {
+                            tag = "<video src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+columnName+"' type='"+mimeType+"'/>";
+                        }
+                        else
 //                    if(mimeType.startsWith("image"))
-                    {
-                        tag = "<img src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+columnName+"'/>";
+                        {
+                            tag = "<img src='clinicalElement/elementBlob?projectId="+projectId+"&clinicalElementGroup="+clinicalElementGroup+"&clinicalElementConfigurationId="+clinicalElementConfigurationId+"&clinicalElementId="+clinicalElementId+"&columnName="+columnName+"'/>";
+                        }
                     }
                     result.put(columnName, tag);
                 } else {
@@ -268,7 +277,10 @@ class ClinicalElementService  {
         keyParts.remove("clinicalElementGroup");
         keyParts.remove("clinicalElementConfigurationId");
 
-        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, conn, templates);
+        Project p = Project.get(projectId);
+        DataSource ds = Utils.getProjectDatasource(p);
+
+        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
         if (!clinicalElementConfiguration) {
             throw new ValidationException("Clinical element configuration with id ${clinicalElementConfigurationId} not found.");
         }
@@ -304,7 +316,10 @@ class ClinicalElementService  {
      * @return  the clinical element field map with key being the field name and value being the field value.
      */
     public LinkedHashMap<String, Object> getClinicalElementByClinicalElementIdFromConnection(Connection conn, SQLTemplates templates, String projectId, String clinicalElementConfigurationId, String clinicalElementId, List<ClinicalElementColumnDef> columns, boolean eliminateBlobColumnsFromQuery, boolean includeAllFields = false) {
-        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, conn, templates);
+        Project p = Project.get(projectId);
+        DataSource ds = Utils.getProjectDatasource(p);
+
+        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
         if (!clinicalElementConfiguration) {
             throw new ValidationException("Clinical element configuration with id ${clinicalElementConfigurationId} not found.");
         }
@@ -397,8 +412,10 @@ class ClinicalElementService  {
         if (!p) {
             throw new ValidationException("Project with id ${projectId} not found.");
         }
+        DataSource ds = Utils.getProjectDatasource(p);
 
-        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, projectId);
+
+        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
         if (!clinicalElementConfiguration) {
             throw new ValidationException("Clinical element configuration with id ${clinicalElementConfigurationId} not found.");
         }
@@ -470,25 +487,35 @@ class ClinicalElementService  {
 
         LinkedHashMap<String, Object> results = new LinkedHashMap<String, Object>();
 
+        try
+        {
+            ResultSetMetaData metaData = rs.getMetaData();
+            List row = new ArrayList();
 
-        ResultSetMetaData metaData = rs.getMetaData();
-        List row = new ArrayList();
-
-        for (int i = 1; i <= metaData.columnCount; i++) {
-            // Don't return exclude columns.
-            if ((removeExcludedFields && !excludeFields.containsKey(i)) || !removeExcludedFields) {
-                Object o = rs.getObject(i);
-                String columnName = dto.dataQueryColumns.get(i-1).columnName;
-                if (o != null && o instanceof Clob) {
-                    Clob clob = (Clob)o;
-                    InputStream inputStream = clob.getAsciiStream();
-                    StringWriter w = new StringWriter();
-                    IOUtils.copy(inputStream, w);
-                    results.put(columnName, w.toString());
-                } else {
-                    results.put(columnName, o);
+            for (int i = 1; i <= metaData.columnCount; i++) {
+                // Don't return exclude columns.
+                if ((removeExcludedFields && !excludeFields.containsKey(i-1)) || !removeExcludedFields) {
+                    Object o = rs.getObject(i);
+                    if(i-1 >= dto.dataQueryColumns.size())
+                    {
+                        int hey = 0;
+                    }
+                    Object col = dto.dataQueryColumns.get(i-1);
+                    String columnName = dto.dataQueryColumns.get(i-1).columnName;
+                    if (o != null && o instanceof Clob) {
+                        Clob clob = (Clob)o;
+                        InputStream inputStream = clob.getAsciiStream();
+                        StringWriter w = new StringWriter();
+                        IOUtils.copy(inputStream, w);
+                        results.put(columnName, w.toString());
+                    } else {
+                        results.put(columnName, o);
+                    }
                 }
             }
+        } catch(Exception e)
+        {
+            // Nothing.
         }
 
         String key = null;
@@ -534,23 +561,25 @@ class ClinicalElementService  {
      * @return              A ClinicalElementConfigurationDetails from the result metadata of the query.
      * @throws SQLException if any type of sql exception occurs connection to or querying the database.
      */
-    public ClinicalElementConfigurationDetails populateColumnInfo(Project p,  ClinicalElementConfigurationDetails config) throws SQLException {
-        // Get a connection to the database
-        Connection conn = null;
+    public ClinicalElementConfigurationDetails populateColumnInfo(DataSource ds,  ClinicalElementConfigurationDetails config) throws SQLException {
+        Connection c = null;
 
         try {
-            conn = projectService.getDatabaseConnection(p);
+            c = ds.getConnection();
 
-            PreparedStatement dataQueryStatement = conn.prepareStatement(config.query);
+            PreparedStatement dataQueryStatement = c.prepareStatement(config.query);
 
             // Execute the data query query
-            dataQueryStatement.setObject(1, config.examplePatientId);
+            if(config.query.indexOf('?') >= 0)
+            {
+                dataQueryStatement.setObject(1, config.examplePatientId);
+            }
             ResultSet rs = dataQueryStatement.executeQuery();
             config.dataQueryColumns = resultSetToColumnDTOArray(rs)
 
         } finally {
             try {
-                conn.close()
+                c.close()
             } catch (Exception e) {
 
             }
@@ -558,17 +587,26 @@ class ClinicalElementService  {
         return config;
     }
 
-    public List getExampleResults(Project p,  ClinicalElementConfigurationDetails config) {
-        // Get a connection to the database
-        Connection conn = null;
+    /**
+     * Return a list of example results give the currently defined queries and columns.
+     * @param p The project to query
+     * @param clinicalElementConfigurationDetails the current clinical element configuration.
+     * @return a results list.
+     */
+    public List getExampleResults(DataSource ds,  ClinicalElementConfigurationDetails config) {
+        Connection c = null;
         List<Map> results = new ArrayList<Map>();
-        try {
-            conn = projectService.getDatabaseConnection(p);
 
-            PreparedStatement dataQueryStatement = conn.prepareStatement(config.query);
+        try {
+            c = ds.getConnection();
+
+            PreparedStatement dataQueryStatement = c.prepareStatement(config.query);
 
             // Execute the data query query
-            dataQueryStatement.setObject(1, config.examplePatientId);
+            if(config.examplePatientId && config.examplePatientId.length() > 0 && config.query.indexOf('?') >= 0)
+            {
+                dataQueryStatement.setObject(1, config.examplePatientId);
+            }
             ResultSet rs = dataQueryStatement.executeQuery();
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
@@ -582,14 +620,12 @@ class ClinicalElementService  {
             }
         } finally {
             try {
-                conn.close()
+                c.close()
             } catch (Exception e) {
             }
         }
         return results;
     }
-
-
 
     /**
      * Transfer a resultset into a list of ClinicalElementColumnDefs
@@ -618,7 +654,11 @@ class ClinicalElementService  {
      */
     public String getElementMimeType(String projectId, String clinicalElementConfigurationId, String clinicalElementId, String columnName) {
         String mimeType = "image/jpeg"
-        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, projectId);
+
+        Project p = Project.get(projectId);
+        DataSource ds = Utils.getProjectDatasource(p);
+
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
         List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
         ClinicalElementColumnDef colDef = findDef(columns, columnName);
@@ -635,7 +675,6 @@ class ClinicalElementService  {
                     String mimeTypeReferenceColumn = subParts[1].trim();
                     Connection c = null;
                     try {
-                        Project p = projectService.getProject(projectId);
                         c = projectService.getDatabaseConnection(p);
                         Map result = getClinicalElementByClinicalElementIdFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId, columns, false, true);
                         Object o1 = result.get(mimeTypeReferenceColumn);
@@ -658,7 +697,11 @@ class ClinicalElementService  {
      */
     public Map<String, Object> getElementBlobAndMimeType(String projectId, String clinicalElementConfigurationId, String clinicalElementId, String columnName) {
         Map<String, Object> ret = new HashMap();
-        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, projectId);
+
+        Project p = Project.get(projectId);
+        DataSource ds = Utils.getProjectDatasource(p);
+
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
         List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
         ClinicalElementColumnDef colDef = findDef(columns, columnName);
@@ -677,7 +720,6 @@ class ClinicalElementService  {
                     byte[] blob = null;
                     Connection c = null;
                     try {
-                        Project p = projectService.getProject(projectId);
                         c = projectService.getDatabaseConnection(p);
                         Map result = getClinicalElementByClinicalElementIdFromConnection(c, Utils.getSQLTemplate(p.getJdbcDriver()), projectId, clinicalElementConfigurationId, clinicalElementId, columns, false, true);
                         Object o1 = result.get(mimeTypeReferenceColumn);

@@ -1,13 +1,10 @@
 package chartreview
-
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import gov.va.vinci.chartreview.*
 import gov.va.vinci.chartreview.model.ActivitiRuntimeProperty
 import gov.va.vinci.chartreview.model.ClinicalElementDisplayParameters
 import gov.va.vinci.chartreview.model.Project
-import gov.va.vinci.chartreview.model.schema.AnnotationSchema
-import gov.va.vinci.chartreview.TaskDefinitionWithVariable
 import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
 import gov.va.vinci.chartreview.util.NotFoundException
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
@@ -36,10 +33,10 @@ import org.apache.commons.validator.GenericValidator
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
+import javax.sql.DataSource
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import java.sql.Connection
-import java.sql.ResultSet
 
 import static gov.va.vinci.chartreview.Utils.closeConnection
 
@@ -687,7 +684,10 @@ class ProcessService {
 
             clinicalElements.each {
                 if (it.include) {
-                    results.put(clinicalElementConfigurationService.getClinicalElementConfiguration(it.clinicalElementConfigurationId, projectId), it);
+                    Project p = Project.get(projectId);
+                    DataSource ds = Utils.getProjectDatasource(p);
+
+                    results.put(clinicalElementConfigurationService.getClinicalElementConfiguration(it.clinicalElementConfigurationId, ds, p), it);
                 }
             }
         }
@@ -871,8 +871,11 @@ class ProcessService {
         schema.setTextContent(annotationSchema.name);
         task.appendChild(schema);
 
+        Project p = Project.get(projectId);
+        DataSource ds = Utils.getProjectDatasource(p);
+
         // Get the primary clinical element information.
-        ClinicalElementConfiguration primaryClinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(variables.get(TaskVariablesEnum.PRIMARY_CLINICAL_ELEMENT.getName()), projectId);
+        ClinicalElementConfiguration primaryClinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(variables.get(TaskVariablesEnum.PRIMARY_CLINICAL_ELEMENT.getName()), ds, p);
         if (!primaryClinicalElementConfiguration) {
             throw new IllegalArgumentException("Could not find primary clinical element configuration ('${variables.get(TaskVariablesEnum.PRIMARY_CLINICAL_ELEMENT.getName())}')");
         }

@@ -132,7 +132,7 @@ class AnnotationServiceTest {
 
         mockDomain(Project, testInstances)
 
-        Project p = new Project(id: '1', name: "Project1", description: "Test Project 1", jdbcDriver: "org.h2.Driver", databaseConnectionUrl: DB_CONNECTION_URL, jdbcPassword: "", jdbcUsername: "sa").save();
+        Project p = new Project(id: '1', name: "Project1", description: "Test Project 1", jdbcDriver: "org.h2.Driver", databaseConnectionUrl: DB_CONNECTION_URL, jdbcPassword: "", jdbcUsername: "sa", active:true).save();
 
         //println("Starting H2 web server... should be empty...");
         //org.h2.tools.Server.startWebServer(conn);
@@ -261,7 +261,7 @@ class AnnotationServiceTest {
 
         mockDomain(Project, testInstances)
 
-        Project p = new Project(id: '1', name: "Project1", description: "Test Project 1", jdbcDriver: "org.h2.Driver", databaseConnectionUrl: DB_CONNECTION_URL, jdbcPassword: "", jdbcUsername: "sa").save();
+        Project p = new Project(id: '1', name: "Project1", description: "Test Project 1", jdbcDriver: "org.h2.Driver", databaseConnectionUrl: DB_CONNECTION_URL, jdbcPassword: "", jdbcUsername: "sa", active:true).save();
 
         //println("Starting H2 web server... should be empty...");
      //   org.h2.tools.Server.startWebServer(conn);
@@ -335,7 +335,7 @@ class AnnotationServiceTest {
                """;
 
 
-        new Project(id: '1', name: "Project1", description: "Test Project 1", jdbcDriver: "org.h2.Driver", databaseConnectionUrl: DB_CONNECTION_URL, jdbcPassword: "", jdbcUsername: "sa").save();
+        new Project(id: '1', name: "Project1", description: "Test Project 1", jdbcDriver: "org.h2.Driver", databaseConnectionUrl: DB_CONNECTION_URL, jdbcPassword: "", jdbcUsername: "sa", active:true).save();
 
         //println("Starting H2 web server... should be empty...");
 

@@ -1,16 +1,11 @@
 package gov.va.vinci.chartreview.model;
 
-import gov.va.vinci.siman.model.ClinicalElementConfiguration;
 import gov.va.vinci.siman.tools.DbConnectionInfo;
 import grails.validation.Validateable;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -26,6 +21,8 @@ public class Project implements Serializable{
     private String jdbcPassword;
     private Timestamp version;
     private List<UserProjectRole> authorities;
+    private String schema;
+    private boolean active = true;
 
     @Id
     @Column(length = 36)
@@ -91,6 +88,23 @@ public class Project implements Serializable{
         this.jdbcPassword = jdbcPassword;
     }
 
+    @Column(length=128, name = "database_schema")
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
+    @Column
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
     @OneToMany(fetch=FetchType.EAGER, cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE}, mappedBy="project")
     @OrderBy("user")
@@ -110,7 +124,6 @@ public class Project implements Serializable{
     public void setVersion(Timestamp version) {
         this.version = version;
     }
-
 
     @Transient
     public DbConnectionInfo getDbConnectionInfo() {

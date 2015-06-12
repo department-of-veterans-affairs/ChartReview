@@ -243,7 +243,7 @@ Ext.define('CR.app.view.ItemInfo', {
         var clinicalElementConfiguration = CR.app.model.CRAppData.getClinicalElementConfiguration(clinicalElementConfigurationId);
         if(clinicalElementConfiguration)
         {
-            if(clinicalElementConfiguration.elementType == 'LIST' || clinicalElementConfiguration.elementType == 'BOTH')
+            if(clinicalElementConfiguration.elementType.toUpperCase() == 'LIST' || clinicalElementConfiguration.elementType.toUpperCase() == 'BOTH')
             {
                 var tab = this.addItem('itemlist', 'List');
 
@@ -261,7 +261,7 @@ Ext.define('CR.app.view.ItemInfo', {
                     }
                 });
             }
-            if(clinicalElementConfiguration.elementType == 'SUMMARY' || clinicalElementConfiguration.elementType == 'BOTH')
+            if(clinicalElementConfiguration.elementType.toUpperCase() == 'SUMMARY' || clinicalElementConfiguration.elementType.toUpperCase() == 'BOTH')
             {
                 var tab = this.addItem('itemsummary', 'Summary');
 

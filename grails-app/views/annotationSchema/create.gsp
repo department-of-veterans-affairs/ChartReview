@@ -23,7 +23,7 @@
 <br/><br/>
 
 
-<div ng-app="schemaApp" ng-controller="SchemaController" <g:if test="${id}">ng-init="init('${id}', '${session.getAttribute(chartreview.AnnotationSchemaController.SELECTED_PROJECT)}');"</g:if> style="margin: 40px" >
+<div ng-app="schemaApp" ng-controller="SchemaController" <g:if test="${id}">ng-init="init('${id}', '${session.getAttribute(chartreview.Utils.SELECTED_PROJECT)}');"</g:if> style="margin: 40px" >
     <legend>${mode} Schema</legend>
     <ul class="nav nav-tabs" id="myTab">
         <li class="active"><a href="#generalTab">General Configuration</a></li>
