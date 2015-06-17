@@ -180,8 +180,6 @@ class ProjectController {
             redirect(action: "list")
             return
         }
-//        def userArray = userListToUsernames(projectService.projectUsers(projectInstance));
-//        def userList = "";
         List<User> users = User.findAll().unique();
         String userListStr = "";
         for(int i = 0; i < users.size(); i++)

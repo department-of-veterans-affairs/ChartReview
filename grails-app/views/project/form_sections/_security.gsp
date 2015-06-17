@@ -59,7 +59,7 @@
         }
         else if(!found2)
         {
-            alert(newName + " is not found.");
+            alert(newName + " is not a valid user (ask the system administrator to add this user for you).");
         }
         else
         {
