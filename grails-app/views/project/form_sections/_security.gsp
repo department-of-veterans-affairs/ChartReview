@@ -21,7 +21,7 @@
     </tbody>
 </table>
 <div style="vertical-align: middle" >Find User: <input type="text" id="username"/>
-<br/><a href="#" class="btn btn-primary" id="addUserButton">Add</a></div>
+    <br/><a href="#" class="btn btn-primary" id="addUserButton" onclick="addUser('${userList}')" >Add</a></div>
  <br/><br/>
 
 <fieldset class="buttons">
@@ -36,17 +36,35 @@
         });
     });
 
-    $(document).ready(function(){
-        $("#addUserButton").click(function(){
+    function addUser(userList){
+        var newName = $('#username').val();
+        var idx = userList.indexOf(newName);
+        var found1 = idx >= 0 ? true : false;
+        var adminBody = administrators.children[1];
+        var userListUI = "";
+        for(i = 0; i < adminBody.children.length; i++)
+        {
+            var tRow = adminBody.children[i];
+            var idCell = tRow.cells[0];
+            userListUI += idCell.innerHTML.substring(idCell.innerHTML.indexOf('>')+1);
+            if(i < adminBody.children.length - 1)
+            {
+                userListUI += ",";
+            }
+        }
+        idx = userListUI.indexOf(newName);
+        var found2 = idx >= 0 ? true : false;
+        if(!found1 && !found2)
+        {
             $("#administrators tbody").append('<tr>' +
-                                                    '<td><input type="hidden" value="' + $('#username').val() + '" name="username"/>' + $('#username').val() + '</td>' +
-                                                    '<td><select name="role">' +
-                                                        <g:each in="${gov.va.vinci.chartreview.model.Role.findAll().sort{it.name}}" var="it">'<option value="${it.id}">${it.name}</option>' +</g:each>
-                                                    '      </select></td>' +
-                                                    '<td style="text-align: center" class="delete"><i class="icon-trash"></i>Remove&nbsp;&nbsp;</td>'+
-                                                '</tr>');
-        });
-    });
+            '<td><input type="hidden" value="' + $('#username').val() + '" name="username"/>' + $('#username').val() + '</td>' +
+            '<td><select name="role">' +
+            <g:each in="${gov.va.vinci.chartreview.model.Role.findAll().sort{it.name}}" var="it">'<option value="${it.id}">${it.name}</option>' +</g:each>
+            '      </select></td>' +
+            '<td style="text-align: center" class="delete"><i class="icon-trash"></i>Remove&nbsp;&nbsp;</td>'+
+            '</tr>');
+        }
+    }
     $(document).on('click', 'td.delete', del);
 
     function del() {

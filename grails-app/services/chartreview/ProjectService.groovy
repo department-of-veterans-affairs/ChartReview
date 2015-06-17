@@ -1,5 +1,4 @@
 package chartreview
-
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.Role
 import gov.va.vinci.chartreview.model.User
@@ -13,7 +12,6 @@ import org.codehaus.groovy.grails.web.servlet.mvc.GrailsHttpSession
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
 import org.codehaus.groovy.grails.web.util.WebUtils
 import org.ietf.jgss.GSSCredential
-import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper
 
 import javax.servlet.http.HttpServletRequest
 import java.security.Principal
@@ -39,6 +37,22 @@ class ProjectService {
             }
         }
         return admins;
+    }
+
+    /**
+     * Return a list of administrators for a project.
+     * @param p the project to get administrators for.
+     * @return a list of users that have ROLE_ADMIN on the project.
+     */
+    public List<User> projectUsers(Project p) {
+        List<User> users = new ArrayList<User>();
+
+        p.authorities.each { authority ->
+            if (authority.processStepId == null) {
+                users.add(authority.user);
+            }
+        }
+        return users;
     }
 
     /**

@@ -1,28 +1,16 @@
 package chartreview
-
 import com.mysema.query.sql.SQLQuery
 import com.mysema.query.sql.SQLQueryFactoryImpl
 import com.mysema.query.sql.SQLTemplates
 import gov.va.vinci.chartreview.Utils
 import gov.va.vinci.chartreview.db.CreateAndDropAnnotationSchemaRecord
-import gov.va.vinci.chartreview.model.ActivitiRuntimeProperty
-import gov.va.vinci.chartreview.model.Project
-import gov.va.vinci.chartreview.model.ProjectDocument
-import gov.va.vinci.chartreview.model.QAnnotationTask
-import gov.va.vinci.chartreview.model.Role
-import gov.va.vinci.chartreview.model.User
-import gov.va.vinci.chartreview.model.UserProjectRole
+import gov.va.vinci.chartreview.model.*
 import gov.va.vinci.chartreview.util.AnnotationTaskCreate
-import gov.va.vinci.leo.tools.db.DataManager
 import gov.va.vinci.siman.dao.AnnotationDAO
 import gov.va.vinci.siman.model.Annotation
 import gov.va.vinci.siman.model.QAnnotation
 import gov.va.vinci.siman.model.QClinicalElement
-import gov.va.vinci.siman.schema.ClinicalElementConfigurationCreate
-import gov.va.vinci.siman.schema.ClinicalElementConfigurationDrop
-import gov.va.vinci.siman.schema.SimanCreate
-import gov.va.vinci.siman.schema.SimanDrop
-import gov.va.vinci.siman.schema.SimanValidate
+import gov.va.vinci.siman.schema.*
 import gov.va.vinci.siman.tools.ConnectionProvider
 import gov.va.vinci.siman.tools.SimanUtils
 import org.apache.commons.dbutils.DbUtils
@@ -192,12 +180,23 @@ class ProjectController {
             redirect(action: "list")
             return
         }
-
+        def userArray = userListToUsernames(projectService.projectUsers(projectInstance));
+        def userList = "";
+        for(int i = 0; i < userArray.size(); i++)
+        {
+            def user = userArray.get(i);
+            if(userList.size() >= 0)
+            {
+                userList += ",";
+            }
+            userList += user;
+        }
         [
             administrators: userListToUsernames(projectService.projectAdministrators(projectInstance)),
             projectInstance: projectInstance,
             type: 'update',
-            submitButton: 'Update'
+            submitButton: 'Update',
+            userList: userList,
         ]
     }
 
@@ -484,7 +483,6 @@ class ProjectController {
             counter++;
         }
 
-
         p.save(flush:true, failOnError: true);
 
     }
@@ -517,7 +515,7 @@ class ProjectController {
         usernames.each { username ->
             if (!User.findByUsername(username)) {
                 project.errors.reject("username.not.found", "User [${username}] is not a valid user.".toString());
-                result = false;
+//                result = false;
             }
         }
         return project;

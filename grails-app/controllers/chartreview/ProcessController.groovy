@@ -116,6 +116,8 @@ class ProcessController {
                 conversation.processes = processList;
                 conversation.serviceParameters = new HashMap<String, String>();
                 conversation.possibleAnnotationGroups = getPossibleAnnotationGroups(p);
+                List<ProjectDocument> projectDocumentList = ProjectDocument.findAllByProject(conversation.project).sort{it.name};
+                conversation.projectDocumentList = projectDocumentList;
 
                 // Copying from an existing process.
                 if ( params.proc ) {
@@ -147,8 +149,6 @@ class ProcessController {
                 conversation.tasksWithVariables = tasks;
                 conversation.model = model;
                 conversation.formProperties = props;
-                List<ProjectDocument> projectDocumentList = ProjectDocument.findAllByProject(conversation.model.project).sort{it.name};
-                conversation.projectDocumentList = projectDocumentList;
             }.to "step2"
         }
         step2 {
