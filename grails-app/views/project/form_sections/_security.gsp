@@ -21,7 +21,7 @@
     </tbody>
 </table>
 <div style="vertical-align: middle" >Find User: <input type="text" id="username"/>
-    <br/><a href="#" class="btn btn-primary" id="addUserButton" onclick="addUser('${userList}')" >Add</a></div>
+    <br/><a href="#" class="btn btn-primary" id="addUserButton" onclick="addUser('${userListStr}')" >Add</a></div>
  <br/><br/>
 
 <fieldset class="buttons">
@@ -36,25 +36,32 @@
         });
     });
 
-    function addUser(userList){
+    function addUser(userListStr){
         var newName = $('#username').val();
-        var idx = userList.indexOf(newName);
-        var found1 = idx >= 0 ? true : false;
-        var adminBody = administrators.children[1];
-        var userListUI = "";
-        for(i = 0; i < adminBody.children.length; i++)
+
+        // Get the list of users already added to the project.
+        var projectUsersBody = administrators.children[1];
+        var projectUsers = [];
+        for(i = 0; i < projectUsersBody.children.length; i++)
         {
-            var tRow = adminBody.children[i];
+            var tRow = projectUsersBody.children[i];
             var idCell = tRow.cells[0];
-            userListUI += idCell.innerHTML.substring(idCell.innerHTML.indexOf('>')+1);
-            if(i < adminBody.children.length - 1)
-            {
-                userListUI += ",";
-            }
+            projectUsers.push(idCell.innerHTML.substring(idCell.innerHTML.indexOf('>')+1));
         }
-        idx = userListUI.indexOf(newName);
-        var found2 = idx >= 0 ? true : false;
-        if(!found1 && !found2)
+        var found1 = projectUsers.indexOf(newName) >= 0 ? true : false;
+
+        // Verify that the user is in the system.
+        var userList = userListStr.split(",");
+        var found2 = userList.indexOf(newName) >= 0 ? true : false;
+        if(found1)
+        {
+            alert(newName + " is already in the list.");
+        }
+        else if(!found2)
+        {
+            alert(newName + " is not found.");
+        }
+        else
         {
             $("#administrators tbody").append('<tr>' +
             '<td><input type="hidden" value="' + $('#username').val() + '" name="username"/>' + $('#username').val() + '</td>' +

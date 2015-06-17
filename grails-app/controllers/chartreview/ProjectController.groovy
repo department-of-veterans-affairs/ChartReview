@@ -180,23 +180,25 @@ class ProjectController {
             redirect(action: "list")
             return
         }
-        def userArray = userListToUsernames(projectService.projectUsers(projectInstance));
-        def userList = "";
-        for(int i = 0; i < userArray.size(); i++)
+//        def userArray = userListToUsernames(projectService.projectUsers(projectInstance));
+//        def userList = "";
+        List<User> users = User.findAll().unique();
+        String userListStr = "";
+        for(int i = 0; i < users.size(); i++)
         {
-            def user = userArray.get(i);
-            if(userList.size() >= 0)
+            def user = users.get(i);
+            if(i > 0)
             {
-                userList += ",";
+                userListStr += ",";
             }
-            userList += user;
+            userListStr += user.username;
         }
         [
             administrators: userListToUsernames(projectService.projectAdministrators(projectInstance)),
             projectInstance: projectInstance,
             type: 'update',
             submitButton: 'Update',
-            userList: userList,
+            userListStr: userListStr,
         ]
     }
 
