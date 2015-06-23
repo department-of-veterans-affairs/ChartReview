@@ -256,17 +256,17 @@ class ExampleDataUtils {
                                                     ClinicalElementConfiguration labClinicalElementConfiguration,
                                                     ClinicalElementConfiguration tiuClinicalElementConfiguration,
                                                     ClinicalElementConfiguration patientClinicalElementConfiguration) {
-        Project chartReviewProject = new Project(id: '056fb6c9-bf16-4c07-a89c-e7c0328bc341', name: "ChartReview", description: "Test Description", jdbcDriver: "com.mysql.jdbc.Driver", databaseConnectionUrl: "jdbc:mysql://localhost/chartreview?useUnicode=yes&characterEncoding=UTF-8", jdbcPassword: "", jdbcUsername: "sa", active:true);
+        Project chartReviewProject = new Project(id: '056fb6c9-bf16-4c07-a89c-e7c0328bc341', name: "ChartReview", description: "Test Description", jdbcDriver: "com.mysql.jdbc.Driver", databaseConnectionUrl: "jdbc:mysql://localhost/chartreview?useUnicode=yes&characterEncoding=UTF-8", jdbcPassword: "", jdbcUsername: "sa");
         chartReviewProject.save(flush: true, failOnError: true);
 
-        Project project1 = new Project(id: '1', name: "p1", description: "Test Project 1", jdbcDriver: "com.mysql.jdbc.Driver", databaseConnectionUrl: "jdbc:mysql://localhost/chartreview?useUnicode=yes&characterEncoding=UTF-8", jdbcPassword: "", jdbcUsername: "sa", active:true);
+        Project project1 = new Project(id: '1', name: "p1", description: "Test Project 1", jdbcDriver: "com.mysql.jdbc.Driver", databaseConnectionUrl: "jdbc:mysql://localhost/chartreview?useUnicode=yes&characterEncoding=UTF-8", jdbcPassword: "", jdbcUsername: "sa");
         project1.clinicalElementConfigurations = new ArrayList<ClinicalElementConfiguration>();
         project1.clinicalElementConfigurations.add(patientClinicalElementConfiguration);
         project1.clinicalElementConfigurations.add(tiuClinicalElementConfiguration);
         project1.clinicalElementConfigurations.add(labClinicalElementConfiguration);
         project1.save(flush: true, failOnError: true);
 
-        Project project2 = new Project(id: '2', name: "p2", description: "Test Project 2", jdbcDriver: "com.mysql.jdbc.Driver", databaseConnectionUrl: "jdbc:mysql://localhost/chartreview?useUnicode=yes&characterEncoding=UTF-8", jdbcPassword: "", jdbcUsername: "sa", active:true);
+        Project project2 = new Project(id: '2', name: "p2", description: "Test Project 2", jdbcDriver: "com.mysql.jdbc.Driver", databaseConnectionUrl: "jdbc:mysql://localhost/chartreview?useUnicode=yes&characterEncoding=UTF-8", jdbcPassword: "", jdbcUsername: "sa");
         project2.clinicalElementConfigurations = new ArrayList<ClinicalElementConfiguration>();
         project2.clinicalElementConfigurations.add(patientClinicalElementConfiguration);
         project2.save(flush: true, failOnError: true);
