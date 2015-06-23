@@ -22,7 +22,7 @@ public class Project implements Serializable{
     private Timestamp version;
     private List<UserProjectRole> authorities;
     private String schema;
-    private Boolean active = true;
+//    private Boolean active = true;
 
     @Id
     @Column(length = 36)
@@ -97,14 +97,14 @@ public class Project implements Serializable{
         this.schema = schema;
     }
 
-    @Column
-    public Boolean isActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
+//    @Column
+//    public Boolean isActive() {
+//        return active;
+//    }
+//
+//    public void setActive(Boolean active) {
+//        this.active = active;
+//    }
 
     @OneToMany(fetch=FetchType.EAGER, cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE}, mappedBy="project")
     @OrderBy("user")

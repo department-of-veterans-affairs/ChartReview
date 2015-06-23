@@ -175,7 +175,7 @@ class BootStrap {
             Role userRole = new Role(id: UUID.randomUUID().toString(), name: "ROLE_USER");
             userRole.save(flush: true, failOnError: true);
 
-            Project chartReviewProject = new Project(id: UUID.randomUUID().toString(), name: "ChartReview", description: "Test Description", jdbcDriver: "com.mysql.jdbc.Driver", databaseConnectionUrl: "jdbc:mysql://localhost/chartreview?useUnicode=yes&characterEncoding=UTF-8", jdbcPassword: "passw0rd", jdbcUsername: "chartreview", active: true);
+            Project chartReviewProject = new Project(id: UUID.randomUUID().toString(), name: "ChartReview", description: "Test Description", jdbcDriver: "com.mysql.jdbc.Driver", databaseConnectionUrl: "jdbc:mysql://localhost/chartreview?useUnicode=yes&characterEncoding=UTF-8", jdbcPassword: "passw0rd", jdbcUsername: "chartreview");
             chartReviewProject.save(flush: true, failOnError: true);
 
             UserProjectRole ur = new UserProjectRole(id: UUID.randomUUID().toString(), user: globalAdmin, role: adminRole, project: chartReviewProject);
