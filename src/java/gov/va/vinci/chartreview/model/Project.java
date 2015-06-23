@@ -22,7 +22,7 @@ public class Project implements Serializable{
     private Timestamp version;
     private List<UserProjectRole> authorities;
     private String schema;
-    private boolean active = true;
+    private Boolean active = true;
 
     @Id
     @Column(length = 36)
@@ -98,11 +98,11 @@ public class Project implements Serializable{
     }
 
     @Column
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
