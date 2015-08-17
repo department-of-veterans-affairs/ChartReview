@@ -66,6 +66,11 @@
 <br/>
 <g:textField name="taskVariablesList[${i}].${TaskVariablesEnum.ANNOTATION_GROUP.getName()}" class="input-xxlarge annotationGroup" value="${model.taskVariablesList[i].parameters?.get(TaskVariablesEnum.ANNOTATION_GROUP.getName())}"/>
 <br/><br/>
+<div class="text-info" style="background-color: lightyellow; border: 1px solid #0000ff; padding: 5px; margin-bottom: 10px">
+    The annotationGroup in Chart Review works by deleting all annotations for a user/annotation group when they save their changes and saving new submitted
+    annotations as the users complete annotation set. If tasks are independent of each other, annotation group should be unique throughout a project.
+    When in doubt, make this a unique name that is not used on other tasks.
+</div>
 <strong>Task Pre-Annotation Group
     <i class="icon-question-sign" rel="tooltip" title="The annotation group to load as pre-annotations to this task. If there are multiple pre-annotation groups, separate them with a SEMI-COLON AND NO SPACES. For example: group1;group2;group3" id="taskPreAnnotationGroupToolTip"></i></strong>
 <br/>

@@ -26,7 +26,7 @@ class ChartReviewUserDetailsService  implements GrailsUserDetailsService {
 
             List<UserProjectRole> roles = UserProjectRole.findAllByUser(user);
 
-            user.authorities = roles;
+            user.setAuthorities(roles);
 
             if (!user) throw new UsernameNotFoundException('User not found', username)
             return user;

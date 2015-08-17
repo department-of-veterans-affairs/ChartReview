@@ -2,6 +2,8 @@ package chartreview
 import com.mysema.query.sql.SQLQuery
 import com.mysema.query.sql.SQLQueryFactoryImpl
 import com.mysema.query.sql.SQLTemplates
+import gov.va.vinci.siman.schema.ClinicalElementConfigurationCreate
+import gov.va.vinci.siman.schema.ClinicalElementConfigurationDrop
 import gov.va.vinci.chartreview.Utils
 import gov.va.vinci.chartreview.db.CreateAndDropAnnotationSchemaRecord
 import gov.va.vinci.chartreview.model.*

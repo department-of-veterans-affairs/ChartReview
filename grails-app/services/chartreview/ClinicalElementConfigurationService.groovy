@@ -67,6 +67,7 @@ class ClinicalElementConfigurationService {
         Connection connection = null;
         try {
             Project project = Project.get(projectId);
+//            project.setSchema("dflt")
             connection = projectService.getDatabaseConnection(project);
 
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(connection, Utils.getSQLTemplate(project.getJdbcDriver()));

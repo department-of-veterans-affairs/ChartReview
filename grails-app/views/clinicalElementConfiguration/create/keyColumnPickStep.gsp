@@ -3,7 +3,7 @@
 <head>
     <meta name="layout" content="main">
     <r:require modules="bootstrap"/>
-    <title>Clinical Element Configuration Wizard</title>
+    <title>Clinical Element Configuration Wizard Step 2</title>
 </head>
 <body>
 <br/><br/><br/>

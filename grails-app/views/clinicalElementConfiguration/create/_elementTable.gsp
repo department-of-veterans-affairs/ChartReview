@@ -24,8 +24,14 @@
             <td>${column.columnName}</td>
             <td>${column.displayName}</td>
             <td>${column.type}</td>
-            <td style="text-align: center">${column.keyField}</td>
-            <td style="text-align: center">${column.exclude}</td>
+            <td style="text-align: center">
+                <g:if test="${column.keyField}" ><span class="glyphicon glyphicon-ok"></span></span></g:if>
+                <g:else><span class="glyphicon glyphicon-unchecked"></span></g:else>
+            </td>
+            <td style="text-align: center">
+                <g:if test="${column.exclude}" ><span class="glyphicon glyphicon-ok"></span></span></g:if>
+                <g:else><span class="glyphicon glyphicon-unchecked"></span></g:else>
+            </td>
         </tr>
     </g:each>
 </table>

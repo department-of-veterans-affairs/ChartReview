@@ -1,8 +1,8 @@
 package gov.va.vinci.chartreview.nlp;
 
+import chartreview.AnnotationSchemaService;
 import chartreview.ProcessService;
 import chartreview.ProjectService;
-import chartreview.AnnotationSchemaService;
 import gov.va.vinci.chartreview.ProcessVariablesEnum;
 import gov.va.vinci.chartreview.Utils;
 import gov.va.vinci.chartreview.model.ActivitiRuntimeProperty;
@@ -15,7 +15,6 @@ import grails.util.Holders;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
 import org.apache.log4j.Logger;
-import org.apache.uima.collection.CollectionReader;
 import org.springframework.context.ApplicationContext;
 
 import javax.sql.DataSource;
@@ -113,18 +112,18 @@ public class ActivitiNlpDelegate implements JavaDelegate {
             // TODO - What to set this too?
             myClient.setCasPoolSize(1);
 
-            SimanPatientCollectionReader reader = new SimanPatientCollectionReader(Utils.getActivitiRuntimePropertyFromList("jdbcDriver", propertyList).getValue(),
-                    Utils.getActivitiRuntimePropertyFromList("databaseConnectionUrl", propertyList).getValue(),
-                    Utils.getActivitiRuntimePropertyFromList("jdbcUsername", propertyList).getValue(),
-                    Utils.getActivitiRuntimePropertyFromList("jdbcPassword", propertyList).getValue(),
-                    false, // Load existing annotation.
-                    ((String)serviceVariables.get("serviceTask:" + delegateExecution.getCurrentActivityId() + "-clinicalElements")).split(","), // Clinical Element config ids.
-                    (String) allVariables.get(ProcessVariablesEnum.PROCESS_ID.getName()),
-                    (String) allVariables.get(ProcessVariablesEnum.PROJECT_ID.getName()),
-                    true,
-                    (String) keyParts.get("patientId")
-                    );
-            myClient.run(reader);
+//            SimanPatientCollectionReader reader = new SimanPatientCollectionReader(Utils.getActivitiRuntimePropertyFromList("jdbcDriver", propertyList).getValue(),
+//                    Utils.getActivitiRuntimePropertyFromList("databaseConnectionUrl", propertyList).getValue(),
+//                    Utils.getActivitiRuntimePropertyFromList("jdbcUsername", propertyList).getValue(),
+//                    Utils.getActivitiRuntimePropertyFromList("jdbcPassword", propertyList).getValue(),
+//                    false, // Load existing annotation.
+//                    ((String)serviceVariables.get("serviceTask:" + delegateExecution.getCurrentActivityId() + "-clinicalElements")).split(","), // Clinical Element config ids.
+//                    (String) allVariables.get(ProcessVariablesEnum.PROCESS_ID.getName()),
+//                    (String) allVariables.get(ProcessVariablesEnum.PROJECT_ID.getName()),
+//                    true,
+//                    (String) keyParts.get("patientId"),
+//                    null);
+//            myClient.run(reader);
         } catch (Exception e) {
             System.out.println("Got exception: " + e);
             e.printStackTrace();

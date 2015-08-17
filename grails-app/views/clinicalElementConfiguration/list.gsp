@@ -26,15 +26,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                <g:each in="${projectClinicalElementConfigurations.sort{it.name}}" status="i" var="dataSetConfigurationInstance">
+                <g:each in="${projectClinicalElementConfigurationListObjs.sort{it.obj.name}}" status="i" var="dataSetConfigurationListInstance">
                     <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-                        <td><g:link action="show" params="${[id: dataSetConfigurationInstance.id, projectId: params.projectId]}">${fieldValue(bean: dataSetConfigurationInstance, field: "name")}</g:link></td>
-                        <td>${fieldValue(bean: dataSetConfigurationInstance, field: "description")}</td>
-                        <td style="text-align: center;">${fieldValue(bean: dataSetConfigurationInstance, field: "active")}</td>
-                        <td style="text-align: center"><g:link action="edit" params="${[id: dataSetConfigurationInstance.id, projectId: params.projectId]}" ><i class="icon-pencil"></g:link></i></td>
-                        <td style="text-align: center"><g:link action="delete" params="${[id: dataSetConfigurationInstance.id, projectId: params.projectId]}" onclick="return confirm('Delete this clinical element configuration?');"><i class="icon-trash"></g:link></i></td>
-                        <td style="text-align: center"><g:link action="create" params="${[id: dataSetConfigurationInstance.id, projectId: params.projectId]}" ><i class="icon-share"></g:link></i></td>
-                        <td style="text-align: center"><g:link action="export" params="${[id: dataSetConfigurationInstance.id, projectId: params.projectId]}" target="_blank"><i class="icon-arrow-down"></g:link></i></td>
+                        <td><g:link action="show" params="${[id: dataSetConfigurationListInstance.obj.id, projectId: params.projectId]}">${fieldValue(bean: dataSetConfigurationListInstance, field: "obj.name")}</g:link></td>
+                        <td>${fieldValue(bean: dataSetConfigurationListInstance, field: "obj.description")}</td>
+                        <td style="text-align: center;">${fieldValue(bean: dataSetConfigurationListInstance, field: "obj.active")}</td>
+                        <td style="text-align: center"><g:link action="edit" params="${[id: dataSetConfigurationListInstance.obj.id, projectId: params.projectId]}" ><i class="icon-pencil"></g:link></i></td>
+                        <td style="text-align: center"><g:if test="${dataSetConfigurationListInstance.canDelete}"><g:link action="delete" params="${[id: dataSetConfigurationListInstance.obj.id, projectId: params.projectId]}" onclick="return confirm('Delete this clinical element configuration?');"><i class="icon-trash"></g:link></g:if></i></td>
+                        <td style="text-align: center"><g:link action="create" params="${[id: dataSetConfigurationListInstance.obj.id, projectId: params.projectId]}" ><i class="icon-share"></g:link></i></td>
+                        <td style="text-align: center"><g:link action="export" params="${[id: dataSetConfigurationListInstance.obj.id, projectId: params.projectId]}" target="_blank"><i class="icon-arrow-down"></g:link></i></td>
                     </tr>
                 </g:each>
                 </tbody>

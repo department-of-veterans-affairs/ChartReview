@@ -561,7 +561,7 @@ class ClinicalElementService  {
      * @return              A ClinicalElementConfigurationDetails from the result metadata of the query.
      * @throws SQLException if any type of sql exception occurs connection to or querying the database.
      */
-    public ClinicalElementConfigurationDetails populateColumnInfo(DataSource ds,  ClinicalElementConfigurationDetails config) throws SQLException {
+    public void populateColumnInfo(DataSource ds, ClinicalElementConfigurationDetails config) throws SQLException {
         Connection c = null;
 
         try {
@@ -584,7 +584,6 @@ class ClinicalElementService  {
 
             }
         }
-        return config;
     }
 
     /**
