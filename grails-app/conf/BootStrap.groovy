@@ -21,6 +21,8 @@ import java.sql.Connection
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
+import gov.va.vinci.chartreview.ChartReviewSessionListener;
+
 class BootStrap {
     def springSecurityService;
     GrailsApplication grailsApplication;
@@ -37,6 +39,7 @@ class BootStrap {
 
 
     def init = { servletContext ->
+        servletContext.addListener(new ChartReviewSessionListener());
 
         SpringSecurityUtils.clientRegisterFilter(
                     'myPreAuthFilter', SecurityFilterPosition.PRE_AUTH_FILTER.order);
