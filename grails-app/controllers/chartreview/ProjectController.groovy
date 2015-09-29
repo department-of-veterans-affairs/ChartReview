@@ -131,7 +131,8 @@ class ProjectController {
             CreateAndDropAnnotationSchemaRecord schema = new CreateAndDropAnnotationSchemaRecord(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
             schema.executeCreate();
         } finally {
-            DbUtils.close(c);
+
+            Utils.closeConnection(c);
         }
 
         redirect(action: "show", id: projectInstance.id);
@@ -156,7 +157,8 @@ class ProjectController {
             ClinicalElementConfigurationDrop clinicalElementConfigurationCreate = new ClinicalElementConfigurationDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
             clinicalElementConfigurationCreate.execute();
         } finally {
-            DbUtils.close(c);
+
+            Utils.closeConnection(c);
         }
         redirect(action: "show", id: projectInstance.id);
         return

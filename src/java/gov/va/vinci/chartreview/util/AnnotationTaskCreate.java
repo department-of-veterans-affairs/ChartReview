@@ -1,6 +1,7 @@
 package gov.va.vinci.chartreview.util;
 
 import com.mysema.query.sql.SQLTemplates;
+import gov.va.vinci.chartreview.Utils;
 import gov.va.vinci.siman.tools.DbConnectionInfo;
 import gov.va.vinci.siman.tools.SimanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -231,19 +232,10 @@ public class AnnotationTaskCreate {
 
 
         if(close_on_execute)
-            this.close();
+        {
+            Utils.closeConnection(this.connection);
+        }
+
     }
 
-    /**
-     * Close the database connection
-     */
-    public void close() {
-        if(this.connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                logger.error("Error closing the connection!", e);
-            }
-        }
-    }
 }
