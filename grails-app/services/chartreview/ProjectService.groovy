@@ -7,6 +7,7 @@ import gov.va.vinci.leo.tools.db.LeoArrayListHandler
 import net.sourceforge.jtds.jdbc.jTDSDriverManager
 import net.sourceforge.spnego.SpnegoPrincipal
 import org.apache.commons.dbcp.BasicDataSource
+import org.apache.commons.dbutils.DbUtils
 import org.apache.commons.dbutils.QueryRunner
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsHttpSession
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
@@ -16,6 +17,8 @@ import org.ietf.jgss.GSSCredential
 import javax.servlet.http.HttpServletRequest
 import java.security.Principal
 import java.sql.Connection
+import java.sql.ResultSet
+import java.sql.SQLException
 
 import static gov.va.vinci.chartreview.Utils.closeConnection
 
@@ -122,7 +125,20 @@ class ProjectService {
                 Connection con = (Connection)dataObj;
                 if(!con.isClosed())
                 {
-                    return (Connection)dataObj;
+                    boolean testQueryPassed = false;
+                    // Validate connection is open;
+                    try {
+                        ResultSet rs = con.createStatement().executeQuery("select 1");
+                        testQueryPassed = true;
+                    } catch (SQLException e) {
+                        println("JTDS Connection in session did not pass the query test. (${e.getMessage()}) Discarding this one and getting a new connection...")
+                        DbUtils.closeQuietly((Connection)con);
+                    }
+
+
+                    if (testQueryPassed) {
+                        return (Connection)dataObj;
+                    }
                 }
             }
             else
