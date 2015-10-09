@@ -1,6 +1,5 @@
 package gov.va.vinci.chartreview
 import com.mysema.query.sql.*
-import gov.va.vinci.chartreview.db.DatabaseTable
 import gov.va.vinci.chartreview.model.ActivitiRuntimeProperty
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
@@ -20,9 +19,11 @@ import javax.servlet.ServletContext
 import javax.servlet.http.HttpSession
 import javax.sql.DataSource
 import javax.validation.ValidationException
-import java.sql.*
+import java.sql.Connection
+import java.sql.DatabaseMetaData
+import java.sql.ResultSet
+import java.sql.ResultSetMetaData
 import java.text.MessageFormat
-import java.util.Date
 
 class Utils {
     public static String SELECTED_PROJECT = "selectedProject";
@@ -85,19 +86,8 @@ class Utils {
             DatabaseMetaData md = c.getMetaData();
             ResultSet rs = md.getTables(null, null, "%", null);
             while (rs.next()) {
-                DatabaseTable table = new DatabaseTable();
-                table.tableCat = safeGetSql(rs, "TABLE_CAT");
-
-                table.tableSchem = safeGetSql(rs, "TABLE_SCHEM");
-                table.tableName = safeGetSql(rs, "TABLE_NAME");
-                table.tableType = safeGetSql(rs, "TABLE_TYPE");
-                table.remarks = safeGetSql(rs, "REMARKS");
-                table.typeCat = safeGetSql(rs, "TYPE_CAT");
-                table.typeSchem= safeGetSql(rs, "TYPE_SCHEM")
-                table.typeName= safeGetSql(rs, "TYPE_NAME");
-                table.selfReferencingColName = safeGetSql(rs, "SELF_REFERENCING_COL_NAME");
-                table.refGeneration = safeGetSql(rs, "REF_GENERATION");
-                tableNames.add(table);
+                String tableName = rs.getString(3);
+                tableNames.add(tableName);
             }
         } catch(Exception e) {
             // Nothing
@@ -107,9 +97,10 @@ class Utils {
         return tableNames;
     }
 
-    public static String getIdColName(List<String> fieldNames) throws SQLException
+    public static String getIdColName(DataSource ds, String tableName)
     {
         String idColumnName = "id";
+        List<String> fieldNames = Utils.getFieldNames(ds, tableName);
         for (int i = fieldNames.size() - 1; i >= 0; i--) {
             String fieldName = ((String) fieldNames.get(i));
             if(fieldName.toLowerCase().indexOf("id") >= 0)
@@ -369,21 +360,8 @@ class Utils {
 		}
         return map.get(key)
     }
-
+    
     /**
-     * Tries to get a column by name. If an exception is thrown, null is returned.
-     * @param rs        the resultset to get column from.
-     * @param column    the column name to get.
-     * @return          the column value, or if an exception is thrown, null.
-     */
-    def static private Object safeGetSql(ResultSet rs, String column) {
-        try {
-            return rs.getObject(column);
-        } catch (SQLException e) {
-            return null;
-        }
-    }
-/**
     * Get list of analyte ids from request
     * @param idFromRequest
     * @return list of ids, or throws exception if non found

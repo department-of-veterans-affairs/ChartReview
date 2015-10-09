@@ -457,56 +457,6 @@ class ProcessService {
 
 
     /**
-     * For a project id, find all of the unique process displayNames that have available
-     * tasks for this user. This allows the user to select which "process" they would like to work on.
-     *
-     * @param clinicalElementConfigurationId      Id of the CEC to find.
-     * @param projectId                           The project id.
-     * @return                                    Returns true if there are no processes using the given CEC.
-     */
-    @Transactional
-    public boolean canDeleteClinicalElementConfiguration(String clinicalElementConfigurationId, String projectId) {
-        boolean canDelete = true;
-
-        if (!projectId) {
-            return canDelete;
-        }
-
-        /* Existing clinical element configurations look like this (having event the includ=false ones specified.  The new code will not
-         have the includ-false in it.  That will allow the following query to find only those clinical element configurations that are
-         used in a process by quickly searching for existence in this field on any row.
-        [
-            {"clinicalElementConfigurationId":"df1a7aa8-bea5-437f-a5d6-16905318da2c","hidden":false,"position":1,"include":false},
-            {"clinicalElementConfigurationId":"bcd588c6-2ca2-4e75-962c-9c2f7f3175e5","hidden":false,"position":2,"include":false},
-            {"clinicalElementConfigurationId":"85e2f835-3bd5-4ca6-8923-c8d25783a196","hidden":false,"position":3,"include":false},
-            {"clinicalElementConfigurationId":"036cc219-424d-4573-b5c3-5b7e1bf322a5","hidden":false,"position":4,"include":true},
-            {"clinicalElementConfigurationId":"a57ba2f0-e55d-4f4a-848e-9bd7d2c233de","hidden":false,"position":5,"include":true},
-            {"clinicalElementConfigurationId":"af239c12-2ac7-47e7-a30e-c2216f80ff95","hidden":false,"position":6,"include":false},
-            {"clinicalElementConfigurationId":"979ea7b9-89f4-484c-9bf5-9e0bbcb921b3","hidden":false,"position":7,"include":true}
-        ]
-*/
-//        def sql = new Sql(dataSource);
-//        def likeStr = '%'+clinicalElementConfigurationId+'%';
-//        def results = sql.rows('''
-//                select  count(*)
-//                    from activiti_runtime_property
-//                    where
-//                        activiti_runtime_property.project = ?
-//                        and activiti_runtime_property.name = 'clinicalElements'
-//                        and activiti_runtime_property.value like ?
-//                        and charindex(clinicalElementConfigurationId, activiti_runtime_property.value) -
-//                            charindex("\\"include\\"\\:false", activiti_runtime_property.value, charindex(clinicalElementConfigurationId, activiti_runtime_property.value)) < 40
-//                    ''', projectId, likeStr);
-//        results.each {
-//            if(it[0].value > 0)
-//            {
-//                canDelete = false;
-//            }
-//        }
-        return canDelete;
-    }
-
-    /**
      * For a username and project id, find all of the unique process displayNames that have available
      * tasks for this user or that a user has a task assigned for.
      *

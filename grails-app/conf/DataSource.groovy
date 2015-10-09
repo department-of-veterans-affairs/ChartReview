@@ -18,7 +18,7 @@ environments {
             url = "jdbc:mysql://localhost/chartreview?useUnicode=yes&characterEncoding=UTF-8"
             username = "chartreview"
             password = "passw0rd"
-            driverClassName = "com.mysql.jdbc.Driver";
+            driverClassName="com.mysql.jdbc.Driver";
             dialect = "org.hibernate.dialect.MySQL5InnoDBDialect"
             dbCreate = "update"
             properties {
@@ -50,13 +50,13 @@ environments {
         dataSource {
             dbCreate = "create-drop"
             url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
-            driverClassName = "org.h2.Driver"
+            driverClassName="org.h2.Driver"
         }
         activiti {
             processEngineName = "activiti-engine-test"
             databaseSchemaUpdate = true
             databaseType = "h2"
-        }
+         }
     }
     production {
         dataSource {
@@ -71,3 +71,5 @@ environments {
         }
     }
 }
+
+
