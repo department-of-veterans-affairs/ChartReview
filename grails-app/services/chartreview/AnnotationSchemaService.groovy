@@ -66,9 +66,7 @@ class AnnotationSchemaService {
                 c.commit();
             }
         } finally {
-            if (c!= null) {
-                DbUtils.close(c);
-            }
+            Utils.closeConnection(c);
         }
     }
 
@@ -87,9 +85,7 @@ class AnnotationSchemaService {
                 c.commit();
             }
         } finally {
-            if (c!= null) {
-                DbUtils.close(c);
-            }
+            Utils.closeConnection(c);
         }
     }
 
@@ -106,9 +102,8 @@ class AnnotationSchemaService {
             AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
             return dao.findByName(name);
         } finally {
-            if (c!= null) {
-                DbUtils.close(c);
-            }
+
+            Utils.closeConnection(c);
         }
     }
 
@@ -125,9 +120,8 @@ class AnnotationSchemaService {
             AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
             return dao.get(id);
         } finally {
-            if (c!= null) {
-                DbUtils.close(c);
-            }
+
+            Utils.closeConnection(c);
         }
     }
 
@@ -143,9 +137,8 @@ class AnnotationSchemaService {
             AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
             return dao.getAll();
         } finally {
-            if (c!= null) {
-                DbUtils.close(c);
-            }
+
+            Utils.closeConnection(c);
         }
     }
 
@@ -162,9 +155,8 @@ class AnnotationSchemaService {
             AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
             return dao.delete(id);
         } finally {
-            if (c!= null) {
-                DbUtils.close(c);
-            }
+
+            Utils.closeConnection(c);
         }
     }
 

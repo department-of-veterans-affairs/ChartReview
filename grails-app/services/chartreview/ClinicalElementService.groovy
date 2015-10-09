@@ -578,11 +578,8 @@ class ClinicalElementService  {
             config.dataQueryColumns = resultSetToColumnDTOArray(rs)
 
         } finally {
-            try {
-                c.close()
-            } catch (Exception e) {
 
-            }
+            Utils.closeConnection(c);
         }
     }
 
@@ -618,10 +615,8 @@ class ClinicalElementService  {
                 results.add(row);
             }
         } finally {
-            try {
-                c.close()
-            } catch (Exception e) {
-            }
+
+            Utils.closeConnection(c);
         }
         return results;
     }

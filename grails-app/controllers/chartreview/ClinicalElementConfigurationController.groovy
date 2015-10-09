@@ -265,7 +265,8 @@ class ClinicalElementConfigurationController {
             ]
             //        render (view: "index", model: [configurations: configurations]);
         } finally {
-            DbUtils.close(c);
+
+            Utils.closeConnection(c);
         }
     }
 
