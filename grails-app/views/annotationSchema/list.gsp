@@ -101,7 +101,7 @@
     });
 
     function submitCopy() {
-         window.location ='<g:createLink action="copy"></g:createLink>?id=' + $('#copyId').val() + "&projectId=${session.getAttribute(chartreview.Utils.SELECTED_PROJECT)}&newName=" + encodeURIComponent($('#newName').val());
+         window.location ='<g:createLink action="copy"></g:createLink>?id=' + $('#copyId').val() + "&projectId=${session.getAttribute(gov.va.vinci.chartreview.Utils.SELECTED_PROJECT)}&newName=" + encodeURIComponent($('#newName').val());
     }
 
     function doModal(schemaId) {

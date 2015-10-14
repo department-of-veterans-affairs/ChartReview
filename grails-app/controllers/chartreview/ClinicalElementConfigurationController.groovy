@@ -1,8 +1,6 @@
 package chartreview
 import com.google.gson.Gson
 import gov.va.vinci.chartreview.Utils
-import gov.va.vinci.chartreview.db.DatabaseUtilities
-import gov.va.vinci.chartreview.model.ClinicalElementConfigurationListObj
 import gov.va.vinci.chartreview.model.Project
 import gov.va.vinci.chartreview.model.Role
 import gov.va.vinci.siman.model.ClinicalElementColumnDef
@@ -33,8 +31,6 @@ class ClinicalElementConfigurationController {
     def clinicalElementService;
     def projectService;
     def springSecurityService;
-    def processService;
-    def sqlService;
 
     def index() {
         redirect(action: "list", params: params)
@@ -241,14 +237,6 @@ class ClinicalElementConfigurationController {
 
             userProjects.remove(p);
 
-            List<ClinicalElementConfigurationListObj> projectClinicalElementConfigurationListObjs = new ArrayList<ClinicalElementConfigurationListObj>();
-            for(ClinicalElementConfiguration configObj : projectClinicalElementConfigurations)
-            {
-                boolean canDelete = processService.canDeleteClinicalElementConfiguration(configObj.id, p.id);
-                ClinicalElementConfigurationListObj listObj = new ClinicalElementConfigurationListObj(configObj, canDelete);
-                projectClinicalElementConfigurationListObjs.add(listObj);
-            }
-
             userProjects.each { otherProject ->
                 try {
                     otherConfigurations.put(otherProject, clinicalElementConfigurationService.getAllClinicalElementConfigurations(otherProject.id, false));
@@ -260,7 +248,7 @@ class ClinicalElementConfigurationController {
                 otherProjectClinicalElementConfigurations: otherConfigurations,
                 project: p,
                 projectId: p.id,
-                projectClinicalElementConfigurationListObjs: projectClinicalElementConfigurationListObjs,
+                projectClinicalElementConfigurations: projectClinicalElementConfigurations,
                 chartReviewProject: Project.findByName("ChartReview")
             ]
             //        render (view: "index", model: [configurations: configurations]);
@@ -294,9 +282,10 @@ class ClinicalElementConfigurationController {
      * is done from a state.
      */
     def createFlow = {
+
         init {
             action {
-                ClinicalElementConfigurationDetails dto =  getDefaultElementConfigurationDTO();
+                ClinicalElementConfigurationDetails details =  getDefaultElementConfigurationDTO();
                 ClinicalElementConfiguration configuration = new ClinicalElementConfiguration();
 
                 Project p = Utils.getSelectedProject(session, params.projectId);
@@ -312,104 +301,70 @@ class ClinicalElementConfigurationController {
                         loadFromProjectId = params.copyFromProjectId;
                     }
                     configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(params.id, ds, p);
-                    dto = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
+                    details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
                 }
 
-                dto.jdbcDriver = p.getJdbcDriver();
-                dto.jdbcPassword = p.getJdbcPassword();
-                dto.jdbcUsername = p.getJdbcUsername();
-                dto.connectionString = p.getDatabaseConnectionUrl();
+                details.jdbcDriver = p.getJdbcDriver();
+                details.jdbcPassword = p.getJdbcPassword();
+                details.jdbcUsername = p.getJdbcUsername();
+                details.connectionString = p.getDatabaseConnectionUrl();
 
-                dto.elementType="Summary";
-                conversation.dto = dto;
-                conversation.clinicalElementConfiguration = configuration;
+                if (details.contentTemplate) {
+                    details.setHasContent(true);
+                }
+                conversation.dto = details;
+                conversation.clinicalElementConfiguration  = configuration;
+                conversation.clinicalElementTableName = "COMPANY";
                 conversation.examplePatientId = conversation.dto.examplePatientId;
-                conversation.primaryClinicalElement = true;
-
-                // Assume the user wants a content template, until he actually turns it off
-                conversation.userWantsContentTemplate = true;
-                conversation.lastHasContentTemplate = dto.contentTemplate && dto.contentTemplate.length() > 0;
-                conversation.lastContentTemplate = null;
-
                 nameDescriptionTableStep();
             }
             on("nameDescriptionTableStep").to "nameDescriptionTableStep"
         }
         nameDescriptionTableStep {
             on("next"){
-                try {
-                    conversation.name = params.name;
+                conversation.name = params.name;
+                conversation.clinicalElementTableName = params.clinicalElementTableName;
+                conversation.principalClinicalElementIdColName = Utils.getIdColName(conversation.dataSource, conversation.principalClinicalElementTableName);
+                conversation.clinicalElementIdColName = Utils.getIdColName(conversation.dataSource, conversation.clinicalElementTableName);
+                conversation.clinicalElementTableFieldNames = Utils.getFieldNames(conversation.dataSource, conversation.clinicalElementTableName);
 
-                    // If a new table is picked, reset the queries and column information.
-                    if(conversation.clinicalElementTableName && conversation.clinicalElementTableName.length() > 0 &&
-                            params.clinicalElementTableName.compareToIgnoreCase(conversation.clinicalElementTableName) != 0)
-                    {
-                        conversation.dto.dataQueryColumns.removeAll();
-                        conversation.dto.setQuery(null);
-                        conversation.dto.setSingleElementQuery(null);
-                        conversation.dto.contentTemplate = null;
-                        conversation.dto.titleField = null;
-                        conversation.dto.description = null;
-                        conversation.clinicalElementTableName = null;
-                        conversation.principalClinicalElementIdColName = null;
-                        conversation.clinicalElementIdColName = null;
-                        conversation.clinicalElementTableFieldNames = null;
-                        conversation.columnsTableRowOrder = null;
-
-                        // Assume the user wants a content template, until he actually turns it off
-                        conversation.userWantsContentTemplate = true;
-                        conversation.lastHasContentTemplate = false; // Was reset here.
-                    }
-                    conversation.clinicalElementTableName = params.clinicalElementTableName;
-                    List<String> clinicalElementTableFields = Utils.getFieldNames(conversation.dataSource, conversation.clinicalElementTableName);
-                    conversation.clinicalElementIdColName = Utils.getIdColName(clinicalElementTableFields);
-                    conversation.clinicalElementTableFieldNames = clinicalElementTableFields
-
-                    if (!setNamdAndDescriptionsParams(params, conversation.dto, conversation.dataSource, conversation.project)) {
-                        return nameAndDescriptionStep();
-                    }
-                    ClinicalElementConfiguration elementConfiguration = new ClinicalElementConfiguration();
-                    elementConfiguration.setId(UUID.randomUUID().toString());
-                    elementConfiguration.setName(conversation.dto.name);
-                    elementConfiguration.setDescription(conversation.dto.description);
-                    elementConfiguration.setCreatedBy(springSecurityService.authentication.principal.username);
-                    elementConfiguration.setActive(conversation.dto.active);
-                    elementConfiguration.setVersion(new Timestamp(System.currentTimeMillis()));
-                    elementConfiguration.setCreatedDate(new Timestamp(new Date().getTime()));
-                    conversation.clinicalElementConfiguration = elementConfiguration;
-                } catch (Exception e) {
-                    flash.message = "An error has occured getting the table columns. (${e.getMessage()})";
-                    return nameDescriptionTableStep();
-
+                if (!setNamdAndDescriptionsParams(params, conversation.dto, conversation.dataSource, conversation.project)) {
+                    return nameAndDescriptionStep();
                 }
+                ClinicalElementConfiguration elementConfiguration = new ClinicalElementConfiguration();
+                elementConfiguration.setId(UUID.randomUUID().toString());
+                elementConfiguration.setName(conversation.dto.name);
+                elementConfiguration.setDescription(conversation.dto.description);
+                elementConfiguration.setCreatedBy(springSecurityService.authentication.principal.username);
+                elementConfiguration.setActive(conversation.dto.active);
+                elementConfiguration.setVersion(new Timestamp(System.currentTimeMillis()));
+                elementConfiguration.setCreatedDate(new Timestamp(new Date().getTime()));
+                conversation.clinicalElementConfiguration = elementConfiguration;
             }.to "keyColumnPickStep"
         }
         keyColumnPickStep {
             on("prev") {
-                saveKeyColumnPickValues(conversation.dataSource, params, conversation.dto, conversation.clinicalElementTableName, conversation.columnsTableRowOrder);
+                ClinicalElementConfigurationDetails dto = conversation.dto;
+                saveKeyColumnPickValues(conversation.dataSource, params, dto, conversation.clinicalElementTableName);
                 conversation.principalClinicalElementIdColName = params.principalClinicalElementIdColName;
                 conversation.clinicalElementIdColName = params.clinicalElementIdColName;
                 conversation.examplePatientId = params.examplePatientId;
-                conversation.primaryClinicalElement = Boolean.parseBoolean(params.primaryClinicalElement);
             }.to "nameDescriptionTableStep"
             on("next"){
-                saveKeyColumnPickValues(conversation.dataSource, params, conversation.dto, conversation.clinicalElementTableName, conversation.columnsTableRowOrder);
+                ClinicalElementConfigurationDetails dto = conversation.dto;
+                saveKeyColumnPickValues(conversation.dataSource, params, dto, conversation.clinicalElementTableName);
                 conversation.principalClinicalElementIdColName = params.principalClinicalElementIdColName;
                 conversation.clinicalElementIdColName = params.clinicalElementIdColName;
                 conversation.examplePatientId = params.examplePatientId;
-                conversation.primaryClinicalElement = Boolean.parseBoolean(params.primaryClinicalElement);
 
                 try {
-                    List<ClinicalElementColumnDef> existingDataQueryColumns = conversation.dto.getDataQueryColumns()
+                    List<ClinicalElementColumnDef> existingDataQueryColumns = dto.getDataQueryColumns()
 
-                    if (conversation.primaryClinicalElement) {
-                        conversation.dto.query = conversation.dto.singleElementQuery;
-                    }
-                    clinicalElementService.populateColumnInfo(conversation.dataSource, conversation.dto);
+                    dto = clinicalElementService.populateColumnInfo(conversation.dataSource, dto);
                     List<ClinicalElementColumnDef> toRemove = new ArrayList<ClinicalElementColumnDef>();
                     List<ClinicalElementColumnDef> toAdd = new ArrayList<ClinicalElementColumnDef>();
 
-                    conversation.dto.dataQueryColumns.each{ column ->
+                    dto.dataQueryColumns.each{ column ->
                         def existingColumn = existingDataQueryColumns.find{ col -> col.columnName == column.columnName && col.type == column.type}
                         if (existingColumn) {
                             toRemove.add(column);
@@ -417,55 +372,24 @@ class ClinicalElementConfigurationController {
                         }
                     }
                     toRemove.eachWithIndex { col, counter ->
-                        int index = conversation.dto.dataQueryColumns.indexOf(col);
-                        conversation.dto.dataQueryColumns[index] = toAdd.get(counter);
+                        int index = dto.dataQueryColumns.indexOf(col);
+                        dto.dataQueryColumns[index] = toAdd.get(counter);
                     }
-                    // Sort the columns
-                    if(conversation.columnsTableRowOrder && conversation.columnsTableRowOrder.length() > 0)
-                    {
-                        List<String> columnNames = conversation.columnsTableRowOrder.split(',');
-                        conversation.dto.dataQueryColumns = sortDataQueryColumns(conversation.dto, columnNames);
-                    }
-                    // If the user wants a content template and we don't have one, build one.
-                    if(conversation.userWantsContentTemplate && (!conversation.dto.contentTemplate || conversation.dto.contentTemplate.length() == 0))
-                    {
-                        buildDefaultContentTemplate(conversation.dto);
-                        conversation.lastHasContentTemplate = conversation.dto.contentTemplate && conversation.dto.contentTemplate.length() > 0;
-                        conversation.lastContentTemplate = conversation.dto.contentTemplate;
-                    }
+                    buildDefaultContentTemplate(dto);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     flash.message = "Error: ${e.getMessage()}";
-                    conversation.dataSetConfigurationInstance = conversation.dto;
+                    conversation.dataSetConfigurationInstance = dto;
                     return keyColumnPickStep();
                 }
+                conversation.dto = dto;
                 conversation.template = conversation.dto.contentTemplate;
             }.to "columnDefinitionStep"
         }
         columnDefinitionStep {
             on("prev") {
-                conversation.columnsTableRowOrder = params.columnsTableRowOrder;
-                // Sort the columns
-                if(conversation.columnsTableRowOrder && conversation.columnsTableRowOrder.length() > 0)
-                {
-                    List<String> columnNames = conversation.columnsTableRowOrder.split(',');
-                    conversation.dto.dataQueryColumns = sortDataQueryColumns(conversation.dto, columnNames);
-                    conversation.dto.query = conversation.dto.query.replace("*", conversation.columnsTableRowOrder);
-                    conversation.dto.singleElementQuery = conversation.dto.singleElementQuery.replace("*", conversation.columnsTableRowOrder);
-                }
-                saveContentTemplateChangeOfMind(params.hasContent, conversation);
                 def(boolean success, List<String> messages) = saveColumnDefinitionParams(conversation.dto, conversation.clinicalElementIdColName);
             }.to "keyColumnPickStep"
             on("advanced"){
-                conversation.columnsTableRowOrder = params.columnsTableRowOrder;
-                if(conversation.columnsTableRowOrder && conversation.columnsTableRowOrder.length() > 0)
-                {
-                    List<String> columnNames = conversation.columnsTableRowOrder.split(',');
-                    conversation.dto.dataQueryColumns = sortDataQueryColumns(conversation.dto, columnNames);
-                    conversation.dto.query.replace("*", conversation.columnsTableRowOrder);
-                    conversation.dto.singleElementQuery.replace("*", conversation.columnsTableRowOrder);
-                }
-                saveContentTemplateChangeOfMind(params.hasContent, conversation);
                 def(boolean success, List<String> messages) = saveColumnDefinitionParams(conversation.dto, conversation.clinicalElementIdColName);
                 if (!success) {
                     if (flash.message == null) {
@@ -479,40 +403,6 @@ class ClinicalElementConfigurationController {
                 }
             }.to "defineQueriesStep"
             on("next"){
-                conversation.columnsTableRowOrder = params.columnsTableRowOrder;
-                if(conversation.columnsTableRowOrder && conversation.columnsTableRowOrder.length() > 0)
-                {
-                    List<String> columnNames = conversation.columnsTableRowOrder.split(',');
-                    conversation.dto.dataQueryColumns = sortDataQueryColumns(conversation.dto, columnNames);
-                    conversation.dto.query = conversation.dto.query.replace("*", conversation.columnsTableRowOrder);
-                    conversation.dto.singleElementQuery = conversation.dto.singleElementQuery.replace("*", conversation.columnsTableRowOrder);
-                }
-                if(params.hasContent != conversation.lastHasContentTemplate)
-                {
-                    if(params.hasContent)
-                    {
-                        conversation.userWantsContentTemplate = true;
-                        // If the user wants a content template and we don't have one, build one.
-                        if(conversation.userWantsContentTemplate && (!conversation.dto.contentTemplate || conversation.dto.contentTemplate.length() == 0))
-                        {
-                            buildDefaultContentTemplate(conversation.dto);
-                            conversation.lastHasContentTemplate = conversation.dto.contentTemplate && conversation.dto.contentTemplate.length() > 0;
-                            conversation.lastContentTemplate = conversation.dto.contentTemplate;
-                        }
-                    }
-                    else
-                    {
-                        conversation.userWantsContentTemplate = false;
-                        // If the user does not want  a content template and we have one, save the last one in case he changes his mind.
-                        if(!conversation.userWantsContentTemplate && (conversation.dto.contentTemplate && conversation.dto.contentTemplate.length() > 0))
-                        {
-                            conversation.contentTemplate = null;
-                            conversation.lastHasContentTemplate = conversation.dto.contentTemplate && conversation.dto.contentTemplate.length() > 0;
-                            conversation.lastContentTemplate = conversation.dto.contentTemplate;
-                        }
-                    }
-                }
-//                saveContentTemplateChangeOfMind(params.hasContent, conversation);
                 def(boolean success, List<String> messages) = saveColumnDefinitionParams(conversation.dto, conversation.clinicalElementIdColName);
                 if (!success) {
                     if (flash.message == null) {
@@ -525,40 +415,12 @@ class ClinicalElementConfigurationController {
                     return columnDefinitionStep();
                 }
 
-                def sqlServiceResults = null;
-
-                String query = conversation.dto.query;
-                if (!query) {
-                    query = conversation.dto.singleElementQuery
+                List<Map> results  = clinicalElementService.getExampleResults(conversation.dataSource, conversation.dto);
+                conversation.exampleResults = results;
+                if (conversation.dto.contentTemplate && conversation.dto.contentTemplate.trim().length() > 0 && results.size()>0) {
+                    Map result = results[0];
+                    conversation.exampleContentTemplate = clinicalElementService.resultSetToContentTemplate(result, conversation.dto.contentTemplate, null, null, null, null, null, false)
                 }
-
-//                // Execute the data query query
-                try {
-                    if( conversation.dto.examplePatientId &&  conversation.dto.examplePatientId.length() > 0 &&  query.indexOf('?') >= 0)
-                    {
-                        sqlServiceResults = sqlService.runQuery(conversation.dataSource, query, conversation.dto.examplePatientId);
-                    } else {
-                        sqlServiceResults = sqlService.runQuery(conversation.dataSource, query);
-                    }
-
-                    if (sqlServiceResults['status'] == "FAILED")  {
-                        throw new RuntimeException(sqlServiceResults['message'])
-                    }
-
-                    List<TreeMap<String,Object>> convertedResults = DatabaseUtilities.resultSetToMap(sqlServiceResults['rows'], sqlServiceResults['metadata']);
-                    conversation.exampleResults = convertedResults;
-                    if (conversation.dto.contentTemplate && conversation.dto.contentTemplate.trim().length() > 0 && convertedResults?.size()>0) {
-                        String template = clinicalElementService.resultSetToContentTemplate(convertedResults.get(0), conversation.dto.contentTemplate);
-                        conversation.exampleContentTemplate = template;
-                    }
-                }
-                catch(Exception e)
-                {
-                    flash.message = "No example results available.  You may want to check the example principal element id.";
-                    return columnDefinitionStep();
-                }
-                int hey=1;
-                int there=2;
             }.to "previewOutputStep"
         }
         defineQueriesStep {
@@ -570,7 +432,7 @@ class ClinicalElementConfigurationController {
                 try {
                     List<ClinicalElementColumnDef> existingDataQueryColumns = conversation.dto.getDataQueryColumns()
 
-                    clinicalElementService.populateColumnInfo(conversation.dataSource, conversation.dto);
+                    conversation.dto = clinicalElementService.populateColumnInfo(conversation.dataSource, conversation.dto);
                     List<ClinicalElementColumnDef> toRemove = new ArrayList<ClinicalElementColumnDef>();
                     List<ClinicalElementColumnDef> toAdd = new ArrayList<ClinicalElementColumnDef>();
 
@@ -642,6 +504,7 @@ class ClinicalElementConfigurationController {
     }
 
     def show(String id) {
+//        public ClinicalElementConfiguration getClinicalElementConfiguration(String id, DataSource ds, Project project) {
         Project p = Utils.getSelectedProject(session, params.projectId);
         DataSource ds = Utils.getProjectDatasource(p);
         ClinicalElementConfiguration dataSetConfigurationInstance = clinicalElementConfigurationService.getClinicalElementConfiguration(id, ds, p);
@@ -803,21 +666,16 @@ class ClinicalElementConfigurationController {
         return [true, messages];
     }
 
-    protected ClinicalElementConfigurationDetails saveKeyColumnPickValues(DataSource ds, Map params, ClinicalElementConfigurationDetails dto, String clinicalElementTableName, String columnsTableRowOrder) {
+    protected ClinicalElementConfigurationDetails saveKeyColumnPickValues(DataSource ds, Map params, ClinicalElementConfigurationDetails dto, String clinicalElementTableName) {
         String principalClinicalElementIdColName = params.principalClinicalElementIdColName;
         String clinicalElementIdColName = params.clinicalElementIdColName;
-        String columns = "*";
-        if(columnsTableRowOrder && columnsTableRowOrder.length() > 0)
-        {
-            columns = columnsTableRowOrder;
-        }
         if(clinicalElementTableName && (!dto.query || dto.query && dto.query.trim().length() == 0) && principalClinicalElementIdColName && principalClinicalElementIdColName.length() > 0)
         {
-            dto.setQuery("select " + columns + " from " + clinicalElementTableName + " where " + principalClinicalElementIdColName + " = ?");
+            dto.setQuery("select * from " + clinicalElementTableName + " where " + principalClinicalElementIdColName + " = ?");
         }
         if(clinicalElementTableName && (!dto.singleElementQuery || dto.singleElementQuery && dto.singleElementQuery.trim().length() == 0) && clinicalElementIdColName && clinicalElementIdColName.length() > 0)
         {
-            dto.setSingleElementQuery("select " + columns + " from " + clinicalElementTableName + " where " + clinicalElementIdColName + " = ?");
+            dto.setSingleElementQuery("select * from " + clinicalElementTableName + " where " + clinicalElementIdColName + " = ?");
         }
         dto.setExamplePatientId(params.examplePatientId);
         return dto;
@@ -835,7 +693,6 @@ class ClinicalElementConfigurationController {
             return false;
         }
 
-        // DIFF
         def exists = clinicalElementConfigurationService.getClinicalElementConfigurationByName(params.name, ds, p);
         if (exists) {
             flash.message = "Element with name '${params.name}' already exists.";
@@ -863,7 +720,7 @@ class ClinicalElementConfigurationController {
                     dataIndex: configuration.id,
                     fields: list,
                     elementType: details.elementType,
-                    hasContent: details.contentTemplate.trim().length() > 0,
+                    hasContent: details.contentTemplate?.trim()?.length() > 0,
                     titleField: details.titleField,
                     descriptionField: details.descriptionField,
                     idField: '_SERIALIZED_ID_'
@@ -881,6 +738,15 @@ class ClinicalElementConfigurationController {
         if (params.containsKey("elementType")) {
             dto.elementType = params.elementType;
         }
+        dto.hasContent = params.hasContent.compareToIgnoreCase("false") == 0 ? false : true;
+        if(!dto.hasContent)
+        {
+            dto.contentTemplate = null;
+        }
+        else
+        {
+            dto.contentTemplate = params.template;
+        }
 
         return updateColumnsFromParams(params, dto.dataQueryColumns, clinicalElementIdColName);
     }
@@ -894,63 +760,6 @@ class ClinicalElementConfigurationController {
                 template += "<p>" + column.columnName + ": \${" + column.columnName + "}" + "</p>";
             }
             dto.setContentTemplate(template);
-        }
-    }
-
-    protected List<ClinicalElementColumnDef> sortDataQueryColumns(ClinicalElementConfigurationDetails dto, List<String> columnNames)
-    {
-        List<ClinicalElementColumnDef> sortedColumns = new ArrayList();
-        for(String columnName : columnNames)
-        {
-            ClinicalElementColumnDef column = getColumn(columnName, dto);
-            if(column)
-            {
-                sortedColumns.add(column);
-            }
-        }
-        return sortedColumns;
-    }
-
-    protected ClinicalElementColumnDef getColumn(String columnName, ClinicalElementConfigurationDetails dto)
-    {
-        ClinicalElementColumnDef column;
-        for(ClinicalElementColumnDef col : dto.dataQueryColumns)
-        {
-            if(col.columnName.compareToIgnoreCase(columnName) == 0)
-            {
-                column = col;
-            }
-        }
-        return column;
-    }
-
-    protected void saveContentTemplateChangeOfMind(boolean hasContent, Object conversation)
-    {
-        // If the user changes his desire for a content template, make that change now.
-        if(hasContent != conversation.lastHasContentTemplate)
-        {
-            if(hasContent)
-            {
-                conversation.userWantsContentTemplate = true;
-                // If the user wants a content template and we don't have one, build one.
-                if(conversation.userWantsContentTemplate && (!conversation.dto.contentTemplate || conversation.dto.contentTemplate.length() == 0))
-                {
-                    buildDefaultContentTemplate(conversation.dto);
-                    conversation.lastHasContentTemplate = conversation.dto.contentTemplate && conversation.dto.contentTemplate.length() > 0;
-                    conversation.lastContentTemplate = conversation.dto.contentTemplate;
-                }
-            }
-            else
-            {
-                conversation.userWantsContentTemplate = false;
-                // If the user does not want  a content template and we have one, save the last one in case he changes his mind.
-                if(!conversation.userWantsContentTemplate && (conversation.dto.contentTemplate && conversation.dto.contentTemplate.length() > 0))
-                {
-                    conversation.contentTemplate = null;
-                    conversation.lastHasContentTemplate = conversation.dto.contentTemplate && conversation.dto.contentTemplate.length() > 0;
-                    conversation.lastContentTemplate = conversation.dto.contentTemplate;
-                }
-            }
         }
     }
 }

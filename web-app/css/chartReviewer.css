@@ -10,10 +10,6 @@
 .gridNoDetail{background-image: url("../images/grid_no_detail.gif") !important;}
 .gridDetail{background-image: url("../images/grid_detail.gif") !important;}
 .autoSelect{background-image: url("../images/auto_select.gif") !important;}
-/*.buttons input.cancel {*/
-    /*background: transparent url(../images/cancel.png) 5px 50% no-repeat;*/
-    /*padding-left: 28px;*/
-/*}*/
 
 html, body {
     overflow: hidden;

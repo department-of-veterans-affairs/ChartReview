@@ -36,24 +36,12 @@
                         <span style="font-weight: normal; font-size: small">The name of the table in the project database from which to get the clinical elements.</span>
                     </th>
                     <td>
-                        <!-- TO BE IMPLEMENTED
-                        Schema: <select>
-                            <option value="">- All -</option>
-                            <g:each in="${tableNames.collect{it.tableSchem}.unique()}" var="schema">
-                            <option value="${schema}">${schema}</option>
-                        </g:each>
-                        </select>
-                        <br/> -->
-                        <g:select id="selectClinicalElementTableName"
-                                  name="clinicalElementTableName"
-                                  from="${tableNames}"
-                                  optionKey="schemaAndTable" optionValue="schemaAndTable"
-                                  value="${clinicalElementTableName}" noSelection="['':'-Choose a table-']" required="" />
+                        <g:select name="clinicalElementTableName" from="${tableNames}" value="${clinicalElementTableName}" noSelection="['':'-Choose a table-']"/>
                     </td>
                 </tr>
             </table>
             <br/>
-            <button type="submit" name="_eventId_next"  class="btn btn-primary" style="float:right;" id="_eventId_next" >Next <i class="glyphicon glyphicon-chevron-right"></i></button>
+            <g:submitButton name="next"  value="Next" class="btn btn-primary" style="float: right" />
         </fieldset>
     </g:form>
 </div>
