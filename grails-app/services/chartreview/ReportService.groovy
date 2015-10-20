@@ -1,5 +1,4 @@
 package chartreview
-
 import com.mysema.query.sql.SQLQuery
 import com.mysema.query.sql.SQLQueryFactoryImpl
 import com.mysema.query.sql.SQLTemplates
@@ -14,19 +13,13 @@ import gov.va.vinci.chartreview.model.schema.ClassDef
 import gov.va.vinci.chartreview.report.AnnotationByAnnotatorDetailModel
 import gov.va.vinci.chartreview.report.PrimaryClinicalElementUserClassificationCount
 import gov.va.vinci.chartreview.report.PrimaryClinicalElementUserClassificationDetails
-import gov.va.vinci.siman.model.Annotation
-import gov.va.vinci.siman.model.Feature
-import gov.va.vinci.siman.model.QAnnotation
-import gov.va.vinci.siman.model.QClinicalElement
-import gov.va.vinci.siman.model.QClinicalElementConfiguration
-import gov.va.vinci.siman.model.QFeature
+import gov.va.vinci.siman.model.*
 import gov.va.vinci.siman.tools.ConnectionProvider
 
 import java.math.RoundingMode
-import java.text.DecimalFormat;
-import java.util.regex.Pattern;
-
 import java.sql.Connection
+import java.text.DecimalFormat
+import java.util.regex.Pattern
 
 import static gov.va.vinci.chartreview.Utils.closeConnection
 
@@ -174,6 +167,22 @@ class ReportService {
 
             Annotation a = null;
             for (com.mysema.query.Tuple t: queryResults) {
+                def annotationType = t.get(qAnnotation.annotationType)
+                Map<String, String> keyMap = deSerializeStringToMap(annotationType, ";");
+                def schemaId = keyMap.get("annotationSchema");
+
+                AnnotationSchema annotationSchema = schemaMap.get(schemaId);
+                if (!annotationSchema) {
+                    AnnotationSchemaRecord annotationSchemaRecord = annotationSchemaService.get(p, schemaId);
+                    if (!annotationSchemaRecord) {
+                        throw new IllegalArgumentException("Could not find schema with id ${schemaId}.");
+                    }
+                    annotationSchema = annotationSchemaService.parseSchemaXml(annotationSchemaRecord.serializationData, false);
+                    schemaMap.put(schemaId, annotationSchema);
+                }
+                if (!annotationSchema) {
+                    throw new IllegalArgumentException("Could not find schema with id ${schemaId}.");
+                }
                 if ( a == null || a.guid != t.get(qAnnotation.guid)) {
                     a = new Annotation(  guid: t.get(qAnnotation.guid),
                             annotationGroup: t.get(qAnnotation.annotationGroup),
@@ -182,23 +191,6 @@ class ReportService {
                             start: t.get(qAnnotation.start),
                             end: t.get(qAnnotation.end),
                             userId: t.get(qAnnotation.userId));
-
-                    def annotationType = t.get(qAnnotation.annotationType)
-                    Map<String, String> keyMap = deSerializeStringToMap(annotationType, ";");
-                    def schemaId = keyMap.get("annotationSchema");
-
-                    AnnotationSchema annotationSchema = schemaMap.get(schemaId);
-                    if (!annotationSchema) {
-                        AnnotationSchemaRecord annotationSchemaRecord = annotationSchemaService.get(p, schemaId);
-                        if (!annotationSchemaRecord) {
-                            throw new IllegalArgumentException("Could not find schema with id ${schemaId}.");
-                        }
-                        annotationSchema = annotationSchemaService.parseSchemaXml(annotationSchemaRecord.serializationData, false);
-                        schemaMap.put(schemaId, annotationSchema);
-                    }
-                    if (!annotationSchema) {
-                        throw new IllegalArgumentException("Could not find schema with id ${schemaId}.");
-                    }
 
                     AnnotationTask at = new AnnotationTask(annotationGuid: t.get(qAnnotationTask.annotationGuid),
                             processName: t.get(qAnnotationTask.processName),
@@ -213,11 +205,14 @@ class ReportService {
                             clinicalElementSerializedKeys: "clinicalElementConfigurationId=${t.get(qClinicalElementConfiguration.id)};" + t.get(qClinicalElement.serializedKeys)));
                 }
                 if (t.get(qFeature.guid)) {
+                    String guid = t.get(qFeature.value);
+                    String value = annotationSchema.getAttributeDefOptionDefValue(guid);
+
                     Feature feature = new Feature(guid: t.get(qFeature.guid),
                                                 featureIndex: t.get(qFeature.featureIndex),
                                                 featureType: t.get(qFeature.featureType),
                                                 name: t.get(qFeature.name),
-                                                value: t.get(qFeature.value),
+                                                value: value ? value : t.get(qFeature.value),
                                                 version: t.get(qFeature.version));
                     feature.setAnnotation(a);
 
@@ -229,9 +224,7 @@ class ReportService {
                         a.setFeatures(features);
                     }
                 }
-
             }
-
         } finally {
             closeConnection(connection);
         }
