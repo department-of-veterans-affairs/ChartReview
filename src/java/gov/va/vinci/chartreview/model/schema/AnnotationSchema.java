@@ -594,4 +594,20 @@ public class AnnotationSchema implements java.io.Serializable, Comparable<Annota
             this.addClassRelDef(classRelDef);
         }
     }
+
+    public String getAttributeDefOptionDefValue(String attributeDefOptionDefId)
+    {
+        String value = null;
+        for(AttributeDef attributeDef : this.attributeDefs)
+        {
+            for(AttributeDefOptionDef attributeDefOptionDef : attributeDef.getAttributeDefOptionDefs())
+            {
+                if(attributeDefOptionDef.getId().equalsIgnoreCase(attributeDefOptionDefId))
+                {
+                    value = attributeDefOptionDef.getName();
+                }
+            }
+        }
+        return value;
+    }
 }

@@ -52,15 +52,15 @@
 
         // Verify that the user is in the system.
         var userList = userListStr.split(",");
-        var found2 = userList.indexOf(newName) >= 0 ? true : false;
+        //var found2 = userList.indexOf(newName) >= 0 ? true : false;
         if(found1)
         {
             alert(newName + " is already in the list.");
         }
-        else if(!found2)
-        {
-            alert(newName + " is not a valid user (ask the system administrator to add this user for you).");
-        }
+//        else if(!found2)
+//        {
+//            alert(newName + " is not a valid user (ask the system administrator to add this user for you).");
+//        }
         else
         {
             $("#administrators tbody").append('<tr>' +
