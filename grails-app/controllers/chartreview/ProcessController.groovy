@@ -344,42 +344,48 @@ class ProcessController {
     protected List prepForStep2(AddProcessWorkflowModel model, Project p) {
         List<TaskDefinitionWithVariable> tasks = processService.getTaskDefinitions(model.processId);
         Map<String, ClinicalElementConfiguration> configurationMap = new HashMap<>();
-        DataSource ds = Utils.getProjectDatasource(p);
+        Connection c = null;
 
-        /**
-         * Add default task variables for each user task.
-         */
-        List<TaskVariables> taskVariablesList = new ArrayList<TaskVariables>();
-        for (TaskDefinitionWithVariable task : tasks) {
-            if (task instanceof ServiceTaskDefinitionWithVariable) {
-                List<ClinicalElementConfiguration> cecs = clinicalElementConfigurationService.getAllClinicalElementConfigurations(ds, p).sort{it.name};
-                cecs.eachWithIndex() { obj, i ->
-                    configurationMap.put(obj.id, obj);
-                }
-                continue;
-            }
+        try {
+            c = projectService.getDatabaseConnection(p);
 
-            TaskVariables variables = new TaskVariables();
-            variables.taskDefinitionKey = task.taskDefinitionKey;
-            if (task.hasClinicalElements) {
-                List<ClinicalElementDisplayParameters> clinicalElementConfigurations = new ArrayList<ClinicalElementDisplayParameters>();
-                List<ClinicalElementConfiguration> cecs = clinicalElementConfigurationService.getAllClinicalElementConfigurations(ds, p).sort{it.name};
-
-
-                cecs.eachWithIndex() { obj, i ->
-                    configurationMap.put(obj.id, obj);
-                    clinicalElementConfigurations.add(new ClinicalElementDisplayParameters(obj.id, i + 1));
+            /**
+             * Add default task variables for each user task.
+             */
+            List<TaskVariables> taskVariablesList = new ArrayList<TaskVariables>();
+            for (TaskDefinitionWithVariable task : tasks) {
+                if (task instanceof ServiceTaskDefinitionWithVariable) {
+                    List<ClinicalElementConfiguration> cecs = clinicalElementConfigurationService.getAllClinicalElementConfigurations(c, p).sort{it.name};
+                    cecs.eachWithIndex() { obj, i ->
+                        configurationMap.put(obj.id, obj);
+                    }
+                    continue;
                 }
 
-                variables.clinicalElements = clinicalElementConfigurations;
+                TaskVariables variables = new TaskVariables();
+                variables.taskDefinitionKey = task.taskDefinitionKey;
+                if (task.hasClinicalElements) {
+                    List<ClinicalElementDisplayParameters> clinicalElementConfigurations = new ArrayList<ClinicalElementDisplayParameters>();
+                    List<ClinicalElementConfiguration> cecs = clinicalElementConfigurationService.getAllClinicalElementConfigurations(c, p).sort{it.name};
+
+
+                    cecs.eachWithIndex() { obj, i ->
+                        configurationMap.put(obj.id, obj);
+                        clinicalElementConfigurations.add(new ClinicalElementDisplayParameters(obj.id, i + 1));
+                    }
+
+                    variables.clinicalElements = clinicalElementConfigurations;
+                }
+                taskVariablesList.add(variables);
             }
-            taskVariablesList.add(variables);
+            model.taskVariablesList = taskVariablesList;
+            model.schemas = getSchemaOptions(p);
+
+            List<FormPropertyImpl> props = getStartFormData(model.processId)
+            return [tasks, props, configurationMap]
+        } finally {
+            closeConnection((Connection)con);
         }
-        model.taskVariablesList = taskVariablesList;
-        model.schemas = getSchemaOptions(p);
-
-        List<FormPropertyImpl> props = getStartFormData(model.processId)
-        return [tasks, props, configurationMap]
     }
 
     protected List<FormPropertyImpl> getStartFormData(String processId) {

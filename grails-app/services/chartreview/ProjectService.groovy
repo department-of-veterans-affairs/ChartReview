@@ -7,7 +7,6 @@ import gov.va.vinci.leo.tools.db.LeoArrayListHandler
 import net.sourceforge.jtds.jdbc.jTDSDriverManager
 import net.sourceforge.spnego.SpnegoPrincipal
 import org.apache.commons.dbcp.BasicDataSource
-import org.apache.commons.dbutils.DbUtils
 import org.apache.commons.dbutils.QueryRunner
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsHttpSession
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
@@ -132,7 +131,7 @@ class ProjectService {
                         testQueryPassed = true;
                     } catch (SQLException e) {
                         println("JTDS Connection in session did not pass the query test. (${e.getMessage()}) Discarding this one and getting a new connection...")
-                        DbUtils.closeQuietly((Connection)con);
+                        closeConnection((Connection)con);
                     }
 
 
@@ -190,12 +189,9 @@ class ProjectService {
                 // Get the credential from the token and try it.
                 GSSCredential credential = ((SpnegoPrincipal)principal).getDelegatedCredential();
                 if (credential != null) {
-                    println("PROJECTSERVICE: CREDENTIAL ="+credential.toString());
                     // Get the jdbc connection
                     Connection con = jTDSDriverManager.getConnection(p.getDatabaseConnectionUrl(), credential);
-                    println("PROJECTSERVICE: CONNECTION ="+con.toString());
                     session.setAttribute("BasicDataSource:" + p.getId(), con);
-                    println("PROJECTSERVICE: done setting connection as dataSource");
                     return con;
                 }
                 else

@@ -7,7 +7,6 @@ import gov.va.vinci.siman.model.ClinicalElementColumnDef
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
 import gov.va.vinci.siman.model.ClinicalElementConfigurationDetails
 import grails.plugin.gson.converters.GSON
-import org.apache.commons.dbutils.DbUtils
 import org.apache.commons.validator.GenericValidator
 import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
@@ -22,6 +21,8 @@ import javax.sql.DataSource
 import javax.validation.ValidationException
 import java.sql.Connection
 import java.sql.Timestamp
+
+import static gov.va.vinci.chartreview.Utils.closeConnection
 
 @RestApi(name = "Clinical Element Configuration services", description = "Methods for managing and querying clinical element configurations.")
 class ClinicalElementConfigurationController {
@@ -68,20 +69,27 @@ class ClinicalElementConfigurationController {
      */
     def active() {
         Project p = Utils.getSelectedProject(session, params.projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
-        List<ClinicalElementConfiguration> allConfigurations = clinicalElementConfigurationService.getAllClinicalElementConfigurations(ds, p);
-        List<ClinicalElementConfiguration> activeConfiguration = new ArrayList<ClinicalElementConfiguration>();
+        Connection c = null;
+        try {
+            c = projectService.getDatabaseConnection(p)
+            List<ClinicalElementConfiguration> allConfigurations = clinicalElementConfigurationService.getAllClinicalElementConfigurations(c, p);
+            List<ClinicalElementConfiguration> activeConfiguration = new ArrayList<ClinicalElementConfiguration>();
 
-        allConfigurations.sort{it.name}.each { it ->
-            if (it.active) {
-                activeConfiguration.add(it);
+            allConfigurations.sort{it.name}.each { it ->
+                if (it.active) {
+                    activeConfiguration.add(it);
+                }
             }
+
+            Object outputObjectList = convertClinicalElementConfigurationToJSONObject(activeConfiguration)
+            def returnMap = new HashMap();
+            returnMap.put ("elements", outputObjectList);
+            render returnMap as GSON;
+        } finally {
+            closeConnection((Connection)c);
         }
 
-        Object outputObjectList = convertClinicalElementConfigurationToJSONObject(activeConfiguration)
-        def returnMap = new HashMap();
-        returnMap.put ("elements", outputObjectList);
-        render returnMap as GSON;
+
     }
 
     @RestApiMethod( description="Returns a single clinical element configuration",
@@ -99,24 +107,31 @@ class ClinicalElementConfigurationController {
      * @return
      */
     def configuration(String id) {
-        Project p = Utils.getSelectedProject(session, params.projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
-        List<ClinicalElementConfiguration> configurations = [];
-        ClinicalElementConfiguration conf = clinicalElementConfigurationService.getClinicalElementConfiguration(id, ds, p);
-        if (!conf) {
-            throw new ValidationException("ClinicalElementConfiguration '${id}' not found.");
+        Connection c = null;
+
+        try {
+            Project p = Utils.getSelectedProject(session, params.projectId);
+            c= projectService.getDatabaseConnection(p);
+            List<ClinicalElementConfiguration> configurations = [];
+            ClinicalElementConfiguration conf = clinicalElementConfigurationService.getClinicalElementConfiguration(id, c, p);
+            if (!conf) {
+                throw new ValidationException("ClinicalElementConfiguration '${id}' not found.");
+            }
+
+            configurations.add(conf);
+
+
+            Object outputObjectList = convertClinicalElementConfigurationToJSONObject(configurations)
+
+            def returnMap = new HashMap();
+            returnMap.put ("elements", outputObjectList);
+            new Gson().toJson(returnMap);
+            render returnMap as GSON;
+            return null;
+        } finally {
+            closeConnection(c);
         }
 
-        configurations.add(conf);
-
-
-        Object outputObjectList = convertClinicalElementConfigurationToJSONObject(configurations)
-
-        def returnMap = new HashMap();
-        returnMap.put ("elements", outputObjectList);
-        new Gson().toJson(returnMap);
-        render returnMap as GSON;
-        return null;
     }
 
     @RestApiMethod( description="Exports a single clinical element configuration to JSON.",
@@ -130,13 +145,19 @@ class ClinicalElementConfigurationController {
     ])
     def export(String id) {
         Project p = Utils.getSelectedProject(session, params.projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
-        ClinicalElementConfiguration conf = clinicalElementConfigurationService.getClinicalElementConfiguration(id, ds, p);
-        if (!conf) {
-            throw new ValidationException("ClinicalElementConfiguration '${id}' not found.");
+        Connection c = null;
+        try {
+            c = projectService.getDatabaseConnection(p);
+            ClinicalElementConfiguration conf = clinicalElementConfigurationService.getClinicalElementConfiguration(id, c, p);
+            if (!conf) {
+                throw new ValidationException("ClinicalElementConfiguration '${id}' not found.");
+            }
+
+            render conf as GSON;
+        } finally {
+            closeConnection(c);
         }
 
-        render conf as GSON;
     }
 
     @RestApiMethod( description="Returns all clinical element configurations associated with a project",
@@ -155,13 +176,19 @@ class ClinicalElementConfigurationController {
         String projectId = params.id;
         log.debug("Getting clinical element configurations for project: ${projectId}")
         Project p = Project.get(projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
-        List<ClinicalElementConfiguration> conf = clinicalElementConfigurationService.getAllClinicalElementConfigurations(ds, p);
-        Object outputObjectList = convertClinicalElementConfigurationToJSONObject(conf);
-        def returnMap = new HashMap();
-        returnMap.put ("elements", outputObjectList);
-        render returnMap as GSON;
-        return null;
+        Connection c = null;
+        try {
+            c=projectService.getDatabaseConnection(p);
+            List<ClinicalElementConfiguration> conf = clinicalElementConfigurationService.getAllClinicalElementConfigurations(c, p);
+            Object outputObjectList = convertClinicalElementConfigurationToJSONObject(conf);
+            def returnMap = new HashMap();
+            returnMap.put ("elements", outputObjectList);
+            render returnMap as GSON;
+            return null;
+        } finally {
+            closeConnection(c);
+        }
+
     }
 
    /**
@@ -169,34 +196,40 @@ class ClinicalElementConfigurationController {
      */
     def upload = {
         Project p = Utils.getSelectedProject(session, params.projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
-        def f = request.getFile('myFile')
-        if (f.empty) {
-            flash.message = 'File cannot be empty'
-            redirect(action: "list")
+        Connection c = null;
+        try {
+            c=projectService.getDatabaseConnection(p);
+
+            def f = request.getFile('myFile')
+            if (f.empty) {
+                flash.message = 'File cannot be empty'
+                redirect(action: "list")
+                return
+            }
+
+            String jsonText = f.getInputStream().getText();
+            ClinicalElementConfiguration conf = new Gson().fromJson(jsonText, ClinicalElementConfiguration.class);
+
+            ClinicalElementConfiguration existing = clinicalElementConfigurationService.getClinicalElementConfiguration(conf.id, c, p);
+            if (existing) {
+                flash.message = "Clinical element configuration with id '${conf.id}' already exists in project database. Change id in file before importing.";
+                redirect(action: "list")
+                return
+            }
+
+            conf.name = conf.name + " Imported " + new Date();
+            if (conf.version == null) {
+                conf.version = new Timestamp(new Date().getTime());
+            }
+
+            clinicalElementConfigurationService.addClinicalElementConfiguration(c, p, conf)
+            flash.message = 'Upload complete.';
+            redirect(action: "list", params: [projectId: p.id])
             return
+
+        } finally {
+            closeConnection(c);
         }
-
-        String jsonText = f.getInputStream().getText();
-        ClinicalElementConfiguration conf = new Gson().fromJson(jsonText, ClinicalElementConfiguration.class);
-
-        ClinicalElementConfiguration existing = clinicalElementConfigurationService.getClinicalElementConfiguration(conf.id, ds, p);
-        if (existing) {
-            flash.message = "Clinical element configuration with id '${conf.id}' already exists in project database. Change id in file before importing.";
-            redirect(action: "list")
-            return
-        }
-
-        conf.name = conf.name + " Imported " + new Date();
-        if (conf.version == null) {
-            conf.version = new Timestamp(new Date().getTime());
-        }
-
-
-        clinicalElementConfigurationService.addClinicalElementConfiguration(ds, p, conf)
-        flash.message = 'Upload complete.';
-        redirect(action: "list", params: [projectId: p.id])
-        return
     }
 
     def chooseProject() {
@@ -218,11 +251,10 @@ class ClinicalElementConfigurationController {
             return;
         }
 
-        DataSource ds = Utils.getProjectDatasource(p);
         Connection c = null;
 
         try {
-            c = ds.getConnection();
+            c = projectService.getDatabaseConnection(p);
 
             params.max = Math.min(max ?: 10, 100)
             if (!params.sort) {
@@ -230,7 +262,7 @@ class ClinicalElementConfigurationController {
             }
 
             params.project = p;
-            List<ClinicalElementConfiguration> projectClinicalElementConfigurations = clinicalElementConfigurationService.getAllClinicalElementConfigurations(ds, p).sort{it.name};
+            List<ClinicalElementConfiguration> projectClinicalElementConfigurations = clinicalElementConfigurationService.getAllClinicalElementConfigurations(c, p).sort{it.name};
 
             List<Project> userProjects = projectService.projectsUserIsAssignedTo(springSecurityService.authentication.principal.username, Role.findByName("ROLE_ADMIN")).sort{it.name};
             LinkedHashMap<Project, List<ClinicalElementConfiguration>> otherConfigurations = new LinkedHashMap<Project, List<ClinicalElementConfiguration>>();
@@ -253,16 +285,16 @@ class ClinicalElementConfigurationController {
             ]
             //        render (view: "index", model: [configurations: configurations]);
         } finally {
-
-            Utils.closeConnection(c);
+            closeConnection(c);
         }
     }
 
     def delete(String id) {
         Project p = Utils.getSelectedProject(session, params.projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
+        Connection c = null;
         try {
-            clinicalElementConfigurationService.deleteClinicalElementConfig(ds, p, id);
+            c =  projectService.getDatabaseConnection(p);
+            clinicalElementConfigurationService.deleteClinicalElementConfig(c, p, id);
             flash.message = message(code: 'default.deleted.message', args: [message(code: 'clinicalElementConfiguration.label'), ""])
             redirect(action: "list", params: [projectId: p.id]);
             return;
@@ -271,7 +303,10 @@ class ClinicalElementConfigurationController {
             flash.message = message(code: 'default.not.deleted.message', args: [message(code: 'clinicalElementConfiguration.label'), ""])
             redirect(action: "show", id: id);
             return;
+        } finally {
+            closeConnection(c);
         }
+
     }
 
     /**
@@ -289,48 +324,60 @@ class ClinicalElementConfigurationController {
                 ClinicalElementConfiguration configuration = new ClinicalElementConfiguration();
 
                 Project p = Utils.getSelectedProject(session, params.projectId);
+                Connection c = null;
                 conversation.project = p;
-                DataSource ds = Utils.getProjectDatasource(p);
-                conversation.dataSource = ds;
-                List<String> tableNames = Utils.getTableNames(ds);
-                conversation.tableNames = tableNames;
 
-                if (params.id) {
-                    String loadFromProjectId = p.id;
-                    if (params.copyFromProjectId) {
-                        loadFromProjectId = params.copyFromProjectId;
+                try {
+                    c = projectService.getDatabaseConnection(p);
+                    List<String> tableNames = Utils.getTableNames(c);
+                    conversation.tableNames = tableNames;
+
+                    if (params.id) {
+                        String loadFromProjectId = p.id;
+                        if (params.copyFromProjectId) {
+                            loadFromProjectId = params.copyFromProjectId;
+                        }
+                        configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(params.id, c, p);
+                        details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
                     }
-                    configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(params.id, ds, p);
-                    details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
-                }
 
-                details.jdbcDriver = p.getJdbcDriver();
-                details.jdbcPassword = p.getJdbcPassword();
-                details.jdbcUsername = p.getJdbcUsername();
-                details.connectionString = p.getDatabaseConnectionUrl();
+                    details.jdbcDriver = p.getJdbcDriver();
+                    details.jdbcPassword = p.getJdbcPassword();
+                    details.jdbcUsername = p.getJdbcUsername();
+                    details.connectionString = p.getDatabaseConnectionUrl();
 
-                if (details.contentTemplate) {
-                    details.setHasContent(true);
+                    if (details.contentTemplate) {
+                        details.setHasContent(true);
+                    }
+                    conversation.dto = details;
+                    conversation.clinicalElementConfiguration  = configuration;
+                    conversation.clinicalElementTableName = "COMPANY";
+                    conversation.examplePatientId = conversation.dto.examplePatientId;
+                    nameDescriptionTableStep();
+                } finally {
+                    closeConnection(c);
                 }
-                conversation.dto = details;
-                conversation.clinicalElementConfiguration  = configuration;
-                conversation.clinicalElementTableName = "COMPANY";
-                conversation.examplePatientId = conversation.dto.examplePatientId;
-                nameDescriptionTableStep();
             }
             on("nameDescriptionTableStep").to "nameDescriptionTableStep"
         }
         nameDescriptionTableStep {
             on("next"){
                 conversation.name = params.name;
-                conversation.clinicalElementTableName = params.clinicalElementTableName;
-                conversation.principalClinicalElementIdColName = Utils.getIdColName(conversation.dataSource, conversation.principalClinicalElementTableName);
-                conversation.clinicalElementIdColName = Utils.getIdColName(conversation.dataSource, conversation.clinicalElementTableName);
-                conversation.clinicalElementTableFieldNames = Utils.getFieldNames(conversation.dataSource, conversation.clinicalElementTableName);
-
-                if (!setNamdAndDescriptionsParams(params, conversation.dto, conversation.dataSource, conversation.project)) {
-                    return nameAndDescriptionStep();
+                Connection connection = null;
+                try {
+                    connection = projectService.getDatabaseConnection(conversation.project);
+                    conversation.clinicalElementTableName = params.clinicalElementTableName;
+                    conversation.principalClinicalElementTableName = params.clinicalElementTableName;
+                    conversation.principalClinicalElementIdColName = Utils.getIdColName(connection, conversation.principalClinicalElementTableName);
+                    conversation.clinicalElementIdColName = Utils.getIdColName(connection, conversation.clinicalElementTableName);
+                    conversation.clinicalElementTableFieldNames = Utils.getFieldNames(connection, conversation.clinicalElementTableName);
+                    if (!setNamdAndDescriptionsParams(params, conversation.dto, connection, conversation.project)) {
+                        return nameAndDescriptionStep();
+                    }
+                } finally {
+                   closeConnection(connection);
                 }
+
                 ClinicalElementConfiguration elementConfiguration = new ClinicalElementConfiguration();
                 elementConfiguration.setId(UUID.randomUUID().toString());
                 elementConfiguration.setName(conversation.dto.name);
@@ -345,22 +392,23 @@ class ClinicalElementConfigurationController {
         keyColumnPickStep {
             on("prev") {
                 ClinicalElementConfigurationDetails dto = conversation.dto;
-                saveKeyColumnPickValues(conversation.dataSource, params, dto, conversation.clinicalElementTableName);
+                saveKeyColumnPickValues(params, dto, conversation.clinicalElementTableName);
                 conversation.principalClinicalElementIdColName = params.principalClinicalElementIdColName;
                 conversation.clinicalElementIdColName = params.clinicalElementIdColName;
                 conversation.examplePatientId = params.examplePatientId;
             }.to "nameDescriptionTableStep"
             on("next"){
                 ClinicalElementConfigurationDetails dto = conversation.dto;
-                saveKeyColumnPickValues(conversation.dataSource, params, dto, conversation.clinicalElementTableName);
+                saveKeyColumnPickValues(params, dto, conversation.clinicalElementTableName);
                 conversation.principalClinicalElementIdColName = params.principalClinicalElementIdColName;
                 conversation.clinicalElementIdColName = params.clinicalElementIdColName;
                 conversation.examplePatientId = params.examplePatientId;
-
+                Connection connection = null;
                 try {
+                    connection = projectService.getDatabaseConnection(conversation.project);
                     List<ClinicalElementColumnDef> existingDataQueryColumns = dto.getDataQueryColumns()
 
-                    dto = clinicalElementService.populateColumnInfo(conversation.dataSource, dto);
+                    dto = clinicalElementService.populateColumnInfo(connection, dto);
                     List<ClinicalElementColumnDef> toRemove = new ArrayList<ClinicalElementColumnDef>();
                     List<ClinicalElementColumnDef> toAdd = new ArrayList<ClinicalElementColumnDef>();
 
@@ -380,6 +428,8 @@ class ClinicalElementConfigurationController {
                     flash.message = "Error: ${e.getMessage()}";
                     conversation.dataSetConfigurationInstance = dto;
                     return keyColumnPickStep();
+                }  finally {
+                    closeConnection(connection);
                 }
                 conversation.dto = dto;
                 conversation.template = conversation.dto.contentTemplate;
@@ -415,12 +465,20 @@ class ClinicalElementConfigurationController {
                     return columnDefinitionStep();
                 }
 
-                List<Map> results  = clinicalElementService.getExampleResults(conversation.dataSource, conversation.dto);
-                conversation.exampleResults = results;
-                if (conversation.dto.contentTemplate && conversation.dto.contentTemplate.trim().length() > 0 && results.size()>0) {
-                    Map result = results[0];
-                    conversation.exampleContentTemplate = clinicalElementService.resultSetToContentTemplate(result, conversation.dto.contentTemplate, null, null, null, null, null, false)
+                Connection c = null;
+
+                try {
+                    c = projectService.getDatabaseConnection(p);
+                    List<Map> results  = clinicalElementService.getExampleResults(c, conversation.dto);
+                    conversation.exampleResults = results;
+                    if (conversation.dto.contentTemplate && conversation.dto.contentTemplate.trim().length() > 0 && results.size()>0) {
+                        Map result = results[0];
+                        conversation.exampleContentTemplate = clinicalElementService.resultSetToContentTemplate(result, conversation.dto.contentTemplate, null, null, null, null, null, false)
+                    }
+                } finally {
+                    closeConnection(c);
                 }
+
             }.to "previewOutputStep"
         }
         defineQueriesStep {
@@ -428,11 +486,12 @@ class ClinicalElementConfigurationController {
                 String oldQuery = conversation.dto.query;
                 conversation.dto.setQuery(params.query);
                 conversation.dto.setSingleElementQuery(params.singleElementQuery);
-
+                Connection c = null;
                 try {
+                    c= projectService.getDatabaseConnection(conversation.project);
                     List<ClinicalElementColumnDef> existingDataQueryColumns = conversation.dto.getDataQueryColumns()
 
-                    conversation.dto = clinicalElementService.populateColumnInfo(conversation.dataSource, conversation.dto);
+                    conversation.dto = clinicalElementService.populateColumnInfo(c, conversation.dto);
                     List<ClinicalElementColumnDef> toRemove = new ArrayList<ClinicalElementColumnDef>();
                     List<ClinicalElementColumnDef> toAdd = new ArrayList<ClinicalElementColumnDef>();
 
@@ -455,6 +514,8 @@ class ClinicalElementConfigurationController {
                     flash.message = "Error: ${e.getMessage()}";
                     conversation.dataSetConfigurationInstance = conversation.dto;
                     return keyColumnPickStep();
+                } finally {
+                    closeConnection(c);
                 }
             }.to "columnDefinitionStep"
         }
@@ -491,7 +552,16 @@ class ClinicalElementConfigurationController {
 
                 ClinicalElementConfiguration elementConfiguration = conversation.clinicalElementConfiguration;
                 elementConfiguration.setConfiguration(new Gson().toJson(conversation.dto));
-                clinicalElementConfigurationService.addClinicalElementConfiguration(conversation.dataSource, conversation.project, elementConfiguration);
+                Connection c = null;
+                try {
+
+                    c=projectService.getDatabaseConnection(conversation.project);
+                    clinicalElementConfigurationService.addClinicalElementConfiguration(c, conversation.project, elementConfiguration);
+
+                } finally {
+                    closeConnection(c);
+                }
+
                 redirect(action: 'list', params: [projectId: conversation.project.id]);
             }.to "finish"
         }
@@ -506,8 +576,16 @@ class ClinicalElementConfigurationController {
     def show(String id) {
 //        public ClinicalElementConfiguration getClinicalElementConfiguration(String id, DataSource ds, Project project) {
         Project p = Utils.getSelectedProject(session, params.projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
-        ClinicalElementConfiguration dataSetConfigurationInstance = clinicalElementConfigurationService.getClinicalElementConfiguration(id, ds, p);
+
+        Connection c = null;
+        ClinicalElementConfiguration dataSetConfigurationInstance = null;
+        try {
+            c=projectService.getDatabaseConnection(p);
+            dataSetConfigurationInstance = clinicalElementConfigurationService.getClinicalElementConfiguration(id, c, p);
+        }  finally {
+            closeConnection(c);
+        }
+
         if (!dataSetConfigurationInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'clinicalElementConfiguration.label'), id])
             redirect(action: "list")
@@ -522,8 +600,16 @@ class ClinicalElementConfigurationController {
 
     def edit(String id) {
         Project p = Utils.getSelectedProject(session, params.projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
-        def dataSetConfigurationInstance = clinicalElementConfigurationService.getClinicalElementConfiguration(id, ds, p)
+
+        Connection c = null;
+        def dataSetConfigurationInstance = null;
+        try {
+            c = projectService.getDatabaseConnection(p);
+            dataSetConfigurationInstance = clinicalElementConfigurationService.getClinicalElementConfiguration(id, c, p)
+        } finally {
+            closeConnection(c);
+        }
+
         if (!dataSetConfigurationInstance) {
             flash.message = message(code: 'default.not.found.message', args: [message(code: 'clinicalElementConfiguration.label'), id])
             redirect(action: "list", params: [ projectId: p.id])
@@ -540,53 +626,62 @@ class ClinicalElementConfigurationController {
 
     def update(String id) {
         Project p = Utils.getSelectedProject(session, params.projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
-        ClinicalElementConfiguration conf = clinicalElementConfigurationService.getClinicalElementConfiguration(id, ds, p);
+        Connection c = null;
+        ClinicalElementConfiguration conf = null;
 
-        if (!conf) {
-            flash.message = message(code: 'default.not.found.message', args: [message(code: 'clinicalElementConfiguration.label'), id])
-            redirect(action: "list")
-            return
+        try {
+            c = projectService.getDatabaseConnection(p);
+            conf = clinicalElementConfigurationService.getClinicalElementConfiguration(id, c, p);
+
+
+            if (!conf) {
+                flash.message = message(code: 'default.not.found.message', args: [message(code: 'clinicalElementConfiguration.label'), id])
+                redirect(action: "list")
+                return
+            }
+
+            ClinicalElementConfigurationDetails details =  clinicalElementConfigurationService.getClinicalElementConfigurationDetails(conf);
+
+            if (params.active && "on" == params.active) {
+                conf.active = true;
+            } else {
+                conf.active = false;
+            }
+
+            conf.name = params.name;
+            conf.description = params.description;
+
+    //        details.contentTemplate = params.contentTemplate;
+
+            if (params.containsKey("elementType")) {
+                details.elementType = params.elementType;
+            }
+
+            if (GenericValidator.isBlankOrNull(params.name) || GenericValidator.isBlankOrNull(params.description) ) {
+                flash.message = message(code: "clinicalElement.nameAndDescription.required");
+                conf.discard();
+                render (view: "edit", model: [dataSetConfigurationInstance: conf, elementConfigurationDTO:  details])
+                return;
+            }
+
+            ClinicalElementConfiguration existingName = clinicalElementConfigurationService.getClinicalElementConfigurationByName(params.name, c, p);
+
+            if (existingName && existingName.id != id) {
+                flash.message = message(code: "clinicalElementConfiguration.name.unique");
+                render (view: "edit", model: [dataSetConfigurationInstance: conf, elementConfigurationDTO:  details])
+                return;
+            }
+
+            conf.setConfiguration( new Gson().toJson(details));
+
+            clinicalElementConfigurationService.update(conf, p.id);
+
+            flash.message = message(code: 'default.updated.message', args: [message(code: 'clinicalElementConfiguration.label', default: 'Clinical Element Configuration'), conf.name])
+            redirect(action: "show", params:[id: id, projectId: p.id])
+        } finally {
+            closeConnection(c);
         }
 
-        ClinicalElementConfigurationDetails details =  clinicalElementConfigurationService.getClinicalElementConfigurationDetails(conf);
-
-        if (params.active && "on" == params.active) {
-            conf.active = true;
-        } else {
-            conf.active = false;
-        }
-
-        conf.name = params.name;
-        conf.description = params.description;
-
-//        details.contentTemplate = params.contentTemplate;
-
-        if (params.containsKey("elementType")) {
-            details.elementType = params.elementType;
-        }
-
-        if (GenericValidator.isBlankOrNull(params.name) || GenericValidator.isBlankOrNull(params.description) ) {
-            flash.message = message(code: "clinicalElement.nameAndDescription.required");
-            conf.discard();
-            render (view: "edit", model: [dataSetConfigurationInstance: conf, elementConfigurationDTO:  details])
-            return;
-        }
-
-        ClinicalElementConfiguration existingName = clinicalElementConfigurationService.getClinicalElementConfigurationByName(params.name, ds, p);
-
-        if (existingName && existingName.id != id) {
-            flash.message = message(code: "clinicalElementConfiguration.name.unique");
-            render (view: "edit", model: [dataSetConfigurationInstance: conf, elementConfigurationDTO:  details])
-            return;
-        }
-
-        conf.setConfiguration( new Gson().toJson(details));
-
-        clinicalElementConfigurationService.update(conf, p.id);
-
-        flash.message = message(code: 'default.updated.message', args: [message(code: 'clinicalElementConfiguration.label', default: 'Clinical Element Configuration'), conf.name])
-        redirect(action: "show", params:[id: id, projectId: p.id])
     }
 
 
@@ -666,7 +761,7 @@ class ClinicalElementConfigurationController {
         return [true, messages];
     }
 
-    protected ClinicalElementConfigurationDetails saveKeyColumnPickValues(DataSource ds, Map params, ClinicalElementConfigurationDetails dto, String clinicalElementTableName) {
+    protected ClinicalElementConfigurationDetails saveKeyColumnPickValues(Map params, ClinicalElementConfigurationDetails dto, String clinicalElementTableName) {
         String principalClinicalElementIdColName = params.principalClinicalElementIdColName;
         String clinicalElementIdColName = params.clinicalElementIdColName;
         if(clinicalElementTableName && (!dto.query || dto.query && dto.query.trim().length() == 0) && principalClinicalElementIdColName && principalClinicalElementIdColName.length() > 0)
@@ -681,7 +776,7 @@ class ClinicalElementConfigurationController {
         return dto;
     }
 
-    protected boolean setNamdAndDescriptionsParams(Map params, ClinicalElementConfigurationDetails dto, DataSource ds, Project p) {
+    protected boolean setNamdAndDescriptionsParams(Map params, ClinicalElementConfigurationDetails dto, Connection connection, Project p) {
         dto.name = params.name;
         dto.description = params.description;
         dto.active= false;
@@ -693,7 +788,7 @@ class ClinicalElementConfigurationController {
             return false;
         }
 
-        def exists = clinicalElementConfigurationService.getClinicalElementConfigurationByName(params.name, ds, p);
+        def exists = clinicalElementConfigurationService.getClinicalElementConfigurationByName(params.name, connection, p);
         if (exists) {
             flash.message = "Element with name '${params.name}' already exists.";
             return false;

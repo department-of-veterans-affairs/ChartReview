@@ -13,8 +13,6 @@ import gov.va.vinci.leo.descriptors.LeoTypeSystemDescription
 import gov.va.vinci.leo.descriptors.TypeDescriptionBuilder
 import grails.converters.XML
 import groovy.util.slurpersupport.GPathResult
-import org.apache.commons.dbutils.DbUtils
-
 import java.sql.Connection
 import java.sql.Timestamp
 import java.text.SimpleDateFormat

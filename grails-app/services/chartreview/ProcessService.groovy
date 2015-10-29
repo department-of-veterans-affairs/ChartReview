@@ -685,9 +685,13 @@ class ProcessService {
             clinicalElements.each {
                 if (it.include) {
                     Project p = Project.get(projectId);
-                    DataSource ds = Utils.getProjectDatasource(p);
-
-                    results.put(clinicalElementConfigurationService.getClinicalElementConfiguration(it.clinicalElementConfigurationId, ds, p), it);
+                    Connection c = null;
+                    try {
+                       c = projectService.getDatabaseConnection(p);
+                        results.put(clinicalElementConfigurationService.getClinicalElementConfiguration(it.clinicalElementConfigurationId, c, p), it);
+                    } finally {
+                        closeConnection((Connection)con);
+                    }
                 }
             }
         }
@@ -872,10 +876,18 @@ class ProcessService {
         task.appendChild(schema);
 
         Project p = Project.get(projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
 
         // Get the primary clinical element information.
-        ClinicalElementConfiguration primaryClinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(variables.get(TaskVariablesEnum.PRIMARY_CLINICAL_ELEMENT.getName()), ds, p);
+        ClinicalElementConfiguration primaryClinicalElementConfiguration = null;
+
+        Connection c = null;
+        try {
+            c=projectService.getDatabaseConnection(p);
+            primaryClinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(variables.get(TaskVariablesEnum.PRIMARY_CLINICAL_ELEMENT.getName()), c, p);
+        } finally {
+            closeConnection((Connection)con);
+        }
+
         if (!primaryClinicalElementConfiguration) {
             throw new IllegalArgumentException("Could not find primary clinical element configuration ('${variables.get(TaskVariablesEnum.PRIMARY_CLINICAL_ELEMENT.getName())}')");
         }
