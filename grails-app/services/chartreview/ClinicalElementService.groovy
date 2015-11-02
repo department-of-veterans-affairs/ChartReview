@@ -596,6 +596,7 @@ class ClinicalElementService  {
         }
         ResultSet rs = dataQueryStatement.executeQuery();
         config.dataQueryColumns = resultSetToColumnDTOArray(rs);
+        return config;
     }
 
     /**

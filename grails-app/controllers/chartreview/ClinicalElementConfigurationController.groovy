@@ -468,7 +468,7 @@ class ClinicalElementConfigurationController {
                 Connection c = null;
 
                 try {
-                    c = projectService.getDatabaseConnection(p);
+                    c = projectService.getDatabaseConnection(conversation.project);
                     List<Map> results  = clinicalElementService.getExampleResults(c, conversation.dto);
                     conversation.exampleResults = results;
                     if (conversation.dto.contentTemplate && conversation.dto.contentTemplate.trim().length() > 0 && results.size()>0) {

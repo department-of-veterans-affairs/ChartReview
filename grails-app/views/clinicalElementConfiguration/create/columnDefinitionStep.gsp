@@ -4,7 +4,7 @@
     <meta name="layout" content="main">
     <r:require modules="bootstrap"/>
     <title>Clinical Element Configuration Wizard</title>
-    <script src="${request.contextPath}/ckeditor/ckeditor.js"></script>
+    <script src="${request.contextPath}/js/ckeditor/ckeditor.js"></script>
 </head>
 <body>
 <br/><br/><br/>
