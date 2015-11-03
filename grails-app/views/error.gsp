@@ -13,6 +13,7 @@
 		<g:else>
 			<ul class="errors">
 				<li>An internal error has occurred.</li>
+				<g:renderException exception="${exception}" />
 			</ul>
 		</g:else>
 	</body>
