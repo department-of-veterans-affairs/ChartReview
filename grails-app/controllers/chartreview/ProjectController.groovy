@@ -120,7 +120,7 @@ class ProjectController {
             SimanCreate create = new SimanCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             create.execute();
 
-            ClinicalElementConfigurationCreate clinicalElementConfigurationCreate = new ClinicalElementConfigurationCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
+            ClinicalElementConfigurationCreate clinicalElementConfigurationCreate = new ClinicalElementConfigurationCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             clinicalElementConfigurationCreate.execute();
 
             AnnotationTaskCreateDrop annotationTaskCreate = new AnnotationTaskCreateDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
