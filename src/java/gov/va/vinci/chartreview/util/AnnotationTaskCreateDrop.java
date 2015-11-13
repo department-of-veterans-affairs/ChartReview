@@ -15,7 +15,7 @@ import static gov.va.vinci.siman.tools.SimanUtils.executeSqlStatement;
 /**
  * Created by ryancornia on 8/26/14.
  */
-public class AnnotationTaskCreate {
+public class AnnotationTaskCreateDrop {
 
     /**
      * Name of the database schema if applicable - mssql
@@ -41,7 +41,7 @@ public class AnnotationTaskCreate {
     /**
      * Log output object
      */
-    protected static final Logger logger = Logger.getLogger(AnnotationTaskCreate.class);
+    protected static final Logger logger = Logger.getLogger(AnnotationTaskCreateDrop.class);
 
     /**
      * Create a connection with the database information provided.  The schema is optional and is specific primarily to
@@ -52,7 +52,7 @@ public class AnnotationTaskCreate {
      * @throws java.sql.SQLException if there is an error getting the database connection
      * @throws javax.xml.bind.ValidationException if there is a problem getting the SQLTemplates from the connection information
      */
-    public AnnotationTaskCreate(DbConnectionInfo dbConnectionInfo, String schema)
+    public AnnotationTaskCreateDrop(DbConnectionInfo dbConnectionInfo, String schema)
             throws SQLException, ValidationException {
         if(dbConnectionInfo == null) {
             throw new IllegalArgumentException("dbConnectionInfo argument cannot be null!");
@@ -74,7 +74,7 @@ public class AnnotationTaskCreate {
      * @param templates implementation specific SQLTemplates instance
      * @param schema optional, name of the sql schema to use
      */
-    public AnnotationTaskCreate(Connection conn, SQLTemplates templates, String schema) {
+    public AnnotationTaskCreateDrop(Connection conn, SQLTemplates templates, String schema) {
         if(conn == null) {
             throw new IllegalArgumentException("Connection argument cannot be null!");
         }
@@ -101,7 +101,7 @@ public class AnnotationTaskCreate {
      * @param schema schema string to be used
      * @return reference to this SimanCreate instance
      */
-    public AnnotationTaskCreate setSchema(String schema) {
+    public AnnotationTaskCreateDrop setSchema(String schema) {
         this.schema = schema;
         return this;
     }
@@ -121,7 +121,7 @@ public class AnnotationTaskCreate {
      * @param connection database connection object
      * @return reference to this SimanCreate instance
      */
-    public AnnotationTaskCreate setConnection(Connection connection) {
+    public AnnotationTaskCreateDrop setConnection(Connection connection) {
         this.connection = connection;
         return this;
     }
@@ -141,7 +141,7 @@ public class AnnotationTaskCreate {
      * @param templates
      * @return
      */
-    public AnnotationTaskCreate setTemplates(SQLTemplates templates) {
+    public AnnotationTaskCreateDrop setTemplates(SQLTemplates templates) {
         this.templates = templates;
         return this;
     }
@@ -161,7 +161,7 @@ public class AnnotationTaskCreate {
      * @param close_on_execute true if the connection should be closed when execute finishes
      * @return reference to this ClinicalElementConfigurationCreate instance
      */
-    public AnnotationTaskCreate setCloseOnExecute(boolean close_on_execute) {
+    public AnnotationTaskCreateDrop setCloseOnExecute(boolean close_on_execute) {
         this.close_on_execute = close_on_execute;
         return this;
     }
@@ -169,7 +169,7 @@ public class AnnotationTaskCreate {
     /**
      * Generate the create table statements and execute them.
      */
-    public void execute() {
+    public void executeCreate() {
         StringBuilder builder = new StringBuilder();
         String table = null;
         boolean isSchema = StringUtils.isNotBlank(schema);
@@ -234,6 +234,27 @@ public class AnnotationTaskCreate {
         if(close_on_execute)
         {
             Utils.closeConnection(this.connection);
+        }
+
+    }
+    public void executeDrop(){
+        boolean isSchema = org.apache.commons.lang3.StringUtils.isNotBlank(this.schema);
+        String table = null;
+        table = isSchema?this.schema + "." + ANNOTATION_TASK_TABLE:ANNOTATION_TASK_TABLE;
+        SimanUtils.executeSqlStatement(this.connection, "DROP TABLE " + table);
+        if(this.close_on_execute) {
+            this.close();
+        }
+    }
+
+
+    public void close() {
+        if(this.connection != null) {
+            try {
+                this.connection.close();
+            } catch (SQLException var2) {
+                logger.error("Error closing the connection!", var2);
+            }
         }
 
     }

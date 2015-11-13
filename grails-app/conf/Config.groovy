@@ -1,3 +1,6 @@
+import javax.naming.Context
+import javax.naming.InitialContext
+
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
@@ -75,6 +78,8 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         grails.logging.jul.usebridge = true
+        chartReview.defaultSchema = "brad1"
+
     }
     production {
         grails.logging.jul.usebridge = false
@@ -240,6 +245,13 @@ chartReview.maxElementsInCreateProcess=5000;
  * which is the max.
  */
 chartReview.warnElementsInCreateProcess=1000;
+
+chartReview.defaultSchema='Dflt';
+try {
+    chartReview.defaultSchema = ((Context)(new InitialContext().lookup("java:comp/env"))).lookup("schema")
+} catch (Exception e) {
+    chartReview.defaultSchema = 'Dflt';
+}
 
 grails.doc.title = "Chart Review"
 grails.doc.subtitle = ""

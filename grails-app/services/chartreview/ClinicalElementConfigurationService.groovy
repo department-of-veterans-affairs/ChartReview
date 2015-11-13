@@ -30,7 +30,8 @@ class ClinicalElementConfigurationService {
 
         SQLTemplates templates = Utils.getSQLTemplate(project);
         try {
-            c = ds.getConnection();
+//            c = ds.getConnection();
+            c = projectService.getDatabaseConnection(project);
 
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates);
             return  clinicalElementConfigDAO.getClinicalElementConfiguration(id);
@@ -49,7 +50,8 @@ class ClinicalElementConfigurationService {
 
         SQLTemplates templates = Utils.getSQLTemplate(project);
         try {
-            c = ds.getConnection();
+//            c = ds.getConnection();
+            c = projectService.getDatabaseConnection(project);
 
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates);
             List<ClinicalElementConfiguration> configurations = clinicalElementConfigDAO.getAllClinicalElementConfigurations();
@@ -119,7 +121,8 @@ class ClinicalElementConfigurationService {
         Connection c = null;
         SQLTemplates templates = Utils.getSQLTemplate(project);
         try {
-            c = ds.getConnection();
+//            c = ds.getConnection();
+            c = projectService.getDatabaseConnection(project);
 
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates);
             clinicalElementConfigDAO.addClinicalElementConfiguration(conf);
@@ -138,7 +141,8 @@ class ClinicalElementConfigurationService {
         SQLTemplates templates = Utils.getSQLTemplate(project);
 
         try {
-            c = ds.getConnection();
+//            c = ds.getConnection();
+            c = projectService.getDatabaseConnection(project);
 
             long deletedCount = new SQLDeleteClause(c, templates, QClinicalElementConfiguration.clinicalElementConfiguration)
                     .where(QClinicalElementConfiguration.clinicalElementConfiguration.id.eq(clinicalElementConfigId)).execute();

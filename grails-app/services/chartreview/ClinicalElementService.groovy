@@ -565,7 +565,8 @@ class ClinicalElementService  {
         Connection c = null;
 
         try {
-            c = ds.getConnection();
+//            c = ds.getConnection();
+            c = projectService.getDatabaseConnection(project);
 
             PreparedStatement dataQueryStatement = c.prepareStatement(config.query);
 
@@ -595,7 +596,8 @@ class ClinicalElementService  {
         List<Map> results = new ArrayList<Map>();
 
         try {
-            c = ds.getConnection();
+//            c = ds.getConnection();
+            c = projectService.getDatabaseConnection(project);
 
             PreparedStatement dataQueryStatement = c.prepareStatement(config.query);
 

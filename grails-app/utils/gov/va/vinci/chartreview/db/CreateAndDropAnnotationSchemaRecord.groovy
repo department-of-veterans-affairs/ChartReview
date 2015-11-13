@@ -1,17 +1,14 @@
 package gov.va.vinci.chartreview.db
-
-import com.mysema.query.sql.H2Templates
-import com.mysema.query.sql.HSQLDBTemplates
-import com.mysema.query.sql.MySQLTemplates
-import com.mysema.query.sql.SQLServerTemplates
-import com.mysema.query.sql.SQLTemplates
+import com.mysema.query.sql.*
+import gov.va.vinci.siman.tools.SimanUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.log4j.Logger
 
 import javax.validation.ValidationException
 import java.sql.Connection
+import java.sql.SQLException
 
 import static gov.va.vinci.siman.tools.SimanUtils.executeSqlStatement
-
 /**
  * Created by ryancornia on 2/18/15.
  *
@@ -56,6 +53,10 @@ class CreateAndDropAnnotationSchemaRecord {
      * Name of the  table
      */
     public static final String TABLE_NAME = "annotation_schema_record";
+    /**
+     * Logger
+     */
+    protected static final Logger logger = Logger.getLogger(CreateAndDropAnnotationSchemaRecord.class);
 
     /**
      * Create a connection with the database information provided.  The schema is optional and is specific primarily to
@@ -155,6 +156,16 @@ class CreateAndDropAnnotationSchemaRecord {
         executeSqlStatement(connection, builder.toString());
     }
 
+    public void executeDrop(){
+        boolean isSchema = org.apache.commons.lang3.StringUtils.isNotBlank(this.schema);
+        String table = null;
+        table = isSchema?this.schema + "." + TABLE_NAME:TABLE_NAME;
+        SimanUtils.executeSqlStatement(this.connection, "DROP TABLE " + table);
+        if(this.close_on_execute) {
+            this.close();
+        }
+    }
+
     boolean getClose_on_execute() {
         return close_on_execute
     }
@@ -185,5 +196,16 @@ class CreateAndDropAnnotationSchemaRecord {
 
     void setTemplates(SQLTemplates templates) {
         this.templates = templates
+    }
+
+    public void close() {
+        if(this.connection != null) {
+            try {
+                this.connection.close();
+            } catch (SQLException var2) {
+                logger.error("Error closing the connection!", var2);
+            }
+        }
+
     }
 }

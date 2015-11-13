@@ -4,12 +4,10 @@ import gov.va.vinci.siman.tools.DbConnectionInfo;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ArrayListHandler;
-import org.hsqldb.Server;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -19,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by ryancornia on 8/26/14.
  */
-public class AnnotationTaskCreateTest {
+public class AnnotationTaskCreateDropTest {
 
 
     DbConnectionInfo dbConnectionInfo = new DbConnectionInfo("org.h2.Driver", "jdbc:h2:mem:TestDb", "sa", "");
@@ -35,7 +33,7 @@ public class AnnotationTaskCreateTest {
         Connection conn = DriverManager.getConnection(dbConnectionInfo.getUrl(), dbConnectionInfo.getUsername(), dbConnectionInfo.getPassword());
 
         //Create the tables first
-        AnnotationTaskCreate sct = new AnnotationTaskCreate(dbConnectionInfo, null);
+        AnnotationTaskCreateDrop sct = new AnnotationTaskCreateDrop(dbConnectionInfo, null);
         sct.execute();
 
          //Check the tables QueryRunner

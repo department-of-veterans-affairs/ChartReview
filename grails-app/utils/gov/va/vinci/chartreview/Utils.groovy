@@ -44,19 +44,14 @@ class Utils {
     }
 
     public static DataSource getProjectDatasource(Project project) {
-        println "getProjectDatasource projectName=" + project.getName();
         ServletContext servletContext = org.codehaus.groovy.grails.web.context.ServletContextHolder.getServletContext();
         DataSource ds = (DataSource) servletContext.getAttribute("STUDY:DATASOURCE:" + project.id);
-        println ds;
 
         if (ds == null) {
-            println "getProjectDatasource create datasource";
             ds =  Utils.createProjectDatasource(project);
-            println "getProjectDatasource ds1=" + ds;
             servletContext.setAttribute("STUDY:DATASOURCE:" + project.id, ds);
 //            throw new RuntimeException("Could not get datasource: STUDY:DATASOURCE:" + projectId + " from session.");
         }
-        println "getProjectDatasource ds2=" + ds;
         return ds;
     }
 

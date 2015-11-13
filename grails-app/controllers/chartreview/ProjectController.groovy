@@ -2,12 +2,10 @@ package chartreview
 import com.mysema.query.sql.SQLQuery
 import com.mysema.query.sql.SQLQueryFactoryImpl
 import com.mysema.query.sql.SQLTemplates
-import gov.va.vinci.siman.schema.ClinicalElementConfigurationCreate
-import gov.va.vinci.siman.schema.ClinicalElementConfigurationDrop
 import gov.va.vinci.chartreview.Utils
 import gov.va.vinci.chartreview.db.CreateAndDropAnnotationSchemaRecord
 import gov.va.vinci.chartreview.model.*
-import gov.va.vinci.chartreview.util.AnnotationTaskCreate
+import gov.va.vinci.chartreview.util.AnnotationTaskCreateDrop
 import gov.va.vinci.siman.dao.AnnotationDAO
 import gov.va.vinci.siman.model.Annotation
 import gov.va.vinci.siman.model.QAnnotation
@@ -15,7 +13,6 @@ import gov.va.vinci.siman.model.QClinicalElement
 import gov.va.vinci.siman.schema.*
 import gov.va.vinci.siman.tools.ConnectionProvider
 import gov.va.vinci.siman.tools.SimanUtils
-import org.apache.commons.dbutils.DbUtils
 import org.apache.commons.dbutils.QueryRunner
 import org.apache.commons.dbutils.ResultSetHandler
 import org.apache.commons.dbutils.handlers.ArrayListHandler
@@ -33,6 +30,7 @@ class ProjectController {
     def processService;
     def clinicalElementService;
     def annotationService;
+    def grailsApplication;
 
     static allowedMethods = [save: "POST", update: "POST"]
 
@@ -114,21 +112,21 @@ class ProjectController {
             return
         }
 
-
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(projectInstance);
+            String defaultSchema = grailsApplication.config.chartReview.defaultSchema;
 
-            SimanCreate create = new SimanCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
+            SimanCreate create = new SimanCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             create.execute();
 
             ClinicalElementConfigurationCreate clinicalElementConfigurationCreate = new ClinicalElementConfigurationCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
             clinicalElementConfigurationCreate.execute();
 
-            AnnotationTaskCreate annotationTaskCreate = new AnnotationTaskCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
-            annotationTaskCreate.execute();
+            AnnotationTaskCreateDrop annotationTaskCreate = new AnnotationTaskCreateDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
+            annotationTaskCreate.executeCreate();
 
-            CreateAndDropAnnotationSchemaRecord schema = new CreateAndDropAnnotationSchemaRecord(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
+            CreateAndDropAnnotationSchemaRecord schema = new CreateAndDropAnnotationSchemaRecord(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             schema.executeCreate();
         } finally {
 
@@ -150,12 +148,19 @@ class ProjectController {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(projectInstance);
+            String defaultSchema = grailsApplication.config.chartReview.defaultSchema;
 
-            SimanDrop create = new SimanDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
-            create.execute();
+            SimanDrop drop = new SimanDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
+            drop.execute();
 
-            ClinicalElementConfigurationDrop clinicalElementConfigurationCreate = new ClinicalElementConfigurationDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), null);
-            clinicalElementConfigurationCreate.execute();
+            AnnotationTaskCreateDrop annotationTaskCreate = new AnnotationTaskCreateDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
+            annotationTaskCreate.executeDrop();
+
+            ClinicalElementConfigurationDrop clinicalElementConfigurationDrop = new ClinicalElementConfigurationDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
+            clinicalElementConfigurationDrop.execute();
+
+            CreateAndDropAnnotationSchemaRecord schema = new CreateAndDropAnnotationSchemaRecord(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
+            schema.executeDrop();
         } finally {
 
             Utils.closeConnection(c);

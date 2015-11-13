@@ -7,7 +7,6 @@ import gov.va.vinci.siman.model.ClinicalElementColumnDef
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
 import gov.va.vinci.siman.model.ClinicalElementConfigurationDetails
 import grails.plugin.gson.converters.GSON
-import org.apache.commons.dbutils.DbUtils
 import org.apache.commons.validator.GenericValidator
 import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
@@ -222,7 +221,8 @@ class ClinicalElementConfigurationController {
         Connection c = null;
 
         try {
-            c = ds.getConnection();
+//            c = ds.getConnection();
+            c = projectService.getDatabaseConnection(p);
 
             params.max = Math.min(max ?: 10, 100)
             if (!params.sort) {
