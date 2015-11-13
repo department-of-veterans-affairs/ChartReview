@@ -78,7 +78,7 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         grails.logging.jul.usebridge = true
-        chartReview.defaultSchema = "brad1"
+        chartReview.defaultSchema = "chartreview"
 
     }
     production {
