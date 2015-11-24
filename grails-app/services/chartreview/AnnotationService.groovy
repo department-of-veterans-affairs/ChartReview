@@ -34,6 +34,7 @@ class AnnotationService {
     def clinicalElementService;
     def projectService;
     def annotationSchemaService;
+    def grailsApplication;
 
     DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
 
@@ -108,17 +109,16 @@ class AnnotationService {
             String clinicalElementGuid;
             Map<String, String> existingClinicalElements = new HashMap<String, String>();
 
-            QFeature qFeature = new QFeature("q");
+            QFeature qFeature = new QFeature("f", grailsApplication.config.chartReview.defaultSchema, "FEATURE");
             SQLInsertClause featureInsert = new SQLInsertClause(connection, dialect, qFeature);
 
-            QAnnotation qAnnotation = new QAnnotation("a");
+            QAnnotation qAnnotation = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
             SQLInsertClause annotationInsert = new SQLInsertClause(connection, dialect, qAnnotation);
 
-            QAnnotationTask qAnnotationTask =
-                        QAnnotationTask.annotationTask;
+            QAnnotationTask qAnnotationTask = new QAnnotationTask("t", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION_TASK");
             SQLInsertClause annotationTaskInsert = new SQLInsertClause(connection, dialect, qAnnotationTask);
 
-            QClinicalElement qClinicalElement = new QClinicalElement("c");
+            QClinicalElement qClinicalElement = new QClinicalElement("ce", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT");
             SQLInsertClause clinicalElementInsert = new SQLInsertClause(connection, dialect, qClinicalElement);
             boolean hasClinicalElementInsert = false;
             boolean hasAnnotationInsert = false;
@@ -150,7 +150,7 @@ class AnnotationService {
                     query = new SQLQueryFactoryImpl(dialect, new ConnectionProvider(connection)).query();
 
                     // Check for clinical element and insert it if it doesn't exit.
-                    QClinicalElement CLINICAL_ELEMENT = QClinicalElement.clinicalElement;
+                    QClinicalElement CLINICAL_ELEMENT = new QClinicalElement("ce", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT");
 
                     List<Tuple> clinicalElements = null;
 
@@ -193,8 +193,8 @@ class AnnotationService {
                 }
 
                 // Insert Annotation
-                QAnnotation ANNOTATION = QAnnotation.annotation;
-                QFeature FEATURE = new QFeature("f");
+                QAnnotation ANNOTATION = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
+                QFeature FEATURE = new QFeature("f", grailsApplication.config.chartReview.defaultSchema, "FEATURE");
                 String annotationGuid = UUID.randomUUID();
                 String schemaURI = it.schemaRef.@uri;
 
@@ -290,11 +290,10 @@ class AnnotationService {
             SQLTemplates dialect = Utils.getSQLTemplate(p.jdbcDriver);
             SQLQuery query = new SQLQueryFactoryImpl(dialect, new ConnectionProvider(connection)).query();
 
-            QClinicalElement CLINICAL_ELEMENT = QClinicalElement.clinicalElement;
-            QAnnotation ANNOTATION = QAnnotation.annotation;
-            QFeature FEATURE = QFeature.feature;
-            QAnnotationTask ANNOTATION_TASK = QAnnotationTask.annotationTask;
-
+            QClinicalElement CLINICAL_ELEMENT = new QClinicalElement("ce", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT")
+            QAnnotation ANNOTATION = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
+            QFeature FEATURE = new QFeature("f", grailsApplication.config.chartReview.defaultSchema, "FEATURE");
+            QAnnotationTask ANNOTATION_TASK = new QAnnotationTask("t", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION_TASK");
 
             query = query.from(CLINICAL_ELEMENT)
                     .leftJoin(ANNOTATION).on(ANNOTATION.clinicalElementGuid.eq(CLINICAL_ELEMENT.guid))
@@ -562,11 +561,11 @@ class AnnotationService {
                                     String clinicalElementGroup,
                                     String annotationGroup,
                                     String user) {
-        QClinicalElement clinicalElement = QClinicalElement.clinicalElement;
-        QAnnotation annotation = QAnnotation.annotation;
-        QAnnotation annotationSubquery = QAnnotation.annotation;
-        QFeature feature = QFeature.feature;
-        QAnnotationTask qAnnotationProcessTaskPrincipalClinicalElement  = QAnnotationTask.annotationTask;
+        QClinicalElement clinicalElement = new QClinicalElement("c", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT")
+        QAnnotation annotation = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
+        QAnnotation annotationSubquery = new QAnnotation("as", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
+        QFeature feature = new QFeature("f", grailsApplication.config.chartReview.defaultSchema, "FEATURE");
+        QAnnotationTask qAnnotationProcessTaskPrincipalClinicalElement = new QAnnotationTask("t", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION_TASK");
         long deleteAnnotationCount = 0;
 
         SQLQuery subQuery = new SQLQueryFactoryImpl(dialect, new ConnectionProvider(c)).query();

@@ -517,7 +517,7 @@ class ProcessController {
 
     public SortedSet<String> getPossibleAnnotationGroups(Project p) {
         Connection connection = null;
-        QAnnotation qAnnotation = new QAnnotation("a");
+        QAnnotation qAnnotation = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
         SortedSet<String> results = new TreeSet<String>();
         try {
             /** Get current siman groups. **/

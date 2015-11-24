@@ -18,6 +18,7 @@ import java.util.List;
  * Data access object for dealing with AnnotationSchemaRecordDAO.
  */
 public class AnnotationSchemaRecordDAO {
+
     /**
      * Database connection object
      */
@@ -26,6 +27,11 @@ public class AnnotationSchemaRecordDAO {
      * SQL dialect to use
      */
     protected SQLTemplates dialect = null;
+    /**
+     * the schema this object resides in if needed. This is generally used in MSSQL connections.
+     */
+    protected String schema = null;
+
     /**
      * Logging object
      */
@@ -48,6 +54,24 @@ public class AnnotationSchemaRecordDAO {
         this.dialect = templates;
     }
 
+    /**
+     * Set the database connection and dialect.
+     *
+     * @param connection database connection object
+     * @param templates database dialect to be used
+     * @param schema  the schema this object resides in if needed. Null if not needed.
+     */
+    public AnnotationSchemaRecordDAO(Connection connection, SQLTemplates templates, String schema) {
+        if(connection == null)
+            throw new IllegalArgumentException("Connection argument cannot be null!");
+        if(templates == null)
+            throw new IllegalArgumentException("SQLTemplates argument cannot be null!");
+
+        //Create the connection from the connection info
+        this.connection = connection;
+        this.dialect = templates;
+        this.schema = schema;
+    }
     /**
      * Get the database specific dialect to be used in queries.
      *
@@ -78,6 +102,14 @@ public class AnnotationSchemaRecordDAO {
     }
 
     /**
+     * The database schema this object resides in if needed. Null if not needed.
+     * @return  the schema this object resides in if needed. Null if not needed.
+     */
+    public String getSchema() {
+        return schema;
+    }
+
+    /**
      * Set the database connection object
      *
      * @param connection database connection object
@@ -97,7 +129,7 @@ public class AnnotationSchemaRecordDAO {
         if(record == null)
             throw new IllegalArgumentException("record argument cannot be null");
 
-        QAnnotationSchemaRecord QRECORD = QAnnotationSchemaRecord.annotationSchemaRecord;
+        QAnnotationSchemaRecord QRECORD = new QAnnotationSchemaRecord("r", this.schema, "annotation_schema_record");
         new SQLInsertClause(connection, dialect, QRECORD)
                 .columns(QRECORD.id, QRECORD.createdBy, QRECORD.createdDate,
                         QRECORD.description, QRECORD.lastModifiedBy, QRECORD.lastModifiedDate,
@@ -119,7 +151,7 @@ public class AnnotationSchemaRecordDAO {
         if(record == null)
             throw new IllegalArgumentException("record argument cannot be null");
 
-        QAnnotationSchemaRecord QRECORD = QAnnotationSchemaRecord.annotationSchemaRecord;
+        QAnnotationSchemaRecord QRECORD = new QAnnotationSchemaRecord("r", this.schema, "annotation_schema_record");
         new SQLUpdateClause(connection, dialect, QRECORD)
                 .where(QRECORD.id.eq(record.getId()))
                 .set(QRECORD.createdBy, record.getCreatedBy())
@@ -141,7 +173,7 @@ public class AnnotationSchemaRecordDAO {
      *
      */
     public AnnotationSchemaRecord get(String id) {
-        QAnnotationSchemaRecord QRECORD = QAnnotationSchemaRecord.annotationSchemaRecord;
+        QAnnotationSchemaRecord QRECORD = new QAnnotationSchemaRecord("r", this.schema, "annotation_schema_record");
         SQLQuery query = new SQLQueryFactoryImpl(dialect, new ConnectionProvider(connection)).query();
 
         query = query.from(QRECORD)
@@ -165,7 +197,7 @@ public class AnnotationSchemaRecordDAO {
      *
      */
     public AnnotationSchemaRecord findByName(String name) {
-        QAnnotationSchemaRecord QRECORD = QAnnotationSchemaRecord.annotationSchemaRecord;
+        QAnnotationSchemaRecord QRECORD = new QAnnotationSchemaRecord("r", this.schema, "annotation_schema_record");
         SQLQuery query = new SQLQueryFactoryImpl(dialect, new ConnectionProvider(connection)).query();
 
         query = query.from(QRECORD)
@@ -187,7 +219,7 @@ public class AnnotationSchemaRecordDAO {
      *
      */
     public List<AnnotationSchemaRecord> getAll() {
-        QAnnotationSchemaRecord QRECORD = QAnnotationSchemaRecord.annotationSchemaRecord;
+        QAnnotationSchemaRecord QRECORD = new QAnnotationSchemaRecord("r", this.schema, "annotation_schema_record");
         SQLQuery query = new SQLQueryFactoryImpl(dialect, new ConnectionProvider(connection)).query();
 
         query = query.from(QRECORD);
@@ -202,7 +234,7 @@ public class AnnotationSchemaRecordDAO {
      *
      */
     public Long delete(String id) {
-        QAnnotationSchemaRecord QRECORD = QAnnotationSchemaRecord.annotationSchemaRecord;
+        QAnnotationSchemaRecord QRECORD = new QAnnotationSchemaRecord("r", this.schema, "annotation_schema_record");
 
         return new SQLDeleteClause(connection, dialect, QRECORD)
                 .where(QRECORD.id.eq(id))

@@ -1,29 +1,21 @@
 package chartreview
-
 import gov.va.vinci.chartreview.Utils
 import gov.va.vinci.chartreview.model.Project
-import gov.va.vinci.chartreview.model.schema.AnnotationSchema
-import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecord
-import gov.va.vinci.chartreview.model.schema.AnnotationSchemaRecordDAO
-import gov.va.vinci.chartreview.model.schema.AttributeDef
-import gov.va.vinci.chartreview.model.schema.AttributeDefOptionDef
-import gov.va.vinci.chartreview.model.schema.ClassDef
-import gov.va.vinci.chartreview.model.schema.ClassRelDef
+import gov.va.vinci.chartreview.model.schema.*
 import gov.va.vinci.leo.descriptors.LeoTypeSystemDescription
 import gov.va.vinci.leo.descriptors.TypeDescriptionBuilder
 import grails.converters.XML
 import groovy.util.slurpersupport.GPathResult
-import org.apache.commons.dbutils.DbUtils
 
 import java.sql.Connection
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
-
 /**
  * Service for dealing with annotation schemas.
  */
 class AnnotationSchemaService {
     def projectService;
+    def grailsApplication;
 
     /**
      * Copy an annotation schema. This creates new UUIDs.
@@ -60,7 +52,7 @@ class AnnotationSchemaService {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(p);
-            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
+            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver), grailsApplication.config.chartReview.defaultSchema);
             dao.insert(record);
             if (!c.autoCommit) {
                 c.commit();
@@ -79,7 +71,7 @@ class AnnotationSchemaService {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(p);
-            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
+            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver), grailsApplication.config.chartReview.defaultSchema);
             dao.update(record);
             if (!c.autoCommit) {
                 c.commit();
@@ -99,7 +91,7 @@ class AnnotationSchemaService {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(p);
-            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
+            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver), grailsApplication.config.chartReview.defaultSchema);
             return dao.findByName(name);
         } finally {
 
@@ -117,7 +109,7 @@ class AnnotationSchemaService {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(p);
-            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
+            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver), grailsApplication.config.chartReview.defaultSchema);
             return dao.get(id);
         } finally {
 
@@ -134,7 +126,7 @@ class AnnotationSchemaService {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(p);
-            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
+            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver), grailsApplication.config.chartReview.defaultSchema);
             return dao.getAll();
         } finally {
 
@@ -152,7 +144,7 @@ class AnnotationSchemaService {
         Connection c = null;
         try {
             c = projectService.getDatabaseConnection(p);
-            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver));
+            AnnotationSchemaRecordDAO dao = new AnnotationSchemaRecordDAO(c, Utils.getSQLTemplate(p.jdbcDriver), grailsApplication.config.chartReview.defaultSchema);
             return dao.delete(id);
         } finally {
 

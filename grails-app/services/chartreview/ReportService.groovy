@@ -26,6 +26,7 @@ import static gov.va.vinci.chartreview.Utils.closeConnection
 class ReportService {
     def projectService;
     def annotationSchemaService;
+    def grailsApplication;
 
     public annotations(String projectId, List<String> processNames) {
         Map<String, AnnotationSchema> schemaMap = new HashMap<>();
@@ -34,10 +35,10 @@ class ReportService {
         SQLTemplates sqlTemplate = Utils.getSQLTemplate(p.jdbcDriver);
         Connection connection = null;
         QClinicalElement qClinicalElement = new QClinicalElement("ce");
-        QClinicalElementConfiguration qClinicalElementConfiguration =new QClinicalElementConfiguration("cec");
-        QFeature qFeature = QFeature.feature;
-        QAnnotation qAnnotation = new QAnnotation("a");
-        QAnnotationTask  qAnnotationTask = QAnnotationTask.annotationTask;
+        QClinicalElementConfiguration qClinicalElementConfiguration = new QClinicalElementConfiguration("cec", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT_CONFIGURATION");
+        QFeature qFeature = new QFeature("f", grailsApplication.config.chartReview.defaultSchema, "FEATURE");
+        QAnnotation qAnnotation = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
+        QAnnotationTask  qAnnotationTask = new QAnnotationTask("t", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION_TASK");
         List<Annotation> results = new ArrayList<Annotation>();
         try {
             connection = projectService.getDatabaseConnection(p);
@@ -128,11 +129,11 @@ class ReportService {
         Project p = projectService.getProject(projectId);
         SQLTemplates sqlTemplate = Utils.getSQLTemplate(p.jdbcDriver);
         Connection connection = null;
-        QClinicalElement qClinicalElement = new QClinicalElement("ce");
-        QClinicalElementConfiguration qClinicalElementConfiguration =new QClinicalElementConfiguration("cec");
-        QFeature qFeature = QFeature.feature;
-        QAnnotation qAnnotation = new QAnnotation("a");
-        QAnnotationTask  qAnnotationTask = QAnnotationTask.annotationTask;
+        QClinicalElement qClinicalElement = new QClinicalElement("ce", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT");
+        QClinicalElementConfiguration qClinicalElementConfiguration = new QClinicalElementConfiguration("cec", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT_CONFIGURATION");
+        QFeature qFeature = new QFeature("f", grailsApplication.config.chartReview.defaultSchema, "FEATURE");
+        QAnnotation qAnnotation = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
+        QAnnotationTask  qAnnotationTask = new QAnnotationTask("t", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION_TASK");
         List<AnnotationByAnnotatorDetailModel> results = new ArrayList<AnnotationByAnnotatorDetailModel>();
         try {
             connection = projectService.getDatabaseConnection(p);
@@ -244,8 +245,8 @@ class ReportService {
         Project p = projectService.getProject(projectId);
         SQLTemplates sqlTemplate = Utils.getSQLTemplate(p.jdbcDriver);
         Connection connection = null;
-        QAnnotation qAnnotation = new QAnnotation("a");
-        QAnnotationTask  qAnnotationTask = QAnnotationTask.annotationTask;
+        QAnnotation qAnnotation = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
+        QAnnotationTask  qAnnotationTask = new QAnnotationTask("t", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION_TASK");
         List<PatientAnnotatorProcessTaskId> patientAnnotatorProcesses = new ArrayList<PatientAnnotatorProcessTaskId>();
         List<String> finalProcessNames = new ArrayList<String>();
 
@@ -339,8 +340,8 @@ class ReportService {
         Project p = projectService.getProject(projectId);
         SQLTemplates sqlTemplate = Utils.getSQLTemplate(p.jdbcDriver);
         Connection connection = null;
-        QAnnotation qAnnotation = new QAnnotation("a");
-        QAnnotationTask  qAnnotationTask = QAnnotationTask.annotationTask;
+        QAnnotation qAnnotation = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
+        QAnnotationTask  qAnnotationTask = new QAnnotationTask("t", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION_TASK");
 
         List<PrimaryClinicalElementUserClassificationDetails> rowDetails = new ArrayList<PrimaryClinicalElementUserClassificationDetails>();
         List<String> classificationList = new ArrayList<String>();

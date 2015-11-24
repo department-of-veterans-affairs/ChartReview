@@ -17,6 +17,7 @@ import static gov.va.vinci.chartreview.Utils.closeConnection
 
 class ClinicalElementConfigurationService {
     def projectService;
+    def grailsApplication;
 
     /**
      * Get a single clinical element configuration.
@@ -33,7 +34,7 @@ class ClinicalElementConfigurationService {
 //            c = ds.getConnection();
             c = projectService.getDatabaseConnection(project);
 
-            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates);
+            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates, grailsApplication.config.chartReview.defaultSchema);
             return  clinicalElementConfigDAO.getClinicalElementConfiguration(id);
         }finally{
             DbUtils.closeQuietly((Connection)c);
@@ -50,10 +51,10 @@ class ClinicalElementConfigurationService {
 
         SQLTemplates templates = Utils.getSQLTemplate(project);
         try {
-//            c = ds.getConnection();
             c = projectService.getDatabaseConnection(project);
+            def defaultSchema = grailsApplication.config.chartReview.defaultSchema;
 
-            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates);
+            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO((java.sql.Connection)c, templates, defaultSchema);
             List<ClinicalElementConfiguration> configurations = clinicalElementConfigDAO.getAllClinicalElementConfigurations();
             if (activeOnly) {
                 return configurations.findAll { it.active }
@@ -71,7 +72,7 @@ class ClinicalElementConfigurationService {
             Project project = Project.get(projectId);
             connection = projectService.getDatabaseConnection(project);
 
-            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(connection, Utils.getSQLTemplate(project.getJdbcDriver()));
+            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(connection, Utils.getSQLTemplate(project.getJdbcDriver()), grailsApplication.config.chartReview.defaultSchema);
             clinicalElementConfigDAO.updateClinicalElementConfiguration(config);
         }finally{
             closeConnection(connection);
@@ -121,10 +122,9 @@ class ClinicalElementConfigurationService {
         Connection c = null;
         SQLTemplates templates = Utils.getSQLTemplate(project);
         try {
-//            c = ds.getConnection();
             c = projectService.getDatabaseConnection(project);
 
-            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates);
+            ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates, grailsApplication.config.chartReview.defaultSchema);
             clinicalElementConfigDAO.addClinicalElementConfiguration(conf);
         } finally {
             DbUtils.closeQuietly((Connection)c);
@@ -143,9 +143,9 @@ class ClinicalElementConfigurationService {
         try {
 //            c = ds.getConnection();
             c = projectService.getDatabaseConnection(project);
-
-            long deletedCount = new SQLDeleteClause(c, templates, QClinicalElementConfiguration.clinicalElementConfiguration)
-                    .where(QClinicalElementConfiguration.clinicalElementConfiguration.id.eq(clinicalElementConfigId)).execute();
+            QClinicalElementConfiguration qClinicalElementConfiguration = new QClinicalElementConfiguration("cec", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT_CONFIGURATION");
+            long deletedCount = new SQLDeleteClause(c, templates, qClinicalElementConfiguration)
+                    .where(qClinicalElementConfiguration.id.eq(clinicalElementConfigId)).execute();
 
             if (deletedCount < 1) {
                 throw new IllegalArgumentException("Clinical element configuration: ${clinicalElementConfigId} not found in project: ${projectId}.")

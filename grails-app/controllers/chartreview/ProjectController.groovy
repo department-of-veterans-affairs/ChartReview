@@ -120,8 +120,8 @@ class ProjectController {
             SimanCreate create = new SimanCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             create.execute();
 
-            ClinicalElementConfigurationCreate clinicalElementConfigurationCreate = new ClinicalElementConfigurationCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
-            clinicalElementConfigurationCreate.execute();
+            ClinicalElementConfigurationDDL clinicalElementConfigurationDDL = new ClinicalElementConfigurationDDL(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
+            clinicalElementConfigurationDDL.createTable();
 
             AnnotationTaskCreateDrop annotationTaskCreate = new AnnotationTaskCreateDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             annotationTaskCreate.executeCreate();
@@ -156,8 +156,8 @@ class ProjectController {
             AnnotationTaskCreateDrop annotationTaskCreate = new AnnotationTaskCreateDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             annotationTaskCreate.executeDrop();
 
-            ClinicalElementConfigurationDrop clinicalElementConfigurationDrop = new ClinicalElementConfigurationDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
-            clinicalElementConfigurationDrop.execute();
+            ClinicalElementConfigurationDDL clinicalElementConfigurationDDL = new ClinicalElementConfigurationDDL(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
+            clinicalElementConfigurationDDL.dropTable();
 
             CreateAndDropAnnotationSchemaRecord schema = new CreateAndDropAnnotationSchemaRecord(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             schema.executeDrop();
@@ -349,9 +349,9 @@ class ProjectController {
         Project p = projectService.getProject(id);
         SQLTemplates sqlTemplate = Utils.getSQLTemplate(p.jdbcDriver);
         Connection connection = null;
-        QAnnotation qAnnotation = new QAnnotation("a");
-        QClinicalElement qClinicalElement = QClinicalElement.clinicalElement;
-        QAnnotationTask  qAnnotationTask = QAnnotationTask.annotationTask;
+        QAnnotation qAnnotation = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
+        QClinicalElement qClinicalElement = new QClinicalElement("ce", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT");
+        QAnnotationTask  qAnnotationTask = new QAnnotationTask("t", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION_TASK");
 
         try {
         connection = projectService.getDatabaseConnection(p);

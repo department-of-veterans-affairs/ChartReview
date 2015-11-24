@@ -44,8 +44,9 @@ grails.project.dependency.resolution = {
             exclude 'org.springframework:spring-asm:3.0.7.RELEASE'
         }
         compile('gov.va.vinci.leo:leo-client:2014.08.0')
-        compile 'gov.va.vinci:leo-siman:2015.06.0'
+        compile 'gov.va.vinci:leo-siman:2015.10.1-SNAPSHOT'
     }
+
 
     plugins {
         build ":rest:0.8"

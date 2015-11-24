@@ -78,7 +78,7 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         grails.logging.jul.usebridge = true
-        chartReview.defaultSchema = "chartreview"
+        chartReview.defaultSchema = ""
 
     }
     production {
@@ -248,7 +248,7 @@ chartReview.warnElementsInCreateProcess=1000;
 
 chartReview.defaultSchema='Dflt';
 try {
-    chartReview.defaultSchema = ((Context)(new InitialContext().lookup("java:comp/env"))).lookup("schema")
+    chartReview.defaultSchema = ((Context)(new InitialContext().lookup("java:comp/env"))).lookup("chartReview").getSchema();
 } catch (Exception e) {
     chartReview.defaultSchema = 'Dflt';
 }
