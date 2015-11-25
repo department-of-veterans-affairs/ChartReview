@@ -32,8 +32,8 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
         runtime 'mysql:mysql-connector-java:5.1.22'
         test 'com.h2database:h2:1.3.175'
-        compile 'com.mysema.querydsl:querydsl-sql:3.3.1'
-        compile 'com.mysema.querydsl:querydsl-sql-codegen:3.3.1'
+        compile 'com.mysema.querydsl:querydsl-sql:3.6.3'
+        compile 'com.mysema.querydsl:querydsl-sql-codegen:3.6.3'
         compile 'org.apache.commons:commons-lang3:3.2.1'
         provided 'com.microsoft.sqlserver:sqljdbc4:4.0'
 //        runtime 'net.sourceforge.jtds:jtds:1.3.0'  Do we need to include this for it to be available as a project jdbc type?
@@ -44,7 +44,7 @@ grails.project.dependency.resolution = {
             exclude 'org.springframework:spring-asm:3.0.7.RELEASE'
         }
         compile('gov.va.vinci.leo:leo-client:2014.08.0')
-        compile 'gov.va.vinci:leo-siman:2015.10.1-SNAPSHOT'
+        compile 'gov.va.vinci:leo-siman:2015.10.0'
     }
 
 
