@@ -32,12 +32,13 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
         runtime 'mysql:mysql-connector-java:5.1.22'
         test 'com.h2database:h2:1.3.175'
-        compile 'com.mysema.querydsl:querydsl-sql:3.6.3'
-        compile 'com.mysema.querydsl:querydsl-sql-codegen:3.6.3'
+        compile 'com.google.guava:guava:18.0'
+        compile 'com.mysema.querydsl:querydsl-sql:3.6.6'
+        compile 'com.mysema.querydsl:querydsl-sql-codegen:3.6.6'
         compile 'org.apache.commons:commons-lang3:3.2.1'
         provided 'com.microsoft.sqlserver:sqljdbc4:4.0'
 //        runtime 'net.sourceforge.jtds:jtds:1.3.0'  Do we need to include this for it to be available as a project jdbc type?
-        compile 'com.google.guava:guava:13.0.1'
+//        compile 'com.google.guava:guava:13.0.1'
         build 'gov.va.vinci:jtds:2.0.1'
         test 'net.sourceforge.spnego:spnego:r7'
         compile('gov.va.vinci.leo:leo-service:2014.08.0') {
@@ -84,7 +85,8 @@ grails.project.dependency.resolution = {
 }
 
 // File: conf/BuildConfig.groovy
-grails.war.resources = { stagingDir ->
+grails.war.resources = { stagingDir ->        compile 'com.google.guava:guava:18.0'
+
     echo message: "StagingDir: $stagingDir"
     delete(verbose: true) {
         fileset(dir: stagingDir) {
