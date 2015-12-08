@@ -432,7 +432,7 @@ class Utils {
         } else if(driver.equals("com.mysql.jdbc.Driver")) {
             return MySQLTemplates.builder().quote().build();
         } else if(driver.equals("com.microsoft.sqlserver.jdbc.SQLServerDriver") || driver.equals("net.sourceforge.jtds.jdbc.Driver")) {
-            return SQLServerTemplates.builder().quote().build();
+            return SQLServerTemplates.builder().quote().printSchema().build();
         } else {
             throw new ValidationException("Could not determine dialect from driver. " + driver);
         }

@@ -78,7 +78,7 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         grails.logging.jul.usebridge = true
-        chartReview.defaultSchema = 'chartreview'
+//        chartReview.defaultSchema = 'dbo'
 
     }
     production {
@@ -246,11 +246,11 @@ chartReview.maxElementsInCreateProcess=5000;
  */
 chartReview.warnElementsInCreateProcess=1000;
 
-chartReview.defaultSchema='Dflt';
+chartReview.defaultSchema='dbo';
 try {
     chartReview.defaultSchema = ((Context)(new InitialContext().lookup("java:comp/env"))).lookup("chartReview").getSchema();
 } catch (Exception e) {
-    chartReview.defaultSchema = 'Dflt';
+    chartReview.defaultSchema = 'dbo';
 }
 
 grails.doc.title = "Chart Review"

@@ -82,7 +82,7 @@ class ProjectController {
 
         try {
             c = projectService.getDatabaseConnection(projectInstance);
-            SimanValidate validate = new SimanValidate(c, null);
+            SimanValidate validate = new SimanValidate(c, grailsApplication.config.chartReview.defaultSchema);
             isValid = validate.isValid();
             validate.close();
         } catch (Exception e) {

@@ -7,11 +7,10 @@ import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -34,7 +33,7 @@ public class AnnotationTaskCreateDropTest {
 
         //Create the tables first
         AnnotationTaskCreateDrop sct = new AnnotationTaskCreateDrop(dbConnectionInfo, null);
-        sct.execute();
+        sct.executeCreate();
 
          //Check the tables QueryRunner
         QueryRunner dataManager = new QueryRunner();

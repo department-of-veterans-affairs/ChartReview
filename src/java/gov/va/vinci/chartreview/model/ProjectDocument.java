@@ -59,7 +59,7 @@ public class ProjectDocument implements Serializable{
     }
 
     @ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.REFRESH, optional = false)
-    @JoinColumn(name = "user", referencedColumnName = "id")
+    @JoinColumn(name = "\"user\"", referencedColumnName = "id")
     @OrderBy("username")
     public User getUploadedBy() {
         return uploadedBy;

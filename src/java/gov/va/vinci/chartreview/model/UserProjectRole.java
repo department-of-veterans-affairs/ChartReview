@@ -24,7 +24,7 @@ public class UserProjectRole implements GrantedAuthority {
     }
 
     @ManyToOne(fetch=FetchType.EAGER, cascade = CascadeType.REFRESH, optional = false)
-    @JoinColumn(name = "user", referencedColumnName = "id")
+    @JoinColumn(name = "\"user\"", referencedColumnName = "id")
     @OrderBy("name")
     public User getUser() {
         return user;
