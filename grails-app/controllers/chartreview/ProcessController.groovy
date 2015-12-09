@@ -309,7 +309,7 @@ class ProcessController {
                 }.getType());
 
                 originalDisplayParameters.each { orig ->
-                    if (!displayParameters.find {
+                    if (displayParameters && !displayParameters.find {
                         it.clinicalElementConfigurationId == orig.clinicalElementConfigurationId
                     }) {
                         orig.position = displayParameters.size() + 1;

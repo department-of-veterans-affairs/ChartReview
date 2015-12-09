@@ -360,7 +360,7 @@ class ClinicalElementConfigurationController {
                 try {
                     List<ClinicalElementColumnDef> existingDataQueryColumns = dto.getDataQueryColumns()
 
-                    dto = clinicalElementService.populateColumnInfo(conversation.dataSource, dto);
+                    dto = clinicalElementService.populateColumnInfo(conversation.project, dto);
                     List<ClinicalElementColumnDef> toRemove = new ArrayList<ClinicalElementColumnDef>();
                     List<ClinicalElementColumnDef> toAdd = new ArrayList<ClinicalElementColumnDef>();
 
@@ -415,7 +415,7 @@ class ClinicalElementConfigurationController {
                     return columnDefinitionStep();
                 }
 
-                List<Map> results  = clinicalElementService.getExampleResults(conversation.dataSource, conversation.dto);
+                List<Map> results  = clinicalElementService.getExampleResults(conversation.project, conversation.dto);
                 conversation.exampleResults = results;
                 if (conversation.dto.contentTemplate && conversation.dto.contentTemplate.trim().length() > 0 && results.size()>0) {
                     Map result = results[0];
@@ -432,7 +432,7 @@ class ClinicalElementConfigurationController {
                 try {
                     List<ClinicalElementColumnDef> existingDataQueryColumns = conversation.dto.getDataQueryColumns()
 
-                    conversation.dto = clinicalElementService.populateColumnInfo(conversation.dataSource, conversation.dto);
+                    conversation.dto = clinicalElementService.populateColumnInfo(conversation.project, conversation.dto);
                     List<ClinicalElementColumnDef> toRemove = new ArrayList<ClinicalElementColumnDef>();
                     List<ClinicalElementColumnDef> toAdd = new ArrayList<ClinicalElementColumnDef>();
 

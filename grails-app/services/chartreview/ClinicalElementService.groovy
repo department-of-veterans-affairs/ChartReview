@@ -561,11 +561,10 @@ class ClinicalElementService  {
      * @return              A ClinicalElementConfigurationDetails from the result metadata of the query.
      * @throws SQLException if any type of sql exception occurs connection to or querying the database.
      */
-    public ClinicalElementConfigurationDetails populateColumnInfo(DataSource ds,  ClinicalElementConfigurationDetails config) throws SQLException {
+    public ClinicalElementConfigurationDetails populateColumnInfo(Project project, ClinicalElementConfigurationDetails config) throws SQLException {
         Connection c = null;
 
         try {
-//            c = ds.getConnection();
             c = projectService.getDatabaseConnection(project);
 
             PreparedStatement dataQueryStatement = c.prepareStatement(config.query);
@@ -591,12 +590,11 @@ class ClinicalElementService  {
      * @param clinicalElementConfigurationDetails the current clinical element configuration.
      * @return a results list.
      */
-    public List getExampleResults(DataSource ds,  ClinicalElementConfigurationDetails config) {
+    public List getExampleResults(Project project, ClinicalElementConfigurationDetails config) {
         Connection c = null;
         List<Map> results = new ArrayList<Map>();
 
         try {
-//            c = ds.getConnection();
             c = projectService.getDatabaseConnection(project);
 
             PreparedStatement dataQueryStatement = c.prepareStatement(config.query);

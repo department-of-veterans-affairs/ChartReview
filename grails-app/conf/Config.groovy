@@ -116,8 +116,8 @@ log4j = {
     //debug 'org.springframework',
 
     // Uncomment the following two lines to get SQL and bind parameters.
-//    debug 'org.hibernate.SQL'
-//    trace 'org.hibernate.type'
+    debug 'org.hibernate.SQL'
+    trace 'org.hibernate.type'
 }
 
 grails.plugins.twitterbootstrap.fixtaglib=true;

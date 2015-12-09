@@ -21,6 +21,7 @@ import static gov.va.vinci.chartreview.Utils.closeConnection
 
 class ProjectService {
     static String DEFAULT_SQL_CONNECTION_VALIDATION_QUERY = "select 1";
+    def springSecurityService;
 
     /**
      * Return a list of administrators for a project.
@@ -175,4 +176,51 @@ class ProjectService {
         Project p = Project.get(projectId);
         return p;
     }
+
+    protected boolean saveProject(Project p, List<String>usernames, List<String>roles) {
+
+        if(!p.save(flush: true, failOnError: true))
+        {
+            return false;
+        }
+
+        /**
+         * Make sure the user creating the project is in the list, or the project will be invisible to them.
+         */
+        User u = springSecurityService.principal;
+
+        if (!usernames.contains(u.username)) {
+            usernames.add(u.username)
+            roles.add(Role.findByName("ROLE_ADMIN").id);
+        }
+
+        Role role = Role.findByName("ROLE_ADMIN");
+        List<UserProjectRole> existingPermissions = UserProjectRole.findAllByProjectAndProcessStepIdIsNull(p);
+
+        if (p.getAuthorities() == null) {
+            p.setAuthorities(new ArrayList<UserProjectRole>());
+        }
+
+        // Delete existing permissions since they are re-created.
+        existingPermissions.each { existing ->
+            existing.delete(flush: true);
+        }
+
+        int counter = 0;
+        usernames.each{ username ->
+            UserProjectRole userProjectRole = new UserProjectRole(project: p, role: Role.get(roles.get(counter)), user: User.findByUsername(username), processStepId: null);
+            userProjectRole.setId(UUID.randomUUID().toString());
+            userProjectRole.save(flush: true, failOnError: true);
+            p.getAuthorities().add(userProjectRole);
+            counter++;
+        }
+
+//        p.save(flush:true, failOnError: true);
+        if(!p.save(flush: true, failOnError: true))
+        {
+            return false;
+        }
+        return true;
+    }
+
 }

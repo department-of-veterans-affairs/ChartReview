@@ -216,7 +216,11 @@ class ProjectController {
         projectInstance = validateAndSetProperties(projectInstance, params);
         projectInstance.id = UUID.randomUUID().toString();
 
-        if (projectInstance.hasErrors() || !projectInstance.save(flush: true, failOnError: true)) {
+        List<String> usernames = new ArrayList<String>(params.list('username'));
+        List<String> roles = new ArrayList<String>(params.list('role'));
+        if(projectInstance.hasErrors() || !projectService.saveProject(projectInstance, usernames, roles))
+        {
+//        if (projectInstance.hasErrors() || !projectInstance.save(flush: true, failOnError: true)) {
             render(view: "create", model: [
                                             administrators: params.list('username'),
                                             projectInstance: projectInstance,
@@ -226,7 +230,7 @@ class ProjectController {
             return
         }
 
-        saveProjectUsersAndClinicalElements(projectInstance, params);
+//        saveProjectUsersAndClinicalElements(projectInstance, params);
 
         flash.message = message(code: 'default.created.message', args: [message(code: 'project.label'), projectInstance.id])
         redirect(action: "show", id: projectInstance.id)
@@ -460,39 +464,40 @@ class ProjectController {
 
         List<String> usernames = new ArrayList<String>(params.list('username'));
         List<String> roles = new ArrayList<String>(params.list('role'));
+        projectService.saveProjectUsersAndClinicalElements(p, usernames, roles);
 
-        /**
-         * Make sure the user creating the project is in the list, or the project will be invisible to them.
-         */
-        User u = springSecurityService.principal;
-
-        if (!usernames.contains(u.username)) {
-            usernames.add(u.username)
-            roles.add(Role.findByName("ROLE_ADMIN").id);
-        }
-
-        Role role = Role.findByName("ROLE_ADMIN");
-        List<UserProjectRole> existingPermissions = UserProjectRole.findAllByProjectAndProcessStepIdIsNull(p);
-
-        if (p.getAuthorities() == null) {
-            p.setAuthorities(new ArrayList<UserProjectRole>());
-        }
-
-        // Delete existing permissions since they are re-created.
-        existingPermissions.each { existing ->
-            existing.delete(flush: true);
-        }
-
-        int counter = 0;
-        usernames.each{ username ->
-            UserProjectRole userProjectRole = new UserProjectRole(project: p, role: Role.get(roles.get(counter)), user: User.findByUsername(username), processStepId: null);
-            userProjectRole.setId(UUID.randomUUID().toString());
-            userProjectRole.save(flush: true, failOnError: true);
-            p.getAuthorities().add(userProjectRole);
-            counter++;
-        }
-
-        p.save(flush:true, failOnError: true);
+//        /**
+//         * Make sure the user creating the project is in the list, or the project will be invisible to them.
+//         */
+//        User u = springSecurityService.principal;
+//
+//        if (!usernames.contains(u.username)) {
+//            usernames.add(u.username)
+//            roles.add(Role.findByName("ROLE_ADMIN").id);
+//        }
+//
+//        Role role = Role.findByName("ROLE_ADMIN");
+//        List<UserProjectRole> existingPermissions = UserProjectRole.findAllByProjectAndProcessStepIdIsNull(p);
+//
+//        if (p.getAuthorities() == null) {
+//            p.setAuthorities(new ArrayList<UserProjectRole>());
+//        }
+//
+//        // Delete existing permissions since they are re-created.
+//        existingPermissions.each { existing ->
+//            existing.delete(flush: true);
+//        }
+//
+//        int counter = 0;
+//        usernames.each{ username ->
+//            UserProjectRole userProjectRole = new UserProjectRole(project: p, role: Role.get(roles.get(counter)), user: User.findByUsername(username), processStepId: null);
+//            userProjectRole.setId(UUID.randomUUID().toString());
+//            userProjectRole.save(flush: true, failOnError: true);
+//            p.getAuthorities().add(userProjectRole);
+//            counter++;
+//        }
+//
+////        p.save(flush:true, failOnError: true);
 
     }
 

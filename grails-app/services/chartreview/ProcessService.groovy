@@ -718,7 +718,7 @@ class ProcessService {
                     List<FormPropertyHandler> handlers = ((DefaultTaskFormHandler) taskDefinition
                             .getTaskFormHandler()).getFormPropertyHandlers();
 
-                    TaskDefinitionWithVariable variable = new TaskDefinitionWithVariable(taskDefinitionKey: taskDefinition.getKey(), documentation: activity.getProperty("documentation"));
+                    TaskDefinitionWithVariable variable = new TaskDefinitionWithVariable(taskDefinitionKey: taskDefinition.getKey(), documentation: activity.getProperty("documentation"), hasSchema: true, hasClinicalElements: true);
 
                     for(FormPropertyHandler handler : handlers){
                         if (handler.getId() == TaskVariablesEnum.SCHEMA.getName()) {
