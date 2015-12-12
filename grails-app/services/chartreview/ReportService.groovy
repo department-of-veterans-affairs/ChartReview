@@ -34,7 +34,7 @@ class ReportService {
         Project p = projectService.getProject(projectId);
         SQLTemplates sqlTemplate = Utils.getSQLTemplate(p.jdbcDriver);
         Connection connection = null;
-        QClinicalElement qClinicalElement = new QClinicalElement("ce");
+        QClinicalElement qClinicalElement = new QClinicalElement("ce", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT");
         QClinicalElementConfiguration qClinicalElementConfiguration = new QClinicalElementConfiguration("cec", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT_CONFIGURATION");
         QFeature qFeature = new QFeature("f", grailsApplication.config.chartReview.defaultSchema, "FEATURE");
         QAnnotation qAnnotation = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
@@ -146,6 +146,26 @@ class ReportService {
                             .and(qClinicalElement.guid.eq(qAnnotation.clinicalElementGuid))
                             .and(qClinicalElement.clinicalElementConfigurationId.eq(qClinicalElementConfiguration.id))
                         );
+
+//            connection = projectService.getDatabaseConnection(p)
+//            SQLTemplates dialect = Utils.getSQLTemplate(p.jdbcDriver);
+//            SQLQuery query = new SQLQueryFactoryImpl(dialect, new ConnectionProvider(connection)).query();
+//
+//            QClinicalElement CLINICAL_ELEMENT = new QClinicalElement("ce", grailsApplication.config.chartReview.defaultSchema, "CLINICAL_ELEMENT")
+//            QAnnotation ANNOTATION = new QAnnotation("a", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION");
+//            QFeature FEATURE = new QFeature("f", grailsApplication.config.chartReview.defaultSchema, "FEATURE");
+//            QAnnotationTask ANNOTATION_TASK = new QAnnotationTask("t", grailsApplication.config.chartReview.defaultSchema, "ANNOTATION_TASK");
+//
+//            query = query.from(CLINICAL_ELEMENT)
+//                    .leftJoin(ANNOTATION).on(ANNOTATION.clinicalElementGuid.eq(CLINICAL_ELEMENT.guid))
+//                    .leftJoin(FEATURE).on(FEATURE.annotationGuid.eq(ANNOTATION.guid))
+//                    .join(ANNOTATION_TASK).on(ANNOTATION.guid.eq(ANNOTATION_TASK.annotationGuid))
+//                    .where(CLINICAL_ELEMENT.projectId.eq(projectId)
+//                    .and(CLINICAL_ELEMENT.clinicalElementConfigurationId.in(clinicalElementConfigurationIds)));
+//
+//
+
+
 
             def queryResults = query.list(qAnnotation.guid,
                                         qAnnotation.annotationGroup,

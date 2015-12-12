@@ -246,11 +246,11 @@ chartReview.maxElementsInCreateProcess=5000;
  */
 chartReview.warnElementsInCreateProcess=1000;
 
-chartReview.defaultSchema='dbo';
+chartReview.defaultSchema='dflt';
 try {
     chartReview.defaultSchema = ((Context)(new InitialContext().lookup("java:comp/env"))).lookup("chartReview").getSchema();
 } catch (Exception e) {
-    chartReview.defaultSchema = 'dbo';
+    chartReview.defaultSchema = 'dflt';
 }
 
 grails.doc.title = "Chart Review"

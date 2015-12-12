@@ -215,7 +215,6 @@ class ProjectService {
             counter++;
         }
 
-//        p.save(flush:true, failOnError: true);
         if(!p.save(flush: true, failOnError: true))
         {
             return false;
