@@ -239,7 +239,8 @@ class ClinicalElementConfigurationController {
 
             userProjects.each { otherProject ->
                 try {
-                    otherConfigurations.put(otherProject, clinicalElementConfigurationService.getAllClinicalElementConfigurations(otherProject.id, false));
+                    DataSource otherProjectDS = Utils.getProjectDatasource(otherProject);
+                    otherConfigurations.put(otherProject, clinicalElementConfigurationService.getAllClinicalElementConfigurations(otherProjectDS, otherProject, false));
                 } catch (Exception e) {
                     log.warn("Could not get clinical element configuration for ${otherProject.id}. Ignoring this project for user.")
                 }
