@@ -237,14 +237,14 @@ class ClinicalElementConfigurationController {
 
             userProjects.remove(p);
 
-            userProjects.each { otherProject ->
-                try {
-                    DataSource otherProjectDS = Utils.getProjectDatasource(otherProject);
-                    otherConfigurations.put(otherProject, clinicalElementConfigurationService.getAllClinicalElementConfigurations(otherProjectDS, otherProject, false));
-                } catch (Exception e) {
-                    log.warn("Could not get clinical element configuration for ${otherProject.id}. Ignoring this project for user.")
-                }
-            }
+//            userProjects.each { otherProject ->
+//                try {
+//                    DataSource otherProjectDS = Utils.getProjectDatasource(otherProject);
+//                    otherConfigurations.put(otherProject, clinicalElementConfigurationService.getAllClinicalElementConfigurations(otherProjectDS, otherProject, false));
+//                } catch (Exception e) {
+//                    log.warn("Could not get clinical element configuration for ${otherProject.id}. Ignoring this project for user.")
+//                }
+//            }
             [
                 otherProjectClinicalElementConfigurations: otherConfigurations,
                 project: p,

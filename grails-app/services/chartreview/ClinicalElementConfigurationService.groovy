@@ -55,7 +55,7 @@ class ClinicalElementConfigurationService {
             def defaultSchema = grailsApplication.config.chartReview.defaultSchema;
 
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO((java.sql.Connection)c, templates, defaultSchema);
-            List<ClinicalElementConfiguration> configurations = clinicalElementConfigDAO.getAllClinicalElementConfigurations(ds, project);
+            List<ClinicalElementConfiguration> configurations = clinicalElementConfigDAO.getAllClinicalElementConfigurations();
             if (activeOnly) {
                 return configurations.findAll { it.active }
             } else {
