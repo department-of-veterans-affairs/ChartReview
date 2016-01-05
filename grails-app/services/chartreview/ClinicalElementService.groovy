@@ -1,5 +1,4 @@
 package chartreview
-
 import com.mysema.query.sql.SQLTemplates
 import gov.va.vinci.chartreview.ProcessVariablesEnum
 import gov.va.vinci.chartreview.Utils
@@ -12,7 +11,6 @@ import groovy.text.SimpleTemplateEngine
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringEscapeUtils
 
-import javax.sql.DataSource
 import javax.validation.ValidationException
 import java.sql.*
 import java.util.regex.Matcher
@@ -135,9 +133,8 @@ class ClinicalElementService  {
         String clinicalElementId = keyParts.get("id");
 
         Project p = Project.get(projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
 
-        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, p);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
         List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
 
@@ -169,9 +166,8 @@ class ClinicalElementService  {
         String clinicalElementId = keyParts.get("id");
 
         Project p = Project.get(projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
 
-        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(keyParts.get("clinicalElementConfigurationId"), ds, p);
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(keyParts.get("clinicalElementConfigurationId"), p);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
         List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
 
@@ -278,9 +274,8 @@ class ClinicalElementService  {
         keyParts.remove("clinicalElementConfigurationId");
 
         Project p = Project.get(projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
 
-        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
+        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, p);
         if (!clinicalElementConfiguration) {
             throw new ValidationException("Clinical element configuration with id ${clinicalElementConfigurationId} not found.");
         }
@@ -317,9 +312,8 @@ class ClinicalElementService  {
      */
     public LinkedHashMap<String, Object> getClinicalElementByClinicalElementIdFromConnection(Connection conn, SQLTemplates templates, String projectId, String clinicalElementConfigurationId, String clinicalElementId, List<ClinicalElementColumnDef> columns, boolean eliminateBlobColumnsFromQuery, boolean includeAllFields = false) {
         Project p = Project.get(projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
 
-        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
+        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, p);
         if (!clinicalElementConfiguration) {
             throw new ValidationException("Clinical element configuration with id ${clinicalElementConfigurationId} not found.");
         }
@@ -412,10 +406,8 @@ class ClinicalElementService  {
         if (!p) {
             throw new ValidationException("Project with id ${projectId} not found.");
         }
-        DataSource ds = Utils.getProjectDatasource(p);
 
-
-        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
+        ClinicalElementConfiguration clinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, p);
         if (!clinicalElementConfiguration) {
             throw new ValidationException("Clinical element configuration with id ${clinicalElementConfigurationId} not found.");
         }
@@ -651,9 +643,8 @@ class ClinicalElementService  {
         String mimeType = "image/jpeg"
 
         Project p = Project.get(projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
 
-        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, p);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
         List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
         ClinicalElementColumnDef colDef = findDef(columns, columnName);
@@ -694,9 +685,8 @@ class ClinicalElementService  {
         Map<String, Object> ret = new HashMap();
 
         Project p = Project.get(projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
 
-        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, ds, p);
+        ClinicalElementConfiguration configuration = clinicalElementConfigurationService.getClinicalElementConfiguration(clinicalElementConfigurationId, p);
         ClinicalElementConfigurationDetails details = clinicalElementConfigurationService.getClinicalElementConfigurationDetails(configuration);
         List<ClinicalElementColumnDef> columns = details.getDataQueryColumns();
         ClinicalElementColumnDef colDef = findDef(columns, columnName);

@@ -23,7 +23,6 @@ import org.apache.commons.validator.GenericValidator
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
-import javax.sql.DataSource
 import javax.validation.ValidationException
 import java.sql.Connection
 
@@ -344,7 +343,6 @@ class ProcessController {
     protected List prepForStep2(AddProcessWorkflowModel model, Project p) {
         List<TaskDefinitionWithVariable> tasks = processService.getTaskDefinitions(model.processId);
         Map<String, ClinicalElementConfiguration> configurationMap = new HashMap<>();
-        DataSource ds = Utils.getProjectDatasource(p);
 
         /**
          * Add default task variables for each user task.
@@ -352,7 +350,7 @@ class ProcessController {
         List<TaskVariables> taskVariablesList = new ArrayList<TaskVariables>();
         for (TaskDefinitionWithVariable task : tasks) {
             if (task instanceof ServiceTaskDefinitionWithVariable) {
-                List<ClinicalElementConfiguration> cecs = clinicalElementConfigurationService.getAllClinicalElementConfigurations(ds, p).sort{it.name};
+                List<ClinicalElementConfiguration> cecs = clinicalElementConfigurationService.getAllClinicalElementConfigurations(p).sort{it.name};
                 cecs.eachWithIndex() { obj, i ->
                     configurationMap.put(obj.id, obj);
                 }
@@ -363,7 +361,7 @@ class ProcessController {
             variables.taskDefinitionKey = task.taskDefinitionKey;
             if (task.hasClinicalElements) {
                 List<ClinicalElementDisplayParameters> clinicalElementConfigurations = new ArrayList<ClinicalElementDisplayParameters>();
-                List<ClinicalElementConfiguration> cecs = clinicalElementConfigurationService.getAllClinicalElementConfigurations(ds, p).sort{it.name};
+                List<ClinicalElementConfiguration> cecs = clinicalElementConfigurationService.getAllClinicalElementConfigurations(p).sort{it.name};
 
 
                 cecs.eachWithIndex() { obj, i ->

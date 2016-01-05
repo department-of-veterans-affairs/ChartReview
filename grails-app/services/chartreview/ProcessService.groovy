@@ -33,7 +33,6 @@ import org.apache.commons.validator.GenericValidator
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
-import javax.sql.DataSource
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import java.sql.Connection
@@ -685,9 +684,8 @@ class ProcessService {
             clinicalElements.each {
                 if (it.include) {
                     Project p = Project.get(projectId);
-                    DataSource ds = Utils.getProjectDatasource(p);
 
-                    results.put(clinicalElementConfigurationService.getClinicalElementConfiguration(it.clinicalElementConfigurationId, ds, p), it);
+                    results.put(clinicalElementConfigurationService.getClinicalElementConfiguration(it.clinicalElementConfigurationId, p), it);
                 }
             }
         }
@@ -872,10 +870,9 @@ class ProcessService {
         task.appendChild(schema);
 
         Project p = Project.get(projectId);
-        DataSource ds = Utils.getProjectDatasource(p);
 
         // Get the primary clinical element information.
-        ClinicalElementConfiguration primaryClinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(variables.get(TaskVariablesEnum.PRIMARY_CLINICAL_ELEMENT.getName()), ds, p);
+        ClinicalElementConfiguration primaryClinicalElementConfiguration = clinicalElementConfigurationService.getClinicalElementConfiguration(variables.get(TaskVariablesEnum.PRIMARY_CLINICAL_ELEMENT.getName()), p);
         if (!primaryClinicalElementConfiguration) {
             throw new IllegalArgumentException("Could not find primary clinical element configuration ('${variables.get(TaskVariablesEnum.PRIMARY_CLINICAL_ELEMENT.getName())}')");
         }

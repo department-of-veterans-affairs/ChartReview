@@ -26,12 +26,11 @@ class ClinicalElementConfigurationService {
      * @return    the clinical element configuration. Note, if clinical element configuration is not found, a
      *          ValidationException is thrown.
      */
-    public ClinicalElementConfiguration getClinicalElementConfiguration(String id, DataSource ds, Project project) {
+    public ClinicalElementConfiguration getClinicalElementConfiguration(String id, Project project) {
         Connection c = null;
 
         SQLTemplates templates = Utils.getSQLTemplate(project);
         try {
-//            c = ds.getConnection();
             c = projectService.getDatabaseConnection(project);
 
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates, grailsApplication.config.chartReview.defaultSchema);
@@ -46,7 +45,7 @@ class ClinicalElementConfigurationService {
      * @param   projectId  the projectId to get clinical element configurations for.
      * @return    A list of clinical element configuration in the project database.
      */
-    public List<ClinicalElementConfiguration> getAllClinicalElementConfigurations(DataSource ds, Project project, boolean activeOnly = true) {
+    public List<ClinicalElementConfiguration> getAllClinicalElementConfigurations(Project project, boolean activeOnly = true) {
         Connection c = null;
 
         SQLTemplates templates = Utils.getSQLTemplate(project);
@@ -79,8 +78,8 @@ class ClinicalElementConfigurationService {
         }
     }
 
-    public ClinicalElementConfiguration getClinicalElementConfigurationByName(String name, DataSource ds, Project p) {
-        List<ClinicalElementConfiguration> configurations = getAllClinicalElementConfigurations(ds, p);
+    public ClinicalElementConfiguration getClinicalElementConfigurationByName(String name, Project p) {
+        List<ClinicalElementConfiguration> configurations = getAllClinicalElementConfigurations(p);
         ClinicalElementConfiguration result = null;
 
         configurations.each {
@@ -118,7 +117,7 @@ class ClinicalElementConfigurationService {
      * @param projectId the project id this clinical element configuration belongs to.
      * @param conf the conf to save.
      */
-    public void addClinicalElementConfiguration(DataSource ds, Project project, ClinicalElementConfiguration conf) {
+    public void addClinicalElementConfiguration(Project project, ClinicalElementConfiguration conf) {
         Connection c = null;
         SQLTemplates templates = Utils.getSQLTemplate(project);
         try {
