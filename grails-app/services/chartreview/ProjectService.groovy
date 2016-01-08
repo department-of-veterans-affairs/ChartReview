@@ -152,12 +152,14 @@ class ProjectService {
                principal = request.getUserPrincipal();
             }
 
+            System.out.println("PRINCIPAL="+principal);
             if (principal instanceof SpnegoPrincipal) {
                 GSSCredential credential = ((SpnegoPrincipal)principal).getDelegatedCredential();
                 if (credential != null) {
                     return jTDSDriverManager.getConnection(p.getDatabaseConnectionUrl(), credential);
                 }
             }
+            System.out.println("SHOULD NOT GET HERE");
 
             dataSource.setDriverClassName(p.getJdbcDriver());
 //        } else if (javaMelodyDriverExists) {

@@ -12,6 +12,7 @@ import org.apache.commons.dbutils.DbUtils
 
 import javax.sql.DataSource
 import java.sql.Connection
+import java.sql.ResultSet
 
 import static gov.va.vinci.chartreview.Utils.closeConnection
 
@@ -51,6 +52,7 @@ class ClinicalElementConfigurationService {
         SQLTemplates templates = Utils.getSQLTemplate(project);
         try {
             c = projectService.getDatabaseConnection(project);
+            ResultSet rs = c.createStatement().executeQuery("select 1")
             def defaultSchema = grailsApplication.config.chartReview.defaultSchema;
 
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO((java.sql.Connection)c, templates, defaultSchema);
