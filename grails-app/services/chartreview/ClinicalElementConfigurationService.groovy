@@ -53,6 +53,8 @@ class ClinicalElementConfigurationService {
         try {
             c = projectService.getDatabaseConnection(project);
             ResultSet rs = c.createStatement().executeQuery("select 1")
+            ResultSet rs2 = c.createStatement().executeQuery("select * from dflt.clinical_element_configuration")
+            ResultSet rs3 = c.createStatement().executeQuery("select * from dflt.annotation_schema_record")
             def defaultSchema = grailsApplication.config.chartReview.defaultSchema;
 
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO((java.sql.Connection)c, templates, defaultSchema);
