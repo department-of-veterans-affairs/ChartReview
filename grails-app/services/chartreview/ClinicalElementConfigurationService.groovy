@@ -12,7 +12,6 @@ import org.apache.commons.dbutils.DbUtils
 
 import javax.sql.DataSource
 import java.sql.Connection
-import java.sql.ResultSet
 
 import static gov.va.vinci.chartreview.Utils.closeConnection
 
@@ -52,13 +51,6 @@ class ClinicalElementConfigurationService {
         SQLTemplates templates = Utils.getSQLTemplate(project);
         try {
             c = projectService.getDatabaseConnection(project);
-            ResultSet rs = c.createStatement().executeQuery("select 1")
-            ResultSet rs1 = c.createStatement().executeQuery("select db_name()")
-            ResultSet rs2 = c.createStatement().executeQuery("select user_name()")
-            ResultSet rs3 = c.createStatement().executeQuery("select table_name from information_schema.tables")
-            ResultSet rs4 = c.createStatement().executeQuery("select * from dflt.annotation_schema_record")
-            ResultSet rs5 = c.createStatement().executeQuery("select * from dflt.clinical_element_configuration")
-
             def defaultSchema = grailsApplication.config.chartReview.defaultSchema;
 
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO((java.sql.Connection)c, templates, defaultSchema);
