@@ -1,5 +1,6 @@
 package gov.va.vinci.chartreview.util;
 
+import com.mysema.query.sql.SQLServerTemplates;
 import com.mysema.query.sql.SQLTemplates;
 import gov.va.vinci.chartreview.Utils;
 import gov.va.vinci.siman.tools.DbConnectionInfo;
@@ -258,5 +259,4 @@ public class AnnotationTaskCreateDrop {
         }
 
     }
-
 }

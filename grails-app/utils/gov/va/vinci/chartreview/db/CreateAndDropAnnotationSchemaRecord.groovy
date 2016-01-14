@@ -122,13 +122,8 @@ class CreateAndDropAnnotationSchemaRecord {
         builder.append(",\n " + templates.quoteIdentifier("name") + " "
                 + "VARCHAR(255)" + templates.getNotNull());
 
-        if (this.getTemplates().getClass().getCanonicalName().equals("com.mysema.query.sql.HSQLDBTemplates")){
-            builder.append(",\n " + templates.quoteIdentifier("serialization_data") + " "
-                    + "VARCHAR(2000)" + templates.getNotNull());
-        } else{
-            builder.append(",\n " + templates.quoteIdentifier("serialization_data") + " "
-                    + "VARCHAR(MAX)" + templates.getNotNull());
-        }
+        builder.append(",\n " + templates.quoteIdentifier("serialization_data") + " "
+                + getBigTextType() + " " + templates.getNotNull());
 
         builder.append(",\n " + templates.quoteIdentifier("serialization_version") + " "
                 + "VARCHAR(50) " + templates.getNotNull());
@@ -208,4 +203,22 @@ class CreateAndDropAnnotationSchemaRecord {
         }
 
     }
+
+    /**
+     * The column type that represents big text for the SQLTemplate that defines this object. This can vary from
+     * varchar(max) to text to varchar(2000) depending on the underlying database.
+     *
+     * @return The column type that represents big text for the SQLTemplate that defines this object.
+     */
+    protected String getBigTextType() {
+        if (this.getTemplates().getClass().getCanonicalName().equals("com.mysema.query.sql.HSQLDBTemplates")) {
+            //configuration column - JSON blob
+            return "VARCHAR(2000)";
+        } else if (this.getTemplates() instanceof SQLServerTemplates) {
+            return "VARCHAR(max)";
+        }  else {
+            return "TEXT";
+        }
+    }
+
 }

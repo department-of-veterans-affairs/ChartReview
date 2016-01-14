@@ -120,8 +120,8 @@ class ProjectController {
             SimanCreate create = new SimanCreate(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             create.execute();
 
-            ClinicalElementConfigurationDDL clinicalElementConfigurationDDL = new ClinicalElementConfigurationDDL(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
-            clinicalElementConfigurationDDL.createTable();
+            ClinicalElementConfigurationTableDDL clinicalElementConfigurationTableDDL = new ClinicalElementConfigurationTableDDL(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
+            clinicalElementConfigurationTableDDL.createTable();
 
             AnnotationTaskCreateDrop annotationTaskCreate = new AnnotationTaskCreateDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             annotationTaskCreate.executeCreate();
@@ -156,8 +156,8 @@ class ProjectController {
             AnnotationTaskCreateDrop annotationTaskCreate = new AnnotationTaskCreateDrop(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             annotationTaskCreate.executeDrop();
 
-            ClinicalElementConfigurationDDL clinicalElementConfigurationDDL = new ClinicalElementConfigurationDDL(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
-            clinicalElementConfigurationDDL.dropTable();
+            ClinicalElementConfigurationTableDDL clinicalElementConfigurationTableDDL = new ClinicalElementConfigurationTableDDL(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
+            clinicalElementConfigurationTableDDL.dropTable();
 
             CreateAndDropAnnotationSchemaRecord schema = new CreateAndDropAnnotationSchemaRecord(c, Utils.getSQLTemplate(projectInstance.jdbcDriver), defaultSchema);
             schema.executeDrop();

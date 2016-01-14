@@ -44,7 +44,7 @@ grails.project.dependency.resolution = {
             exclude 'org.springframework:spring-asm:3.0.7.RELEASE'
         }
         compile('gov.va.vinci.leo:leo-client:2014.08.0')
-        compile 'gov.va.vinci:leo-siman:2015.12.3'
+        compile 'gov.va.vinci:leo-siman:2016.01.0'
     }
 
 
