@@ -127,7 +127,7 @@ class CreateAndDropAnnotationSchemaRecord {
                     + "VARCHAR(2000)" + templates.getNotNull());
         } else{
             builder.append(",\n " + templates.quoteIdentifier("serialization_data") + " "
-                    + "TEXT" + templates.getNotNull());
+                    + "VARCHAR(MAX)" + templates.getNotNull());
         }
 
         builder.append(",\n " + templates.quoteIdentifier("serialization_version") + " "
