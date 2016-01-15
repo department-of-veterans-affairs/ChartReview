@@ -80,9 +80,9 @@ class Utils {
 
     public static List<String> getTableNames(Connection c) {
         List<String> tableNames = new ArrayList<String>();
+        DatabaseMetaData md = c.getMetaData();
+        ResultSet rs = md.getTables(null, null, "%", null);
         try {
-            DatabaseMetaData md = c.getMetaData();
-            ResultSet rs = md.getTables(null, null, "%", null);
             while (rs.next()) {
                 String tableName = rs.getString(3);
                 tableNames.add(tableName);
@@ -90,15 +90,15 @@ class Utils {
         } catch(Exception e) {
             // Nothing
         }finally{
-            DbUtils.closeQuietly((Connection) c);
+            DbUtils.closeQuietly((ResultSet)rs);
         }
         return tableNames;
     }
 
-    public static String getIdColName(DataSource ds, String tableName)
+    public static String getIdColName(Connection c, String tableName)
     {
         String idColumnName = "id";
-        List<String> fieldNames = Utils.getFieldNames(ds, tableName);
+        List<String> fieldNames = Utils.getFieldNames(c, tableName);
         for (int i = fieldNames.size() - 1; i >= 0; i--) {
             String fieldName = ((String) fieldNames.get(i));
             if(fieldName.toLowerCase().indexOf("id") >= 0)
@@ -113,12 +113,10 @@ class Utils {
         return idColumnName;
     }
 
-    public static List<String> getFieldNames(DataSource ds, String tableName) {
+    public static List<String> getFieldNames(Connection c, String tableName) {
         List<String> fieldNames = new ArrayList<String>();
-        Connection c = null;
         ResultSet rs = null;
         try {
-            c = ds.getConnection();
             rs = c.prepareStatement("select * from " + tableName).executeQuery();
             ResultSetMetaData m = rs.getMetaData();
             for (int i = 1; i <= m.getColumnCount(); i++)
@@ -130,7 +128,6 @@ class Utils {
             // Nothing
         }finally{
             DbUtils.closeQuietly((ResultSet)rs);
-            DbUtils.closeQuietly((Connection) c);
         }
         return fieldNames;
     }

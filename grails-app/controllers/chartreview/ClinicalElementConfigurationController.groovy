@@ -276,12 +276,10 @@ class ClinicalElementConfigurationController {
 
                 Project p = Utils.getSelectedProject(session, params.projectId);
                 conversation.project = p;
-                DataSource ds = Utils.getProjectDatasource(p);
-                conversation.dataSource = ds;
 
                 Connection c = null;
                 try {
-                    c = projectService.getDatabaseConnection(p);
+                    c = projectService.getDatabaseConnection(conversation.project);
                     List<String> tableNames = Utils.getTableNames(c);
                     conversation.tableNames = tableNames;
                 } finally {
@@ -317,11 +315,18 @@ class ClinicalElementConfigurationController {
             on("next"){
                 conversation.name = params.name;
                 conversation.clinicalElementTableName = params.clinicalElementTableName;
-                conversation.principalClinicalElementIdColName = Utils.getIdColName(conversation.dataSource, conversation.principalClinicalElementTableName);
-                conversation.clinicalElementIdColName = Utils.getIdColName(conversation.dataSource, conversation.clinicalElementTableName);
-                conversation.clinicalElementTableFieldNames = Utils.getFieldNames(conversation.dataSource, conversation.clinicalElementTableName);
 
-                if (!setNamdAndDescriptionsParams(params, conversation.dto, conversation.dataSource, conversation.project)) {
+                Connection c = null;
+                try {
+                    c = projectService.getDatabaseConnection(conversation.project);
+                    conversation.principalClinicalElementIdColName = Utils.getIdColName(c, conversation.principalClinicalElementTableName);
+                    conversation.clinicalElementIdColName = Utils.getIdColName(c, conversation.clinicalElementTableName);
+                    conversation.clinicalElementTableFieldNames = Utils.getFieldNames(c, conversation.clinicalElementTableName);
+                } finally {
+                    DbUtils.closeQuietly((Connection)c);
+                }
+
+                if (!setNamdAndDescriptionsParams(params, conversation.dto, conversation.project)) {
                     return nameAndDescriptionStep();
                 }
                 ClinicalElementConfiguration elementConfiguration = new ClinicalElementConfiguration();
@@ -338,14 +343,14 @@ class ClinicalElementConfigurationController {
         keyColumnPickStep {
             on("prev") {
                 ClinicalElementConfigurationDetails dto = conversation.dto;
-                saveKeyColumnPickValues(conversation.dataSource, params, dto, conversation.clinicalElementTableName);
+                saveKeyColumnPickValues(params, dto, conversation.clinicalElementTableName);
                 conversation.principalClinicalElementIdColName = params.principalClinicalElementIdColName;
                 conversation.clinicalElementIdColName = params.clinicalElementIdColName;
                 conversation.examplePatientId = params.examplePatientId;
             }.to "nameDescriptionTableStep"
             on("next"){
                 ClinicalElementConfigurationDetails dto = conversation.dto;
-                saveKeyColumnPickValues(conversation.dataSource, params, dto, conversation.clinicalElementTableName);
+                saveKeyColumnPickValues(params, dto, conversation.clinicalElementTableName);
                 conversation.principalClinicalElementIdColName = params.principalClinicalElementIdColName;
                 conversation.clinicalElementIdColName = params.clinicalElementIdColName;
                 conversation.examplePatientId = params.examplePatientId;
@@ -655,7 +660,7 @@ class ClinicalElementConfigurationController {
         return [true, messages];
     }
 
-    protected ClinicalElementConfigurationDetails saveKeyColumnPickValues(DataSource ds, Map params, ClinicalElementConfigurationDetails dto, String clinicalElementTableName) {
+    protected ClinicalElementConfigurationDetails saveKeyColumnPickValues(Map params, ClinicalElementConfigurationDetails dto, String clinicalElementTableName) {
         String principalClinicalElementIdColName = params.principalClinicalElementIdColName;
         String clinicalElementIdColName = params.clinicalElementIdColName;
         if(clinicalElementTableName && (!dto.query || dto.query && dto.query.trim().length() == 0) && principalClinicalElementIdColName && principalClinicalElementIdColName.length() > 0)
@@ -670,7 +675,7 @@ class ClinicalElementConfigurationController {
         return dto;
     }
 
-    protected boolean setNamdAndDescriptionsParams(Map params, ClinicalElementConfigurationDetails dto, DataSource ds, Project p) {
+    protected boolean setNamdAndDescriptionsParams(Map params, ClinicalElementConfigurationDetails dto, Project p) {
         dto.name = params.name;
         dto.description = params.description;
         dto.active= false;

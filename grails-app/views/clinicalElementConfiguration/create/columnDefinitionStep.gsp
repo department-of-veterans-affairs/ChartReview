@@ -1,8 +1,9 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="gov.va.vinci.chartreview.TaskVariablesEnum" contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <meta name="layout" content="main">
     <r:require modules="bootstrap"/>
+    <ckeditor:resources/>
     <title>Clinical Element Configuration Wizard</title>
     <script src="${request.contextPath}/ckeditor/ckeditor.js"></script>
 </head>
@@ -104,7 +105,9 @@
                 <tr>
                     <td>&nbsp;&nbsp;</td>
                     <td>
-                         <textarea id="template" class="ckeditor" name="template">${dto.contentTemplate}</textarea>
+                        <ckeditor:editor name="template" height="200px" width="80%" id="template">
+                            ${dto.contentTemplate}
+                        </ckeditor:editor>
                         <br/>
                         <blockquote>
                             <p>Note: Fields in the content template are shown by putting a ${'${}'} around them,
