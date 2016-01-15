@@ -78,11 +78,9 @@ class Utils {
         return dataSource;
     }
 
-    public static List<String> getTableNames(DataSource ds) {
+    public static List<String> getTableNames(Connection c) {
         List<String> tableNames = new ArrayList<String>();
-        Connection c = null;
         try {
-            c = ds.getConnection();
             DatabaseMetaData md = c.getMetaData();
             ResultSet rs = md.getTables(null, null, "%", null);
             while (rs.next()) {

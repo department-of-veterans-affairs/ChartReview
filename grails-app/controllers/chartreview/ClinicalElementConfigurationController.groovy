@@ -7,6 +7,7 @@ import gov.va.vinci.siman.model.ClinicalElementColumnDef
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
 import gov.va.vinci.siman.model.ClinicalElementConfigurationDetails
 import grails.plugin.gson.converters.GSON
+import org.apache.commons.dbutils.DbUtils
 import org.apache.commons.validator.GenericValidator
 import org.restapidoc.annotation.RestApi
 import org.restapidoc.annotation.RestApiMethod
@@ -19,6 +20,7 @@ import org.springframework.http.MediaType
 
 import javax.sql.DataSource
 import javax.validation.ValidationException
+import java.sql.Connection
 import java.sql.Timestamp
 
 @RestApi(name = "Clinical Element Configuration services", description = "Methods for managing and querying clinical element configurations.")
@@ -276,8 +278,15 @@ class ClinicalElementConfigurationController {
                 conversation.project = p;
                 DataSource ds = Utils.getProjectDatasource(p);
                 conversation.dataSource = ds;
-                List<String> tableNames = Utils.getTableNames(ds);
-                conversation.tableNames = tableNames;
+
+                Connection c = null;
+                try {
+                    c = projectService.getDatabaseConnection(p);
+                    List<String> tableNames = Utils.getTableNames(c);
+                    conversation.tableNames = tableNames;
+                } finally {
+                    DbUtils.closeQuietly((Connection)c);
+                }
 
                 if (params.id) {
                     String loadFromProjectId = p.id;
