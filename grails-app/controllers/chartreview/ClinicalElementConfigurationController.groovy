@@ -326,6 +326,22 @@ class ClinicalElementConfigurationController {
                     DbUtils.closeQuietly((Connection)c);
                 }
 
+                // Reset incase we have come BACK to this point in the wizard after having set this.
+                // In this page we have picked a new table ane we need all new queries, content templates, etc.
+                ClinicalElementConfigurationDetails dto = conversation.dto;
+                String selectFields = getSelectFields(conversation.clinicalElementTableFieldNames);
+                dto.setQuery("select " + selectFields + " from " + conversation.clinicalElementTableName + " where " + conversation.principalClinicalElementIdColName + " = ?");
+                dto.setSingleElementQuery("select " + selectFields + " from " + conversation.clinicalElementTableName + " where " + conversation.clinicalElementIdColName + " = ?");
+                dto.setContentTemplate(null);
+                try {
+                    dto = clinicalElementService.populateColumnInfo(conversation.project, dto);
+                    buildDefaultContentTemplate(dto);
+                } catch (Exception e) {
+                    flash.message = "Error: ${e.getMessage()}";
+                    conversation.dataSetConfigurationInstance = dto;
+                    return nameDescriptionTableStep();
+                }
+
                 if (!setNamdAndDescriptionsParams(params, conversation.dto, conversation.project)) {
                     return nameAndDescriptionStep();
                 }
@@ -343,7 +359,7 @@ class ClinicalElementConfigurationController {
         keyColumnPickStep {
             on("prev") {
                 ClinicalElementConfigurationDetails dto = conversation.dto;
-                saveKeyColumnPickValues(params, dto, conversation.clinicalElementTableName);
+                saveKeyColumnPickValues(params, dto, conversation.clinicalElementTableName, conversation.clinicalElementTableFieldNames);
                 conversation.principalClinicalElementIdColName = params.principalClinicalElementIdColName;
                 conversation.clinicalElementIdColName = params.clinicalElementIdColName;
                 conversation.examplePatientId = params.examplePatientId;
@@ -663,6 +679,21 @@ class ClinicalElementConfigurationController {
     protected ClinicalElementConfigurationDetails saveKeyColumnPickValues(Map params, ClinicalElementConfigurationDetails dto, String clinicalElementTableName, List<String> clinicalElementTableFieldNames) {
         String principalClinicalElementIdColName = params.principalClinicalElementIdColName;
         String clinicalElementIdColName = params.clinicalElementIdColName;
+        String selectFields = getSelectFields(clinicalElementTableFieldNames);
+        if(clinicalElementTableName && (!dto.query || dto.query && dto.query.trim().length() == 0) && principalClinicalElementIdColName && principalClinicalElementIdColName.length() > 0)
+        {
+            dto.setQuery("select " + selectFields + " from " + clinicalElementTableName + " where " + principalClinicalElementIdColName + " = ?");
+        }
+        if(clinicalElementTableName && (!dto.singleElementQuery || dto.singleElementQuery && dto.singleElementQuery.trim().length() == 0) && clinicalElementIdColName && clinicalElementIdColName.length() > 0)
+        {
+            dto.setSingleElementQuery("select " + selectFields + " from " + clinicalElementTableName + " where " + clinicalElementIdColName + " = ?");
+        }
+        dto.setExamplePatientId(params.examplePatientId);
+        return dto;
+    }
+
+    protected String getSelectFields(List<String> clinicalElementTableFieldNames)
+    {
         String selectFields = "";
         for(String fieldName : clinicalElementTableFieldNames)
         {
@@ -676,16 +707,7 @@ class ClinicalElementConfigurationController {
         {
             selectFields = "*";
         }
-        if(clinicalElementTableName && (!dto.query || dto.query && dto.query.trim().length() == 0) && principalClinicalElementIdColName && principalClinicalElementIdColName.length() > 0)
-        {
-            dto.setQuery("select " + selectFields + " from " + clinicalElementTableName + " where " + principalClinicalElementIdColName + " = ?");
-        }
-        if(clinicalElementTableName && (!dto.singleElementQuery || dto.singleElementQuery && dto.singleElementQuery.trim().length() == 0) && clinicalElementIdColName && clinicalElementIdColName.length() > 0)
-        {
-            dto.setSingleElementQuery("select " + selectFields + " from " + clinicalElementTableName + " where " + clinicalElementIdColName + " = ?");
-        }
-        dto.setExamplePatientId(params.examplePatientId);
-        return dto;
+        return selectFields;
     }
 
     protected boolean setNamdAndDescriptionsParams(Map params, ClinicalElementConfigurationDetails dto, Project p) {
