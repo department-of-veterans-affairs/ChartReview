@@ -5,7 +5,6 @@
     <r:require modules="bootstrap"/>
     <ckeditor:resources/>
     <title>Clinical Element Configuration Wizard</title>
-    <script src="${request.contextPath}/ckeditor/ckeditor.js"></script>
 </head>
 <body>
 <br/><br/><br/>
