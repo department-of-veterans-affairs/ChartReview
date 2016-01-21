@@ -97,7 +97,7 @@ class Utils {
 
     public static String getIdColName(Connection c, String tableName)
     {
-        String idColumnName = "id";
+        String idColumnName = "";
         List<String> fieldNames = Utils.getFieldNames(c, tableName);
         for (int i = fieldNames.size() - 1; i >= 0; i--) {
             String fieldName = ((String) fieldNames.get(i));
@@ -109,6 +109,10 @@ class Utils {
                     break;
                 }
             }
+        }
+        if(idColumnName.length() == 0 && fieldNames.size() > 0)
+        {
+            idColumnName = fieldNames.get(0);
         }
         return idColumnName;
     }

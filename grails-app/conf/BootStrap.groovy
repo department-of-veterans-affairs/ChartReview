@@ -7,7 +7,6 @@ import gov.va.vinci.chartreview.model.Role
 import gov.va.vinci.chartreview.model.User
 import gov.va.vinci.chartreview.model.UserProjectRole
 import gov.va.vinci.chartreview.model.schema.AnnotationSchema
-import gov.va.vinci.chartreview.model.schema.AttributeDef
 import gov.va.vinci.siman.model.ClinicalElementConfiguration
 import grails.converters.XML
 import grails.plugin.springsecurity.SecurityFilterPosition
@@ -19,7 +18,6 @@ import org.codehaus.groovy.grails.web.converters.marshaller.xml.CollectionMarsha
 
 import java.sql.Connection
 import java.sql.Timestamp
-import java.text.SimpleDateFormat
 
 class BootStrap {
     def springSecurityService;
@@ -61,7 +59,6 @@ class BootStrap {
         })
 
         createInitialUsersRolesAndProjectsIfNecessary();
-        migrateAttributeDefMinDates();
         /**
         ClinicalElementConfiguration.findAll().each { ClinicalElementConfiguration config ->
             def details = config.getConfigurationDetails();
@@ -182,32 +179,6 @@ class BootStrap {
             ur.save(flush: true, failOnError: true);
             globalAdmin.setAuthorities([ur]);
             globalAdmin.save(flush: true, failOnError: true);
-        }
-    }
-
-    /**
-     * Create all the initial data necessary to get an admin to be able to log into chart review, if the admin does not already exist.
-     *
-     * @param springSecurityService
-     * @return
-     */
-    def migrateAttributeDefMinDates() {
-        AttributeDef.findAll().each { AttributeDef ad ->
-            Date minDate = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            try
-            {
-                minDate = sdf.parse("0002-01-01 00:00:00");
-            }
-            catch(Exception e)
-            {
-                // Do nothing
-            }
-            if(ad != null && ad.getMinDate() != null && minDate != null && ad.getMinDate().getTime() < minDate.getTime())
-            {
-                ad.setMinDate(minDate);
-            }
-            ad.save(flush: true, failOnError: true);
         }
     }
 }

@@ -559,10 +559,10 @@ class ClinicalElementService  {
         try {
             c = projectService.getDatabaseConnection(project);
 
-            PreparedStatement dataQueryStatement = c.prepareStatement(config.query);
+            PreparedStatement dataQueryStatement = c.prepareStatement(config.singleElementQuery);
 
             // Execute the data query query
-            if(config.query.indexOf('?') >= 0)
+            if(config.singleElementQuery.indexOf('?') >= 0)
             {
                 dataQueryStatement.setObject(1, config.examplePatientId);
             }

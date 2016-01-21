@@ -319,7 +319,7 @@ class ClinicalElementConfigurationController {
                 Connection c = null;
                 try {
                     c = projectService.getDatabaseConnection(conversation.project);
-                    conversation.principalClinicalElementIdColName = Utils.getIdColName(c, conversation.principalClinicalElementTableName);
+                    conversation.principalClinicalElementIdColName = Utils.getIdColName(c, conversation.clinicalElementTableName);
                     conversation.clinicalElementIdColName = Utils.getIdColName(c, conversation.clinicalElementTableName);
                     conversation.clinicalElementTableFieldNames = Utils.getFieldNames(c, conversation.clinicalElementTableName);
                 } finally {
@@ -333,14 +333,6 @@ class ClinicalElementConfigurationController {
                 dto.setQuery("select " + selectFields + " from " + conversation.clinicalElementTableName + " where " + conversation.principalClinicalElementIdColName + " = ?");
                 dto.setSingleElementQuery("select " + selectFields + " from " + conversation.clinicalElementTableName + " where " + conversation.clinicalElementIdColName + " = ?");
                 dto.setContentTemplate(null);
-                try {
-                    dto = clinicalElementService.populateColumnInfo(conversation.project, dto);
-                    buildDefaultContentTemplate(dto);
-                } catch (Exception e) {
-                    flash.message = "Error: ${e.getMessage()}";
-                    conversation.dataSetConfigurationInstance = dto;
-                    return nameDescriptionTableStep();
-                }
 
                 if (!setNamdAndDescriptionsParams(params, conversation.dto, conversation.project)) {
                     return nameAndDescriptionStep();
