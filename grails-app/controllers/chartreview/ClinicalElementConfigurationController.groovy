@@ -283,7 +283,7 @@ class ClinicalElementConfigurationController {
                     List<String> tableNames = Utils.getTableNames(c);
                     conversation.tableNames = tableNames;
                 } finally {
-                    DbUtils.closeQuietly((Connection)c);
+                    Utils.closeConnection(c);
                 }
 
                 if (params.id) {
@@ -323,7 +323,7 @@ class ClinicalElementConfigurationController {
                     conversation.clinicalElementIdColName = Utils.getIdColName(c, conversation.clinicalElementTableName);
                     conversation.clinicalElementTableFieldNames = Utils.getFieldNames(c, conversation.clinicalElementTableName);
                 } finally {
-                    DbUtils.closeQuietly((Connection)c);
+                    Utils.closeConnection(c);
                 }
 
                 // Reset incase we have come BACK to this point in the wizard after having set this.

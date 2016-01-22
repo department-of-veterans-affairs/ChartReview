@@ -414,14 +414,13 @@ class Utils {
     }
 
     public static void closeConnection(Connection c) {
-        if (c!= null) {
-            try {
-                c.close();
-            } catch (Exception e) {
-                println(e);
-            }
+        if (c instanceof net.sourceforge.jtds.jdbc.Driver) {  // Don't close if JTDS ONLY
+            return;
         }
+
+        DbUtils.closeQuietly((Connection)c);
     }
+
 
     public static SQLTemplates getSQLTemplate(String driver) throws ValidationException {
         if(driver.equals("org.h2.Driver")) {

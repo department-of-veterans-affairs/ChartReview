@@ -261,7 +261,7 @@ class AnnotationService {
                 connection.commit();
             }
         } finally {
-            closeConnection(connection);
+            Utils.closeConnection(connection);
 
         }
     }
@@ -385,7 +385,7 @@ class AnnotationService {
 
             return new ArrayList<ClinicalElement>(clinicalElementMap.values());
         } finally {
-            closeConnection(connection);
+            Utils.closeConnection(connection);
         }
     }
 
@@ -534,7 +534,7 @@ class AnnotationService {
                 }
             }
         } finally {
-            closeConnection(connection);
+            Utils.closeConnection(connection);
         }
         return XmlUtil.serialize(root);
     }

@@ -571,7 +571,7 @@ class ClinicalElementService  {
 
         } finally {
 
-            Utils.closeConnection(c);
+            closeConnection(c);
         }
         return config;
     }

@@ -16,6 +16,8 @@ import org.ietf.jgss.GSSCredential
 import javax.servlet.http.HttpServletRequest
 import java.security.Principal
 import java.sql.Connection
+import java.sql.ResultSet
+import java.sql.SQLException
 
 import static gov.va.vinci.chartreview.Utils.closeConnection
 
@@ -146,20 +148,36 @@ class ProjectService {
             dataSource.setPassword(p.getJdbcPassword());
         }
         if (p.getJdbcDriver().equals("net.sourceforge.jtds.jdbc.Driver")) {
+
+            Connection jtdsConnection = session.getAttribute("JtdsConnection:" + p.getId());
+
+            // Validate the connection and return it if valid.
+            if (jtdsConnection != null) {
+                boolean validated = true;
+                try {
+                    ResultSet rs = jtdsConnection.createStatement().executeQuery("select 1");
+                } catch (SQLException e) {
+                    validated= false;
+                }
+                if (validated) {
+                    return jtdsConnection;
+                }
+            }
+
             HttpServletRequest request = WebUtils.retrieveGrailsWebRequest().getCurrentRequest();
             Principal principal = request.getSession().getAttribute("SPNEGO-PRINCIPAL");
             if (principal == null) {
                principal = request.getUserPrincipal();
             }
 
-//            System.out.println("PRINCIPAL="+principal);
             if (principal instanceof SpnegoPrincipal) {
                 GSSCredential credential = ((SpnegoPrincipal)principal).getDelegatedCredential();
                 if (credential != null) {
-                    return jTDSDriverManager.getConnection(p.getDatabaseConnectionUrl(), credential);
+                    jtdsConnection = jTDSDriverManager.getConnection(p.getDatabaseConnectionUrl(), credential);
+                    session.setAttribute("JtdsConnection:" + p.getId(), jtdsConnection);
+                    return jtdsConnection;
                 }
             }
-//            System.out.println("SHOULD NOT GET HERE");
 
             dataSource.setDriverClassName(p.getJdbcDriver());
 //        } else if (javaMelodyDriverExists) {

@@ -36,7 +36,7 @@ class ClinicalElementConfigurationService {
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates, grailsApplication.config.chartReview.defaultSchema);
             return  clinicalElementConfigDAO.getClinicalElementConfiguration(id);
         }finally{
-            DbUtils.closeQuietly((Connection)c);
+            Utils.closeConnection(c);
         }
     }
 
@@ -61,7 +61,7 @@ class ClinicalElementConfigurationService {
                 return configurations;
             }
         } finally {
-            DbUtils.closeQuietly((Connection)c);
+            Utils.closeConnection(c);
         }
     }
 
@@ -74,7 +74,7 @@ class ClinicalElementConfigurationService {
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(connection, Utils.getSQLTemplate(project.getJdbcDriver()), grailsApplication.config.chartReview.defaultSchema);
             clinicalElementConfigDAO.updateClinicalElementConfiguration(config);
         }finally{
-            closeConnection(connection);
+            Utils.closeConnection(c);
         }
     }
 
@@ -126,7 +126,7 @@ class ClinicalElementConfigurationService {
             ClinicalElementConfigDAO clinicalElementConfigDAO = new ClinicalElementConfigDAO(c, templates, grailsApplication.config.chartReview.defaultSchema);
             clinicalElementConfigDAO.addClinicalElementConfiguration(conf);
         } finally {
-            DbUtils.closeQuietly((Connection)c);
+            Utils.closeConnection(c);
         }
     }
 
@@ -150,7 +150,7 @@ class ClinicalElementConfigurationService {
                 throw new IllegalArgumentException("Clinical element configuration: ${clinicalElementConfigId} not found in project: ${projectId}.")
             }
         } finally {
-            DbUtils.closeQuietly((Connection)c);
+            Utils.closeConnection(c);
         }
     }
 }
