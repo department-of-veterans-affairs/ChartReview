@@ -414,7 +414,7 @@ class Utils {
     }
 
     public static void closeConnection(Connection c) {
-        if (c instanceof net.sourceforge.jtds.jdbc.Driver) {  // Don't close if JTDS ONLY
+        if (c.getClass().getCanonicalName().startsWith("net.sourceforge.jtds.")) {  // Don't close if JTDS ONLY
             return;
         }
 
