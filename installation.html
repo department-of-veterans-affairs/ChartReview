@@ -77,7 +77,7 @@
                     	<pre><code>mysql -uroot -p
     CREATE DATABASE chartreview;
     CREATE USER 'chartreview'@'localhost' IDENTIFIED BY 'passw0rd';
-    GRANT ALL PRIVILEGES ON chartreview.* TO 'chartreview'@'localhost';
+    GRANT ALL PRIVILEGES ON chartreview.* TO 'chartreview'@'localhost' with grant option;
     flush privileges;</code></pre></li>
                     <li>Create the OMOP example data database in Mysql that will house example OMOP data.
                     	<pre><code>mysql -uroot -p
@@ -95,11 +95,11 @@
                      url="jdbc:mysql://localhost:3306/chartreview" maxActive="15" maxIdle="3"/&gt;
 &lt;/Context&gt;</code></pre>
                 </li>
-                <li>Import the initial Chart Review database: <strong>mysql -uroot -ppassw0rd chartreview &lt; chart-review-demo-omop.sql</strong></li>
-                <li>Import the OMOP example data database: <strong>mysql -uroot -ppassw0rd omop &lt; chart-review-omop-data-2016.01.25.Final.sql</strong></li>
+                <li>Import the initial Chart Review database: <strong>mysql -uroot -p chartreview &lt; chart-review-demo-omop.sql</strong></li>
+                <li>Import the OMOP example data database: <strong>mysql -uroot -p omop &lt; chart-review-omop-data-2016.01.25.Final.sql</strong></li>
                 <li>Copy the downloaded war to TOMCAT_HOME/webapps, and rename it chart-review.war</li>
                 <li>Start Tomcat</li>
-                <li>Browse to <a href="http://localhost:8080/chart-review/">http://localhost:8080/chart-review/</a></li>
+                <li>Browse to <a href="http://localhost:8080/chart-review/" target="_blank">http://localhost:8080/chart-review/</a></li>
                 <li>Example users are username: <strong>admin</strong> password:<strong>admin</strong> and username: <strong>u1</strong> password:<strong>u1</strong>.
                 </ol>
                 <h3>More Detailed Instructions &amp; User Guide</h3>
