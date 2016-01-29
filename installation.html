@@ -56,13 +56,20 @@
                     <li>Web Servlet Container (<a href="http://tomcat.apache.org/download-80.cgi" target="_blank">Tomcat 8</a> is used in the example below, though Tomcat 7 should also work)</li>
                 </ul>
                 <h3>Chart Review Downloads</h3>
+                	Download all artifacts under Releases->chart-review-2016.01.25.Final->Downloads found on <a href="https://github.com/department-of-veterans-affairs/ChartReview">github</a>
                 <ul style=" list-style-type: none;">
+                    <li>chart-review.xml (the Chart Review tomcat database context)</li>
+                	<li>chart-review-demo-omop.sql (the initial Chart Review database)</li>
+                	<li>chart-review-omop-data-2016.01.25.Final.sql (OMOP example data)</li>
+					<li>chart-review-2016.01.25.Final.war (the Chart Review war file)</li>
+                </ul>
+ <!-- 
                 	<li><a href="http://decipher.chpc.utah.edu/nexus/service/local/repositories/thirdparty/content/chart-review/chart-review/2016.01.25.Final/chart-review-2016.01.25.Final.war"><i class="glyphicon glyphicon-download"></i> Chart Review .war</a></li>
                     <li><a download="chart-review.xml" href="assets/chart-review.xml"><i class="glyphicon glyphicon-download"></i> Chart Review example context file (chart-review.xml)</a></li>
                     <li><a download="chart-review-demo-omop.sql" href="assets/chart-review-demo-omop.sql"><i class="glyphicon glyphicon-download"></i> Chart Review example database dump</a></li>
                 	<li><a download="chart-review-omop-data-2016.01.25.Final.sql" href="http://decipher.chpc.utah.edu/nexus/service/local/repositories/thirdparty/content/chart-review/chart-review-omop-data/2016.01.25.Final/chart-review-omop-data-2016.01.25.Final.sql"><i class="glyphicon glyphicon-download"></i> OMOP Example data .sql</a></li>
-                </ul>
-                
+ -->
+               
 				<h3>Installation</h3>
                 <ol>
                 	<li>Install Java, Mysql, and Tomcat.</li>
@@ -88,8 +95,8 @@
                      url="jdbc:mysql://localhost:3306/chartreview" maxActive="15" maxIdle="3"/&gt;
 &lt;/Context&gt;</code></pre>
                 </li>
-                <li>Import the Chart Review database: <strong>mysql -uroot -p chartreview &lt; chart-review-demo-omop.sql</strong></li>
-                <li>Import the OMOP example data database: <strong>mysql -uroot -p omop &lt; chart-review-omop-data-2016.01.25.Final.sql</strong></li>
+                <li>Import the initial Chart Review database: <strong>mysql -uroot -ppassw0rd chartreview &lt; chart-review-demo-omop.sql</strong></li>
+                <li>Import the OMOP example data database: <strong>mysql -uroot -ppassw0rd omop &lt; chart-review-omop-data-2016.01.25.Final.sql</strong></li>
                 <li>Copy the downloaded war to TOMCAT_HOME/webapps, and rename it chart-review.war</li>
                 <li>Start Tomcat</li>
                 <li>Browse to <a href="http://localhost:8080/chart-review/">http://localhost:8080/chart-review/</a></li>
